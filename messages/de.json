@@ -49,7 +49,7 @@
     "newReservation": "Neue Reservierung",
     "today": "Heute",
     "tomorrow": "Morgen",
-    "empty": "Keine Reservierungen an diesem Tag",
+    "empty": "Keine Reservierungen",
     "createFirst": "Erste erstellen",
     "columns": {
       "time": "Zeit",
@@ -85,7 +85,7 @@
       "date": "Datum",
       "guestCount": "Gäste",
       "time": "Zeit",
-      "noTimeAvailable": "An diesem Datum sind keine Zeiten verfügbar",
+      "noTimeAvailable": "Keine Zeiten verfügbar",
       "source": "Quelle",
       "sourcePhone": "Telefonanruf",
       "sourceWalkin": "Walk-in",
@@ -93,7 +93,7 @@
       "comment": "Kommentar",
       "commentPlaceholder": "Besondere Wünsche, Allergien...",
       "selectTime": "Zeit auswählen",
-      "createError": "Fehler beim Erstellen der Reservierung",
+      "createError": "Fehler beim Erstellen",
       "create": "Reservierung erstellen"
     }
   },
@@ -101,8 +101,8 @@
   "floorPlan": {
     "title": "Saalplan",
     "updated": "Aktualisiert",
-    "autoRefresh": "Auto-Aktualisierung alle 30s",
-    "hint": "Klicken Sie auf einen Tisch, um Details zu sehen oder Gäste zu platzieren",
+    "autoRefresh": "Auto-Aktualisierung 30s",
+    "hint": "Klicken Sie auf einen Tisch für Details oder Walk-in-Platzierung",
     "noTables": "Keine Tische",
     "createTable": "Tisch erstellen",
     "counters": {
@@ -133,7 +133,7 @@
       "nowSeated": "Jetzt am Tisch",
       "soonReservation": "Bald (in den nächsten 30 Minuten)",
       "upcomingToday": "Nächste Reservierungen heute",
-      "noReservations": "Keine Reservierungen für heute an diesem Tisch",
+      "noReservations": "Keine Reservierungen heute",
       "walkinDescription": "Der Gast kommt sofort — die Reservierung wird mit Status",
       "walkinSeated": "Am Tisch",
       "guestCount": "Anzahl der Gäste",
@@ -166,8 +166,8 @@
     "capacity": "{min}–{max} Plätze",
     "active": "Aktiv",
     "inactive": "Inaktiv",
-    "deleteConfirm": "Tisch \"{name}\" löschen? Diese Aktion ist unwiderruflich.",
-    "deleteHasReservations": "Tisch \"{name}\" hat {count} Reservierungen im Verlauf — Löschen nicht möglich. Bitte deaktivieren.",
+    "deleteConfirm": "Tisch \"{name}\" löschen?",
+    "deleteHasReservations": "Tisch \"{name}\" hat {count} Reservierungen — Löschen nicht möglich.",
     "form": {
       "create": "Neuer Tisch",
       "edit": "Tisch {name} bearbeiten",
@@ -190,7 +190,7 @@
     "summary": "Kategorien: {categories} · Speisen: {items}",
     "manageCategories": "Kategorien",
     "newItem": "Neue Speise",
-    "empty": "Speisekarte ist noch leer",
+    "empty": "Speisekarte ist leer",
     "createFirstCategory": "Erste Kategorie erstellen",
     "emptyCategory": "Keine Speisen in dieser Kategorie",
     "hidden": "Ausgeblendet",
@@ -209,12 +209,12 @@
       "hidden": "Ausgeblendet",
       "itemsCount": "{count, plural, =0 {0 Speisen} one {# Speise} other {# Speisen}}",
       "confirmDelete": "Kategorie \"{name}\" löschen?",
-      "cannotDelete": "Kategorie \"{name}\" enthält {count} Speisen. Bitte zuerst löschen.",
+      "cannotDelete": "Kategorie \"{name}\" enthält {count} Speisen.",
       "form": {
         "name": "Name",
         "slug": "Slug (URL)",
-        "slugHint": "Nur Kleinbuchstaben, Zahlen und Bindestriche. Wird in der URL verwendet.",
-        "isVisible": "Kategorie auf der Webseite sichtbar"
+        "slugHint": "Nur Kleinbuchstaben, Zahlen und Bindestriche.",
+        "isVisible": "Kategorie sichtbar"
       }
     },
 
@@ -226,7 +226,7 @@
         "name": "Name",
         "description": "Beschreibung",
         "imageUrl": "Bild-URL",
-        "imageHint": "Link zum Bild einfügen (Imgur, Cloudinary usw.)",
+        "imageHint": "Link zum Bild einfügen",
         "singlePrice": "Ein Preis",
         "multipleVariants": "Preisvarianten",
         "price": "Preis",
@@ -242,7 +242,7 @@
         "spicyLevel": "Schärfe",
         "notSpicy": "Nicht scharf",
         "allergens": "Allergene",
-        "isAvailable": "Speise zur Bestellung verfügbar"
+        "isAvailable": "Speise verfügbar"
       }
     },
 
@@ -261,6 +261,96 @@
       "SULPHITES": "Sulfite",
       "LUPIN": "Lupinen",
       "MOLLUSCS": "Weichtiere"
+    }
+  },
+
+  "promotions": {
+    "title": "Aktionen",
+    "newPromotion": "Neue Aktion",
+    "editPromotion": "Bearbeiten: {title}",
+    "activeCount": "Aktiv: {count}",
+    "archivedCount": "Archiviert: {count}",
+    "tabActive": "Aktiv",
+    "tabArchived": "Archiv",
+    "empty": "Noch keine Aktionen",
+    "emptyArchived": "Archiv ist leer",
+    "createFirst": "Erste Aktion erstellen",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "archive": "Archivieren",
+    "unarchive": "Wiederherstellen",
+    "confirmDelete": "Aktion \"{title}\" endgültig löschen?",
+    "status": {
+      "ACTIVE": "Läuft jetzt",
+      "SCHEDULED": "Geplant",
+      "EXPIRED": "Abgelaufen",
+      "ARCHIVED": "Archiv",
+      "INACTIVE": "Deaktiviert"
+    },
+    "form": {
+      "title": "Titel",
+      "description": "Beschreibung",
+      "slug": "Slug (URL)",
+      "imageUrl": "Bild-URL",
+      "period": "Zeitraum",
+      "startDate": "Startdatum",
+      "endDate": "Enddatum",
+      "daysOfWeek": "Wochentage",
+      "daysOfWeekHint": "leer lassen — alle Tage",
+      "timeRestriction": "Auf bestimmte Uhrzeit beschränken (optional)",
+      "startTime": "Von",
+      "endTime": "Bis",
+      "isActive": "Aktion aktiv"
+    }
+  },
+
+  "gallery": {
+    "title": "Galerie",
+    "summary": "Kategorien: {categories} · Bilder: {images} · Featured: {featured}",
+    "manageCategories": "Kategorien",
+    "addImage": "Bild hinzufügen",
+    "noCategoriesYet": "Erstellen Sie zuerst eine Kategorie",
+    "createFirstCategory": "Kategorie erstellen",
+    "emptyCategory": "Keine Bilder in dieser Kategorie",
+    "hidden": "Ausgeblendet",
+    "featured": "Featured",
+    "markFeatured": "Featured markieren",
+    "unmarkFeatured": "Featured entfernen",
+    "hideAction": "Ausblenden",
+    "showAction": "Anzeigen",
+    "confirmDeleteImage": "Bild löschen?",
+
+    "categories": {
+      "title": "Galerie-Kategorien",
+      "newCategory": "Neue Kategorie",
+      "empty": "Noch keine Kategorien",
+      "createFirst": "Erste erstellen",
+      "editCategory": "Bearbeiten: {name}",
+      "visible": "Sichtbar",
+      "hidden": "Ausgeblendet",
+      "imagesCount": "{count, plural, =0 {0 Bilder} one {# Bild} other {# Bilder}}",
+      "confirmDelete": "Kategorie \"{name}\" löschen?",
+      "cannotDelete": "Kategorie \"{name}\" enthält {count} Bilder.",
+      "form": {
+        "name": "Name",
+        "slug": "Slug",
+        "isVisible": "Kategorie sichtbar"
+      }
+    },
+
+    "images": {
+      "newImage": "Neues Bild",
+      "editImage": "Bild bearbeiten",
+      "form": {
+        "imageUrl": "Bild-URL",
+        "urlHint": "Direkter Link zu JPG/PNG einfügen",
+        "category": "Kategorie",
+        "alt": "Beschreibung (Alt-Text)",
+        "altHint": "Kurze Beschreibung. Wird für SEO und Screenreader verwendet.",
+        "isFeatured": "Featured (auf Startseite anzeigen)",
+        "isFeaturedHint": "Featured-Bilder werden im Hero-Block und Karussell verwendet",
+        "isVisible": "Bild sichtbar"
+      }
     }
   },
 

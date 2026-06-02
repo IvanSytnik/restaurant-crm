@@ -228,19 +228,15 @@ model MenuItem {
   descriptionEN String?      @db.Text
   descriptionUK String?      @db.Text
 
-  // Базовая цена. Если есть варианты — это поле не используется.
   price         Decimal?     @db.Decimal(8, 2)
 
   imageUrl      String?
 
-  // Аллергены — стандарт ЕС/Австрии, 14 кодов
   allergens     Allergen[]   @default([])
 
-  // Теги
   isVegetarian  Boolean      @default(false)
   isVegan       Boolean      @default(false)
 
-  // Острота: 0 = не острое, 1-3 = уровни остроты
   spicyLevel    Int          @default(0)
 
   isAvailable   Boolean      @default(true)
@@ -255,8 +251,6 @@ model MenuItem {
   @@map("menu_items")
 }
 
-// Варианты блюда — например, для напитков "0.3л / 0.5л".
-// Если у блюда есть варианты, основное поле price не используется.
 model MenuItemVariant {
   id        String   @id @default(cuid())
   itemId    String
@@ -273,8 +267,6 @@ model MenuItemVariant {
   @@map("menu_item_variants")
 }
 
-// 14 стандартных аллергенов согласно регламенту ЕС 1169/2011.
-// В Австрии маркируются буквами A-P, R.
 enum Allergen {
   GLUTEN
   CRUSTACEANS
@@ -293,7 +285,7 @@ enum Allergen {
 }
 
 // ─────────────────────────────────────────────
-// PROMOTIONS
+// PROMOTIONS / АКЦИИ
 // ─────────────────────────────────────────────
 
 model Promotion {
@@ -304,15 +296,31 @@ model Promotion {
   descriptionDE String?  @db.Text
   descriptionEN String?  @db.Text
   descriptionUK String?  @db.Text
+
+  slug          String   @unique
   imageUrl      String?
+
   startDate     DateTime @db.Date
   endDate       DateTime @db.Date
+
+  // Опционально: дни недели когда действует (например бизнес-ланч Mon-Fri)
+  // Хранится как массив 0-6 (0 = воскресенье)
+  // Пустой массив = действует все дни
+  daysOfWeek    Int[]    @default([])
+
+  // Опционально: часы действия (например 12:00-15:00)
+  startTime     String?  // "12:00"
+  endTime       String?  // "15:00"
+
+  // Архивированные акции остаются в БД, но не показываются на сайте
   isActive      Boolean  @default(true)
+  isArchived    Boolean  @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([startDate, endDate])
+  @@index([isActive, isArchived])
   @@map("promotions")
 }
 
@@ -320,26 +328,46 @@ model Promotion {
 // GALLERY
 // ─────────────────────────────────────────────
 
-model GalleryImage {
-  id        String          @id @default(cuid())
-  url       String
-  altDE     String?
-  altEN     String?
-  altUK     String?
-  category  GalleryCategory @default(RESTAURANT)
-  position  Int             @default(0)
-  isVisible Boolean         @default(true)
+// Категории галереи — теперь редактируемые через CRM
+model GalleryCategory {
+  id        String         @id @default(cuid())
+  nameDE    String
+  nameEN    String?
+  nameUK    String?
+  slug      String         @unique
+  position  Int            @default(0)
+  isVisible Boolean        @default(true)
+
+  images    GalleryImage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@map("gallery_images")
+  @@map("gallery_categories")
 }
 
-enum GalleryCategory {
-  RESTAURANT
-  FOOD
-  TERRACE
+model GalleryImage {
+  id         String          @id @default(cuid())
+  url        String
+  altDE      String?
+  altEN      String?
+  altUK      String?
+
+  categoryId String
+  category   GalleryCategory @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  // Featured-фото показываются на главной странице (hero/карусель)
+  isFeatured Boolean         @default(false)
+
+  position   Int             @default(0)
+  isVisible  Boolean         @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([categoryId, position])
+  @@index([isFeatured])
+  @@map("gallery_images")
 }
 
 // ─────────────────────────────────────────────

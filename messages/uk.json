@@ -166,8 +166,8 @@
     "capacity": "{min}–{max} місць",
     "active": "Активний",
     "inactive": "Неактивний",
-    "deleteConfirm": "Видалити стіл \"{name}\"? Це дію не можна скасувати.",
-    "deleteHasReservations": "На столі \"{name}\" є {count} бронювань в історії — видалення неможливе. Деактивуйте його.",
+    "deleteConfirm": "Видалити стіл \"{name}\"?",
+    "deleteHasReservations": "На столі \"{name}\" є {count} бронювань — видалення неможливе. Деактивуйте його.",
     "form": {
       "create": "Новий стіл",
       "edit": "Редагувати стіл {name}",
@@ -213,7 +213,7 @@
       "form": {
         "name": "Назва",
         "slug": "Slug (URL)",
-        "slugHint": "Тільки латиниця, цифри і дефіс. Використовується в URL.",
+        "slugHint": "Тільки латиниця, цифри і дефіс.",
         "isVisible": "Категорія видима на сайті"
       }
     },
@@ -226,7 +226,7 @@
         "name": "Назва",
         "description": "Опис",
         "imageUrl": "URL зображення",
-        "imageHint": "Вставте посилання на зображення (Imgur, Cloudinary тощо)",
+        "imageHint": "Вставте посилання на зображення",
         "singlePrice": "Одна ціна",
         "multipleVariants": "Варіанти ціни",
         "price": "Ціна",
@@ -261,6 +261,96 @@
       "SULPHITES": "Сульфіти",
       "LUPIN": "Люпин",
       "MOLLUSCS": "Молюски"
+    }
+  },
+
+  "promotions": {
+    "title": "Акції",
+    "newPromotion": "Нова акція",
+    "editPromotion": "Редагувати: {title}",
+    "activeCount": "Активних: {count}",
+    "archivedCount": "Архівних: {count}",
+    "tabActive": "Активні",
+    "tabArchived": "Архів",
+    "empty": "Акцій поки немає",
+    "emptyArchived": "Архів порожній",
+    "createFirst": "Створити першу акцію",
+    "active": "Активна",
+    "inactive": "Неактивна",
+    "archive": "Архівувати",
+    "unarchive": "Розархівувати",
+    "confirmDelete": "Видалити акцію \"{title}\" назавжди?",
+    "status": {
+      "ACTIVE": "Зараз діє",
+      "SCHEDULED": "Запланована",
+      "EXPIRED": "Завершена",
+      "ARCHIVED": "Архів",
+      "INACTIVE": "Вимкнена"
+    },
+    "form": {
+      "title": "Назва",
+      "description": "Опис",
+      "slug": "Slug (URL)",
+      "imageUrl": "URL зображення",
+      "period": "Період дії",
+      "startDate": "Дата початку",
+      "endDate": "Дата завершення",
+      "daysOfWeek": "Дні тижня",
+      "daysOfWeekHint": "залиште порожнім — всі дні",
+      "timeRestriction": "Обмежити по годинах (опціонально)",
+      "startTime": "Початок",
+      "endTime": "Кінець",
+      "isActive": "Акція активна"
+    }
+  },
+
+  "gallery": {
+    "title": "Галерея",
+    "summary": "Категорій: {categories} · Зображень: {images} · Featured: {featured}",
+    "manageCategories": "Категорії",
+    "addImage": "Додати зображення",
+    "noCategoriesYet": "Спочатку створіть категорію",
+    "createFirstCategory": "Створити категорію",
+    "emptyCategory": "У цій категорії немає зображень",
+    "hidden": "Прихована",
+    "featured": "Featured",
+    "markFeatured": "Зробити featured",
+    "unmarkFeatured": "Прибрати featured",
+    "hideAction": "Сховати",
+    "showAction": "Показати",
+    "confirmDeleteImage": "Видалити зображення?",
+
+    "categories": {
+      "title": "Категорії галереї",
+      "newCategory": "Нова категорія",
+      "empty": "Категорій поки немає",
+      "createFirst": "Створити першу",
+      "editCategory": "Редагувати: {name}",
+      "visible": "Видима",
+      "hidden": "Прихована",
+      "imagesCount": "{count, plural, =0 {0 зображень} one {# зображення} few {# зображення} other {# зображень}}",
+      "confirmDelete": "Видалити категорію \"{name}\"?",
+      "cannotDelete": "У категорії \"{name}\" є {count} зображень. Спочатку видаліть їх.",
+      "form": {
+        "name": "Назва",
+        "slug": "Slug",
+        "isVisible": "Категорія видима на сайті"
+      }
+    },
+
+    "images": {
+      "newImage": "Нове зображення",
+      "editImage": "Редагувати зображення",
+      "form": {
+        "imageUrl": "URL зображення",
+        "urlHint": "Вставте пряме посилання на JPG/PNG",
+        "category": "Категорія",
+        "alt": "Опис для accessibility",
+        "altHint": "Короткий опис того, що на фото. Використовується для SEO та читачів екрану.",
+        "isFeatured": "Featured (показувати на головній сторінці)",
+        "isFeaturedHint": "Featured-зображення використовуються в hero-блоці та каруселі",
+        "isVisible": "Зображення видиме на сайті"
+      }
     }
   },
 
