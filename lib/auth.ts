@@ -6,7 +6,7 @@ import { prisma } from '@/lib/prisma'
 import type { UserRole } from '@prisma/client'
 
 export const authOptions: NextAuthOptions = {
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(prisma) as Adapter,
   session: { strategy: 'jwt' },
   pages: {
     signIn: '/admin/login',
