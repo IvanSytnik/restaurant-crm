@@ -1,0 +1,272 @@
+{
+  "common": {
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "create": "Erstellen",
+    "close": "Schließen",
+    "loading": "Laden...",
+    "saving": "Speichern...",
+    "creating": "Erstellen...",
+    "deleting": "Löschen...",
+    "back": "Zurück",
+    "yes": "Ja",
+    "no": "Nein",
+    "actions": "Aktionen",
+    "status": "Status",
+    "refresh": "Aktualisieren",
+    "total": "Gesamt"
+  },
+
+  "login": {
+    "title": "Restaurant CRM",
+    "subtitle": "Anmeldung",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "submit": "Anmelden",
+    "loading": "Anmelden...",
+    "error": "Ungültige E-Mail oder Passwort"
+  },
+
+  "sidebar": {
+    "reservations": "Reservierungen",
+    "floorPlan": "Saalplan",
+    "tables": "Tische",
+    "menu": "Speisekarte",
+    "promotions": "Aktionen",
+    "gallery": "Galerie",
+    "analytics": "Statistik",
+    "settings": "Einstellungen",
+    "users": "Benutzer",
+    "logout": "Abmelden",
+    "language": "Sprache"
+  },
+
+  "reservations": {
+    "title": "Reservierungen",
+    "onThisDay": "An diesem Tag",
+    "newReservation": "Neue Reservierung",
+    "today": "Heute",
+    "tomorrow": "Morgen",
+    "empty": "Keine Reservierungen an diesem Tag",
+    "createFirst": "Erste erstellen",
+    "columns": {
+      "time": "Zeit",
+      "table": "Tisch",
+      "guest": "Gast",
+      "guests": "Gäste",
+      "contacts": "Kontakte",
+      "source": "Quelle",
+      "status": "Status"
+    },
+    "status": {
+      "PENDING": "Ausstehend",
+      "CONFIRMED": "Bestätigt",
+      "SEATED": "Am Tisch",
+      "COMPLETED": "Abgeschlossen",
+      "CANCELLED": "Storniert",
+      "NO_SHOW": "Nicht erschienen"
+    },
+    "source": {
+      "WEBSITE": "Webseite",
+      "PHONE": "Telefon",
+      "WALKIN": "Walk-in",
+      "ADMIN": "CRM"
+    },
+    "form": {
+      "title": "Neue Reservierung",
+      "guestName": "Name des Gastes",
+      "guestNamePlaceholder": "Max Mustermann",
+      "phone": "Telefon",
+      "phonePlaceholder": "+43 ...",
+      "email": "E-Mail (optional)",
+      "emailPlaceholder": "guest@example.com",
+      "date": "Datum",
+      "guestCount": "Gäste",
+      "time": "Zeit",
+      "noTimeAvailable": "An diesem Datum sind keine Zeiten verfügbar",
+      "source": "Quelle",
+      "sourcePhone": "Telefonanruf",
+      "sourceWalkin": "Walk-in",
+      "sourceOther": "Andere",
+      "comment": "Kommentar",
+      "commentPlaceholder": "Besondere Wünsche, Allergien...",
+      "selectTime": "Zeit auswählen",
+      "createError": "Fehler beim Erstellen der Reservierung",
+      "create": "Reservierung erstellen"
+    }
+  },
+
+  "floorPlan": {
+    "title": "Saalplan",
+    "updated": "Aktualisiert",
+    "autoRefresh": "Auto-Aktualisierung alle 30s",
+    "hint": "Klicken Sie auf einen Tisch, um Details zu sehen oder Gäste zu platzieren",
+    "noTables": "Keine Tische",
+    "createTable": "Tisch erstellen",
+    "counters": {
+      "free": "Frei",
+      "soon": "Bald reserviert",
+      "occupied": "Besetzt",
+      "inactive": "Inaktiv"
+    },
+    "status": {
+      "FREE": "Frei",
+      "SOON": "Bald reserviert",
+      "OCCUPIED": "Besetzt",
+      "INACTIVE": "Inaktiv"
+    },
+    "legend": {
+      "free": "Frei",
+      "soon": "Bald reserviert (30 Min)",
+      "occupied": "Besetzt",
+      "inactive": "Inaktiv"
+    },
+    "modal": {
+      "table": "Tisch",
+      "seats": "Plätze",
+      "tabInfo": "Information",
+      "tabWalkin": "Jetzt platzieren",
+      "inactive": "Tisch ist inaktiv. Aktivieren Sie ihn im Bereich",
+      "tables": "Tische",
+      "nowSeated": "Jetzt am Tisch",
+      "soonReservation": "Bald (in den nächsten 30 Minuten)",
+      "upcomingToday": "Nächste Reservierungen heute",
+      "noReservations": "Keine Reservierungen für heute an diesem Tisch",
+      "walkinDescription": "Der Gast kommt sofort — die Reservierung wird mit Status",
+      "walkinSeated": "Am Tisch",
+      "guestCount": "Anzahl der Gäste",
+      "guestName": "Name des Gastes (optional)",
+      "duration": "Dauer des Besuchs",
+      "seatButton": "An diesen Tisch platzieren",
+      "seating": "Platzieren..."
+    },
+    "zone": {
+      "INDOOR": "Innen",
+      "OUTDOOR": "Außen",
+      "TERRACE": "Terrasse",
+      "PRIVATE": "Privater Bereich"
+    }
+  },
+
+  "tables": {
+    "title": "Tische",
+    "newTable": "Neuer Tisch",
+    "summary": "Gesamt: {total} · Aktiv: {active}",
+    "empty": "Noch keine Tische",
+    "createFirst": "Ersten Tisch erstellen",
+    "columns": {
+      "name": "Tisch",
+      "capacity": "Kapazität",
+      "zone": "Zone",
+      "historicalCount": "Reservierungen im Verlauf",
+      "status": "Status"
+    },
+    "capacity": "{min}–{max} Plätze",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "deleteConfirm": "Tisch \"{name}\" löschen? Diese Aktion ist unwiderruflich.",
+    "deleteHasReservations": "Tisch \"{name}\" hat {count} Reservierungen im Verlauf — Löschen nicht möglich. Bitte deaktivieren.",
+    "form": {
+      "create": "Neuer Tisch",
+      "edit": "Tisch {name} bearbeiten",
+      "name": "Tischname",
+      "namePlaceholder": "T6",
+      "minCapacity": "Minimale Kapazität",
+      "maxCapacity": "Maximale Kapazität",
+      "zone": "Zone",
+      "posX": "Position X auf dem Plan (%)",
+      "posY": "Position Y auf dem Plan (%)",
+      "isActive": "Tisch aktiv (für Reservierungen verfügbar)",
+      "minMaxError": "Minimale Kapazität darf maximale nicht überschreiten",
+      "createButton": "Tisch erstellen",
+      "saveError": "Fehler beim Speichern"
+    }
+  },
+
+  "menu": {
+    "title": "Speisekarte",
+    "summary": "Kategorien: {categories} · Speisen: {items}",
+    "manageCategories": "Kategorien",
+    "newItem": "Neue Speise",
+    "empty": "Speisekarte ist noch leer",
+    "createFirstCategory": "Erste Kategorie erstellen",
+    "emptyCategory": "Keine Speisen in dieser Kategorie",
+    "hidden": "Ausgeblendet",
+    "available": "Verfügbar",
+    "notAvailable": "Nicht verfügbar",
+    "allergensLabel": "Allergene",
+    "confirmDeleteItem": "Speise \"{name}\" löschen?",
+
+    "categories": {
+      "title": "Speisekartenkategorien",
+      "newCategory": "Neue Kategorie",
+      "empty": "Noch keine Kategorien",
+      "createFirst": "Erste Kategorie erstellen",
+      "editCategory": "Kategorie {name} bearbeiten",
+      "visible": "Sichtbar",
+      "hidden": "Ausgeblendet",
+      "itemsCount": "{count, plural, =0 {0 Speisen} one {# Speise} other {# Speisen}}",
+      "confirmDelete": "Kategorie \"{name}\" löschen?",
+      "cannotDelete": "Kategorie \"{name}\" enthält {count} Speisen. Bitte zuerst löschen.",
+      "form": {
+        "name": "Name",
+        "slug": "Slug (URL)",
+        "slugHint": "Nur Kleinbuchstaben, Zahlen und Bindestriche. Wird in der URL verwendet.",
+        "isVisible": "Kategorie auf der Webseite sichtbar"
+      }
+    },
+
+    "items": {
+      "newItem": "Neue Speise",
+      "editItem": "Bearbeiten: {name}",
+      "form": {
+        "category": "Kategorie",
+        "name": "Name",
+        "description": "Beschreibung",
+        "imageUrl": "Bild-URL",
+        "imageHint": "Link zum Bild einfügen (Imgur, Cloudinary usw.)",
+        "singlePrice": "Ein Preis",
+        "multipleVariants": "Preisvarianten",
+        "price": "Preis",
+        "variantsHint": "Z.B.: «0.3L — 4€» und «0.5L — 6€»",
+        "variant": "Variante",
+        "variantLabel": "Name",
+        "addVariant": "Variante hinzufügen",
+        "priceOrVariantsRequired": "Geben Sie einen Preis oder mindestens eine Variante an",
+        "addAtLeastOneVariant": "Bitte mindestens eine Variante hinzufügen",
+        "tags": "Tags",
+        "vegetarian": "Vegetarisch",
+        "vegan": "Vegan",
+        "spicyLevel": "Schärfe",
+        "notSpicy": "Nicht scharf",
+        "allergens": "Allergene",
+        "isAvailable": "Speise zur Bestellung verfügbar"
+      }
+    },
+
+    "allergens": {
+      "GLUTEN": "Glutenhaltiges Getreide",
+      "CRUSTACEANS": "Krebstiere",
+      "EGGS": "Eier",
+      "FISH": "Fisch",
+      "PEANUTS": "Erdnüsse",
+      "SOYBEANS": "Soja",
+      "MILK": "Milch/Laktose",
+      "NUTS": "Schalenfrüchte",
+      "CELERY": "Sellerie",
+      "MUSTARD": "Senf",
+      "SESAME": "Sesam",
+      "SULPHITES": "Sulfite",
+      "LUPIN": "Lupinen",
+      "MOLLUSCS": "Weichtiere"
+    }
+  },
+
+  "user": {
+    "owner": "Inhaber",
+    "manager": "Manager",
+    "staff": "Personal"
+  }
+}

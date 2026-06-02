@@ -1,0 +1,272 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "close": "Close",
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "creating": "Creating...",
+    "deleting": "Deleting...",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No",
+    "actions": "Actions",
+    "status": "Status",
+    "refresh": "Refresh",
+    "total": "Total"
+  },
+
+  "login": {
+    "title": "Restaurant CRM",
+    "subtitle": "Sign in",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "loading": "Signing in...",
+    "error": "Invalid email or password"
+  },
+
+  "sidebar": {
+    "reservations": "Reservations",
+    "floorPlan": "Floor plan",
+    "tables": "Tables",
+    "menu": "Menu",
+    "promotions": "Promotions",
+    "gallery": "Gallery",
+    "analytics": "Analytics",
+    "settings": "Settings",
+    "users": "Users",
+    "logout": "Sign out",
+    "language": "Language"
+  },
+
+  "reservations": {
+    "title": "Reservations",
+    "onThisDay": "On this day",
+    "newReservation": "New reservation",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "empty": "No reservations on this day",
+    "createFirst": "Create first",
+    "columns": {
+      "time": "Time",
+      "table": "Table",
+      "guest": "Guest",
+      "guests": "Guests",
+      "contacts": "Contacts",
+      "source": "Source",
+      "status": "Status"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "CONFIRMED": "Confirmed",
+      "SEATED": "Seated",
+      "COMPLETED": "Completed",
+      "CANCELLED": "Cancelled",
+      "NO_SHOW": "No-show"
+    },
+    "source": {
+      "WEBSITE": "Website",
+      "PHONE": "Phone",
+      "WALKIN": "Walk-in",
+      "ADMIN": "CRM"
+    },
+    "form": {
+      "title": "New reservation",
+      "guestName": "Guest name",
+      "guestNamePlaceholder": "John Smith",
+      "phone": "Phone",
+      "phonePlaceholder": "+43 ...",
+      "email": "Email (optional)",
+      "emailPlaceholder": "guest@example.com",
+      "date": "Date",
+      "guestCount": "Guests",
+      "time": "Time",
+      "noTimeAvailable": "No available time on this date",
+      "source": "Source",
+      "sourcePhone": "Phone call",
+      "sourceWalkin": "Walk-in",
+      "sourceOther": "Other",
+      "comment": "Comment",
+      "commentPlaceholder": "Special requests, allergies...",
+      "selectTime": "Select time",
+      "createError": "Error creating reservation",
+      "create": "Create reservation"
+    }
+  },
+
+  "floorPlan": {
+    "title": "Floor plan",
+    "updated": "Updated",
+    "autoRefresh": "auto-refresh every 30s",
+    "hint": "Click a table to see details or seat guests",
+    "noTables": "No tables",
+    "createTable": "Create table",
+    "counters": {
+      "free": "Free",
+      "soon": "Soon booked",
+      "occupied": "Occupied",
+      "inactive": "Inactive"
+    },
+    "status": {
+      "FREE": "Free",
+      "SOON": "Soon booked",
+      "OCCUPIED": "Occupied",
+      "INACTIVE": "Inactive"
+    },
+    "legend": {
+      "free": "Free",
+      "soon": "Soon booked (30 min)",
+      "occupied": "Occupied",
+      "inactive": "Inactive"
+    },
+    "modal": {
+      "table": "Table",
+      "seats": "seats",
+      "tabInfo": "Information",
+      "tabWalkin": "Seat now",
+      "inactive": "Table is inactive. Enable it in",
+      "tables": "Tables",
+      "nowSeated": "Now seated",
+      "soonReservation": "Soon (within 30 minutes)",
+      "upcomingToday": "Upcoming reservations today",
+      "noReservations": "No reservations for this table today",
+      "walkinDescription": "Guest arrives immediately — reservation will be created with status",
+      "walkinSeated": "Seated",
+      "guestCount": "Number of guests",
+      "guestName": "Guest name (optional)",
+      "duration": "Visit duration",
+      "seatButton": "Seat at this table",
+      "seating": "Seating..."
+    },
+    "zone": {
+      "INDOOR": "Indoor",
+      "OUTDOOR": "Outdoor",
+      "TERRACE": "Terrace",
+      "PRIVATE": "Private area"
+    }
+  },
+
+  "tables": {
+    "title": "Tables",
+    "newTable": "New table",
+    "summary": "Total: {total} · Active: {active}",
+    "empty": "No tables yet",
+    "createFirst": "Create first table",
+    "columns": {
+      "name": "Table",
+      "capacity": "Capacity",
+      "zone": "Zone",
+      "historicalCount": "Historical reservations",
+      "status": "Status"
+    },
+    "capacity": "{min}–{max} seats",
+    "active": "Active",
+    "inactive": "Inactive",
+    "deleteConfirm": "Delete table \"{name}\"? This action is irreversible.",
+    "deleteHasReservations": "Table \"{name}\" has {count} historical reservations — deletion not possible. Deactivate it instead.",
+    "form": {
+      "create": "New table",
+      "edit": "Edit table {name}",
+      "name": "Table name",
+      "namePlaceholder": "T6",
+      "minCapacity": "Minimum capacity",
+      "maxCapacity": "Maximum capacity",
+      "zone": "Zone",
+      "posX": "Position X on plan (%)",
+      "posY": "Position Y on plan (%)",
+      "isActive": "Table active (available for booking)",
+      "minMaxError": "Minimum capacity cannot exceed maximum",
+      "createButton": "Create table",
+      "saveError": "Save error"
+    }
+  },
+
+  "menu": {
+    "title": "Menu",
+    "summary": "Categories: {categories} · Items: {items}",
+    "manageCategories": "Categories",
+    "newItem": "New item",
+    "empty": "Menu is empty",
+    "createFirstCategory": "Create first category",
+    "emptyCategory": "No items in this category",
+    "hidden": "Hidden",
+    "available": "Available",
+    "notAvailable": "Not available",
+    "allergensLabel": "Allergens",
+    "confirmDeleteItem": "Delete \"{name}\"?",
+
+    "categories": {
+      "title": "Menu categories",
+      "newCategory": "New category",
+      "empty": "No categories yet",
+      "createFirst": "Create first category",
+      "editCategory": "Edit category {name}",
+      "visible": "Visible",
+      "hidden": "Hidden",
+      "itemsCount": "{count, plural, =0 {0 items} one {# item} other {# items}}",
+      "confirmDelete": "Delete category \"{name}\"?",
+      "cannotDelete": "Category \"{name}\" has {count} items. Please remove them first.",
+      "form": {
+        "name": "Name",
+        "slug": "Slug (URL)",
+        "slugHint": "Lowercase letters, digits, and dashes only. Used in URL.",
+        "isVisible": "Category visible on website"
+      }
+    },
+
+    "items": {
+      "newItem": "New item",
+      "editItem": "Edit: {name}",
+      "form": {
+        "category": "Category",
+        "name": "Name",
+        "description": "Description",
+        "imageUrl": "Image URL",
+        "imageHint": "Paste image link (Imgur, Cloudinary, etc.)",
+        "singlePrice": "Single price",
+        "multipleVariants": "Price variants",
+        "price": "Price",
+        "variantsHint": "Example: «0.3L — 4€» and «0.5L — 6€»",
+        "variant": "Variant",
+        "variantLabel": "Label",
+        "addVariant": "Add variant",
+        "priceOrVariantsRequired": "Specify a price or add at least one variant",
+        "addAtLeastOneVariant": "Add at least one variant",
+        "tags": "Tags",
+        "vegetarian": "Vegetarian",
+        "vegan": "Vegan",
+        "spicyLevel": "Spicy level",
+        "notSpicy": "Not spicy",
+        "allergens": "Allergens",
+        "isAvailable": "Item available to order"
+      }
+    },
+
+    "allergens": {
+      "GLUTEN": "Gluten",
+      "CRUSTACEANS": "Crustaceans",
+      "EGGS": "Eggs",
+      "FISH": "Fish",
+      "PEANUTS": "Peanuts",
+      "SOYBEANS": "Soybeans",
+      "MILK": "Milk/Lactose",
+      "NUTS": "Tree nuts",
+      "CELERY": "Celery",
+      "MUSTARD": "Mustard",
+      "SESAME": "Sesame",
+      "SULPHITES": "Sulphites",
+      "LUPIN": "Lupin",
+      "MOLLUSCS": "Molluscs"
+    }
+  },
+
+  "user": {
+    "owner": "Owner",
+    "manager": "Manager",
+    "staff": "Staff"
+  }
+}

@@ -1,0 +1,272 @@
+{
+  "common": {
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "delete": "Видалити",
+    "edit": "Редагувати",
+    "create": "Створити",
+    "close": "Закрити",
+    "loading": "Завантаження...",
+    "saving": "Збереження...",
+    "creating": "Створення...",
+    "deleting": "Видалення...",
+    "back": "Назад",
+    "yes": "Так",
+    "no": "Ні",
+    "actions": "Дії",
+    "status": "Статус",
+    "refresh": "Оновити",
+    "total": "Всього"
+  },
+
+  "login": {
+    "title": "Restaurant CRM",
+    "subtitle": "Вхід в систему",
+    "email": "Email",
+    "password": "Пароль",
+    "submit": "Увійти",
+    "loading": "Вхід...",
+    "error": "Невірний email або пароль"
+  },
+
+  "sidebar": {
+    "reservations": "Бронювання",
+    "floorPlan": "План залу",
+    "tables": "Столи",
+    "menu": "Меню",
+    "promotions": "Акції",
+    "gallery": "Галерея",
+    "analytics": "Аналітика",
+    "settings": "Налаштування",
+    "users": "Користувачі",
+    "logout": "Вийти",
+    "language": "Мова"
+  },
+
+  "reservations": {
+    "title": "Бронювання",
+    "onThisDay": "На цей день",
+    "newReservation": "Нове бронювання",
+    "today": "Сьогодні",
+    "tomorrow": "Завтра",
+    "empty": "На цей день немає бронювань",
+    "createFirst": "Створити перше",
+    "columns": {
+      "time": "Час",
+      "table": "Стіл",
+      "guest": "Гість",
+      "guests": "Гостей",
+      "contacts": "Контакти",
+      "source": "Джерело",
+      "status": "Статус"
+    },
+    "status": {
+      "PENDING": "Очікує",
+      "CONFIRMED": "Підтверджено",
+      "SEATED": "За столом",
+      "COMPLETED": "Завершено",
+      "CANCELLED": "Скасовано",
+      "NO_SHOW": "Не прийшов"
+    },
+    "source": {
+      "WEBSITE": "Сайт",
+      "PHONE": "Телефон",
+      "WALKIN": "Walk-in",
+      "ADMIN": "CRM"
+    },
+    "form": {
+      "title": "Нове бронювання",
+      "guestName": "Ім'я гостя",
+      "guestNamePlaceholder": "Іван Іваненко",
+      "phone": "Телефон",
+      "phonePlaceholder": "+43 ...",
+      "email": "Email (необов'язково)",
+      "emailPlaceholder": "guest@example.com",
+      "date": "Дата",
+      "guestCount": "Гостей",
+      "time": "Час",
+      "noTimeAvailable": "На цю дату немає вільного часу",
+      "source": "Джерело",
+      "sourcePhone": "Телефонний дзвінок",
+      "sourceWalkin": "Walk-in",
+      "sourceOther": "Інше",
+      "comment": "Коментар",
+      "commentPlaceholder": "Особливі побажання, алергії...",
+      "selectTime": "Оберіть час",
+      "createError": "Помилка створення бронювання",
+      "create": "Створити бронювання"
+    }
+  },
+
+  "floorPlan": {
+    "title": "План залу",
+    "updated": "Оновлено",
+    "autoRefresh": "автооновлення 30с",
+    "hint": "Клікніть на стіл, щоб подивитися деталі або посадити гостей",
+    "noTables": "Немає столів",
+    "createTable": "Створити стіл",
+    "counters": {
+      "free": "Вільні",
+      "soon": "Скоро бронь",
+      "occupied": "Зайняті",
+      "inactive": "Неактивні"
+    },
+    "status": {
+      "FREE": "Вільний",
+      "SOON": "Скоро бронь",
+      "OCCUPIED": "Зайнятий",
+      "INACTIVE": "Неактивний"
+    },
+    "legend": {
+      "free": "Вільний",
+      "soon": "Скоро бронь (30 хв)",
+      "occupied": "Зайнятий",
+      "inactive": "Неактивний"
+    },
+    "modal": {
+      "table": "Стіл",
+      "seats": "місць",
+      "tabInfo": "Інформація",
+      "tabWalkin": "Посадити зараз",
+      "inactive": "Стіл неактивний. Увімкніть його у розділі",
+      "tables": "Столи",
+      "nowSeated": "Зараз за столом",
+      "soonReservation": "Скоро (протягом 30 хвилин)",
+      "upcomingToday": "Наступні бронювання сьогодні",
+      "noReservations": "На сьогодні немає бронювань на цей стіл",
+      "walkinDescription": "Гість прийшов одразу — бронювання буде створене зі статусом",
+      "walkinSeated": "За столом",
+      "guestCount": "Кількість гостей",
+      "guestName": "Ім'я гостя (необов'язково)",
+      "duration": "Тривалість візиту",
+      "seatButton": "Посадити за цей стіл",
+      "seating": "Саджаємо..."
+    },
+    "zone": {
+      "INDOOR": "У залі",
+      "OUTDOOR": "На вулиці",
+      "TERRACE": "Тераса",
+      "PRIVATE": "Приватна зона"
+    }
+  },
+
+  "tables": {
+    "title": "Столи",
+    "newTable": "Новий стіл",
+    "summary": "Всього: {total} · Активних: {active}",
+    "empty": "Столів поки немає",
+    "createFirst": "Створити перший стіл",
+    "columns": {
+      "name": "Стіл",
+      "capacity": "Місткість",
+      "zone": "Зона",
+      "historicalCount": "Бронювань в історії",
+      "status": "Статус"
+    },
+    "capacity": "{min}–{max} місць",
+    "active": "Активний",
+    "inactive": "Неактивний",
+    "deleteConfirm": "Видалити стіл \"{name}\"? Це дію не можна скасувати.",
+    "deleteHasReservations": "На столі \"{name}\" є {count} бронювань в історії — видалення неможливе. Деактивуйте його.",
+    "form": {
+      "create": "Новий стіл",
+      "edit": "Редагувати стіл {name}",
+      "name": "Назва столу",
+      "namePlaceholder": "T6",
+      "minCapacity": "Мінімальна місткість",
+      "maxCapacity": "Максимальна місткість",
+      "zone": "Зона",
+      "posX": "Позиція X на плані (%)",
+      "posY": "Позиція Y на плані (%)",
+      "isActive": "Стіл активний (доступний для бронювання)",
+      "minMaxError": "Мінімальна місткість не може перевищувати максимальну",
+      "createButton": "Створити стіл",
+      "saveError": "Помилка збереження"
+    }
+  },
+
+  "menu": {
+    "title": "Меню",
+    "summary": "Категорій: {categories} · Страв: {items}",
+    "manageCategories": "Категорії",
+    "newItem": "Нова страва",
+    "empty": "Меню поки порожнє",
+    "createFirstCategory": "Створити першу категорію",
+    "emptyCategory": "У цій категорії немає страв",
+    "hidden": "Прихована",
+    "available": "Доступна",
+    "notAvailable": "Недоступна",
+    "allergensLabel": "Алергени",
+    "confirmDeleteItem": "Видалити страву \"{name}\"?",
+
+    "categories": {
+      "title": "Категорії меню",
+      "newCategory": "Нова категорія",
+      "empty": "Категорій поки немає",
+      "createFirst": "Створити першу категорію",
+      "editCategory": "Редагувати категорію {name}",
+      "visible": "Видима",
+      "hidden": "Прихована",
+      "itemsCount": "{count, plural, =0 {0 страв} one {# страва} few {# страви} other {# страв}}",
+      "confirmDelete": "Видалити категорію \"{name}\"?",
+      "cannotDelete": "У категорії \"{name}\" є {count} страв. Спочатку видаліть їх.",
+      "form": {
+        "name": "Назва",
+        "slug": "Slug (URL)",
+        "slugHint": "Тільки латиниця, цифри і дефіс. Використовується в URL.",
+        "isVisible": "Категорія видима на сайті"
+      }
+    },
+
+    "items": {
+      "newItem": "Нова страва",
+      "editItem": "Редагувати: {name}",
+      "form": {
+        "category": "Категорія",
+        "name": "Назва",
+        "description": "Опис",
+        "imageUrl": "URL зображення",
+        "imageHint": "Вставте посилання на зображення (Imgur, Cloudinary тощо)",
+        "singlePrice": "Одна ціна",
+        "multipleVariants": "Варіанти ціни",
+        "price": "Ціна",
+        "variantsHint": "Наприклад: «0.3л — 4€» і «0.5л — 6€»",
+        "variant": "Варіант",
+        "variantLabel": "Назва",
+        "addVariant": "Додати варіант",
+        "priceOrVariantsRequired": "Вкажіть ціну або додайте хоча б один варіант",
+        "addAtLeastOneVariant": "Додайте хоча б один варіант",
+        "tags": "Теги",
+        "vegetarian": "Вегетаріанське",
+        "vegan": "Веганське",
+        "spicyLevel": "Гострота",
+        "notSpicy": "Не гостра",
+        "allergens": "Алергени",
+        "isAvailable": "Страва доступна для замовлення"
+      }
+    },
+
+    "allergens": {
+      "GLUTEN": "Глютен",
+      "CRUSTACEANS": "Ракоподібні",
+      "EGGS": "Яйця",
+      "FISH": "Риба",
+      "PEANUTS": "Арахіс",
+      "SOYBEANS": "Соя",
+      "MILK": "Молоко/лактоза",
+      "NUTS": "Горіхи",
+      "CELERY": "Селера",
+      "MUSTARD": "Гірчиця",
+      "SESAME": "Кунжут",
+      "SULPHITES": "Сульфіти",
+      "LUPIN": "Люпин",
+      "MOLLUSCS": "Молюски"
+    }
+  },
+
+  "user": {
+    "owner": "Власник",
+    "manager": "Менеджер",
+    "staff": "Персонал"
+  }
+}
