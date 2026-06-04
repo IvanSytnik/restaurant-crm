@@ -124,6 +124,7 @@ model Reservation {
   guestPhone  String
   guestCount  Int
   comment     String?           @db.Text
+  locale      String            @default("de")
 
   date        DateTime          @db.Date
   startTime   DateTime

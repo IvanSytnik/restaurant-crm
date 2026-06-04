@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { sendCancellation } from '@/lib/email/send'
 
 const UpdateSchema = z.object({
   status: z
@@ -25,11 +26,27 @@ export async function PATCH(
     const { id } = await params
     const data = UpdateSchema.parse(await req.json())
 
+    // Read previous state so we can detect status transitions
+    const existing = await prisma.reservation.findUnique({
+      where: { id },
+      select: { status: true },
+    })
+    if (!existing) {
+      return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+
     const updated = await prisma.reservation.update({
       where: { id },
       data,
       include: { table: true },
     })
+
+    // If status just changed to CANCELLED, notify guest (fire-and-forget)
+    if (updated.status === 'CANCELLED' && existing.status !== 'CANCELLED') {
+      sendCancellation(updated.id).catch((err) => {
+        console.error('[reservations] cancellation send error', err)
+      })
+    }
 
     return NextResponse.json(updated)
   } catch (error) {

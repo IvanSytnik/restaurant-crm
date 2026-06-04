@@ -58,7 +58,8 @@
       "guests": "Гостей",
       "contacts": "Контакти",
       "source": "Джерело",
-      "status": "Статус"
+      "status": "Статус",
+      "emailLanguage": "Мова email-листів"
     },
     "status": {
       "PENDING": "Очікує",

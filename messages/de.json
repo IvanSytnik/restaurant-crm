@@ -58,7 +58,8 @@
       "guests": "Gäste",
       "contacts": "Kontakte",
       "source": "Quelle",
-      "status": "Status"
+      "status": "Status",
+      "emailLanguage": "Sprache der E-Mails"
     },
     "status": {
       "PENDING": "Ausstehend",

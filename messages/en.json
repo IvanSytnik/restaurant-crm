@@ -94,7 +94,8 @@
       "commentPlaceholder": "Special requests, allergies...",
       "selectTime": "Select time",
       "createError": "Error creating reservation",
-      "create": "Create reservation"
+      "create": "Create reservation",
+      "emailLanguage": "Email language"
     }
   },
 
@@ -549,125 +550,6 @@
       "errors": {
         "minGtMax": "Minimum guests cannot exceed maximum",
         "outOfRange": "{key}: value must be between {min} and {max}"
-      }
-    }
-  },
-  "settings": {
-    "title": "Налаштування",
-    "subtitle": "Загальна інформація про ресторан, юридичне, години роботи та параметри бронювання",
-    "tabs": {
-      "general": "Загальні",
-      "legal": "Юридичне",
-      "hours": "Години роботи",
-      "booking": "Бронювання"
-    },
-    "days": {
-      "0": "Неділя",
-      "1": "Понеділок",
-      "2": "Вівторок",
-      "3": "Середа",
-      "4": "Четвер",
-      "5": "Пʼятниця",
-      "6": "Субота"
-    },
-    "general": {
-      "branding": "Назва та опис",
-      "address": "Адреса",
-      "publicContacts": "Публічні контакти",
-      "name": "Назва ресторану",
-      "tagline": "Гасло / коротка фраза",
-      "taglineHint": "Кілька слів, що зʼявляються під назвою в hero публічного сайту",
-      "description": "Опис закладу",
-      "descriptionHint": "2-3 речення для секції About на публічному сайті",
-      "addressLine": "Вулиця та номер",
-      "postalCode": "Поштовий індекс",
-      "city": "Місто",
-      "country": "Країна",
-      "phone": "Телефон",
-      "email": "Email",
-      "mapsUrl": "Посилання Google Maps",
-      "mapsUrlHint": "Використовується для кнопки «Знайти на мапі»",
-      "save": "Зберегти",
-      "saving": "Збереження...",
-      "saveOk": "Збережено.",
-      "saveError": "Не вдалося зберегти.",
-      "networkError": "Помилка мережі. Спробуйте ще раз."
-    },
-    "legal": {
-      "disclaimerTitle": "Юридичне попередження",
-      "disclaimerBody": "Тексти Impressum та Datenschutz мають юридичну силу за австрійським правом (§ 5 ECG, DSGVO). Рекомендуємо використати готовий шаблон від WKO або проконсультуватися з юристом перед публікацією.",
-      "wkoLink": "Генератор Impressum від WKO →",
-      "impressumTitle": "Impressum — структуровані поля",
-      "impressumHint": "Якщо заповнити ці поля, Impressum згенерується автоматично. Можна також вказати власний текст нижче.",
-      "legalCompanyName": "Юридична назва",
-      "legalCompanyNameHint": "Напр. «Sytnik Gastro GmbH» або «Ivan Sytnik e.U.»",
-      "legalOwner": "Власник / Geschäftsführer",
-      "legalAddress": "Юридична адреса",
-      "legalFirmenbuch": "Firmenbuchnummer",
-      "legalFirmenbuchCourt": "Реєстраційний суд",
-      "legalUid": "UID-Nummer",
-      "legalGewerbe": "Gewerbe",
-      "legalChamber": "Wirtschaftskammer (палата)",
-      "legalSupervisingAuthority": "Aufsichtsbehörde",
-      "customImpressumTitle": "Власний текст Impressum (опціонально)",
-      "customImpressumHint": "Якщо заповнити — використовується замість автогенерації. Залиште порожнім, щоб генерувати з полів вище.",
-      "customImpressumPlaceholder": "Вставте сюди готовий Impressum-текст від WKO або вашого юриста...",
-      "dsgvoTitle": "Datenschutz / Конфіденційність",
-      "dsgvoHint": "Згідно ст. 13 DSGVO має бути на кожному комерційному сайті",
-      "dpoName": "Відповідальна особа (опціонально)",
-      "dpoContact": "Контакт для запитів про дані",
-      "dpoContactHint": "Email, на який гості можуть надсилати запити DSGVO",
-      "privacyHint": "Повний текст Datenschutzerklärung. Рекомендуємо взяти шаблон з eRecht24 або WKO.",
-      "privacyPlaceholder": "Datenschutzerklärung\n\n1. Verantwortlicher\n...",
-      "save": "Зберегти",
-      "saving": "Збереження...",
-      "saveOk": "Збережено.",
-      "saveError": "Не вдалося зберегти.",
-      "networkError": "Помилка мережі. Спробуйте ще раз."
-    },
-    "hours": {
-      "day": "День",
-      "open": "Відкрито",
-      "closed": "Закрито",
-      "from": "Відкриття",
-      "to": "Закриття",
-      "lastBooking": "Останнє бронювання",
-      "lastBookingHint": "Останнє бронювання — час, до якого приймаються брони. Має бути в межах робочих годин.",
-      "save": "Зберегти",
-      "saving": "Збереження...",
-      "saveOk": "Збережено.",
-      "saveError": "Не вдалося зберегти.",
-      "networkError": "Помилка мережі. Спробуйте ще раз.",
-      "errors": {
-        "invalidRange": "Час відкриття має бути раніше за час закриття",
-        "invalidLastBooking": "Час останнього бронювання має бути в межах робочих годин"
-      }
-    },
-    "booking": {
-      "durations": "Тривалість візиту",
-      "durationsHint": "Скільки часу столик вважається зайнятим залежно від кількості гостей",
-      "duration12": "Для 1-2 гостей",
-      "duration34": "Для 3-4 гостей",
-      "duration5plus": "Для 5+ гостей",
-      "buffer": "Буфер прибирання",
-      "bufferHint": "Пауза між бронями на одному столі для прибирання та підготовки",
-      "limits": "Обмеження",
-      "horizon": "Горизонт бронювання",
-      "horizonHint": "На скільки днів вперед можна бронювати",
-      "minGuests": "Мінімум гостей",
-      "maxGuests": "Максимум гостей",
-      "maxGuestsHint": "Для більших груп — приймайте телефонні дзвінки",
-      "minutes": "хв",
-      "days": "днів",
-      "guests": "осіб",
-      "save": "Зберегти",
-      "saving": "Збереження...",
-      "saveOk": "Збережено.",
-      "saveError": "Не вдалося зберегти.",
-      "networkError": "Помилка мережі. Спробуйте ще раз.",
-      "errors": {
-        "minGtMax": "Мінімум гостей не може бути більше за максимум",
-        "outOfRange": "{key}: значення має бути в діапазоні {min}–{max}"
       }
     }
   }

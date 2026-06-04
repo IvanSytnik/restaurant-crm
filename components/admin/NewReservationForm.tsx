@@ -9,6 +9,8 @@ function todayStr(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
+type Locale = 'de' | 'en' | 'uk'
+
 export function NewReservationForm() {
   const router = useRouter()
   const today = todayStr()
@@ -24,6 +26,7 @@ export function NewReservationForm() {
     time: '',
     comment: '',
     source: 'PHONE' as 'PHONE' | 'WALKIN' | 'ADMIN',
+    locale: 'de' as Locale,
   })
 
   const [slots, setSlots] = useState<string[]>([])
@@ -71,6 +74,7 @@ export function NewReservationForm() {
         startTime,
         comment: form.comment,
         source: form.source,
+        locale: form.locale,
       }),
     })
 
@@ -180,17 +184,30 @@ export function NewReservationForm() {
         )}
       </Field>
 
-      <Field label={t('source')}>
-        <select
-          value={form.source}
-          onChange={(e) => setForm({ ...form, source: e.target.value as 'PHONE' | 'WALKIN' | 'ADMIN' })}
-          className={inputClass}
-        >
-          <option value="PHONE">{t('sourcePhone')}</option>
-          <option value="WALKIN">{t('sourceWalkin')}</option>
-          <option value="ADMIN">{t('sourceOther')}</option>
-        </select>
-      </Field>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <Field label={t('source')}>
+          <select
+            value={form.source}
+            onChange={(e) => setForm({ ...form, source: e.target.value as 'PHONE' | 'WALKIN' | 'ADMIN' })}
+            className={inputClass}
+          >
+            <option value="PHONE">{t('sourcePhone')}</option>
+            <option value="WALKIN">{t('sourceWalkin')}</option>
+            <option value="ADMIN">{t('sourceOther')}</option>
+          </select>
+        </Field>
+        <Field label={t('emailLanguage')}>
+          <select
+            value={form.locale}
+            onChange={(e) => setForm({ ...form, locale: e.target.value as Locale })}
+            className={inputClass}
+          >
+            <option value="de">🇩🇪 Deutsch</option>
+            <option value="en">🇬🇧 English</option>
+            <option value="uk">🇺🇦 Українська</option>
+          </select>
+        </Field>
+      </div>
 
       <Field label={t('comment')}>
         <textarea

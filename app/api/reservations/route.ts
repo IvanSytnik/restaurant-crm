@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { findBestTable } from '@/lib/booking/table-allocator'
 import { getBookingSettings } from '@/lib/booking/settings'
+import { sendConfirmation } from '@/lib/email/send'
 
 const CreateReservationSchema = z.object({
   guestName: z.string().min(2).max(100),
@@ -12,6 +13,7 @@ const CreateReservationSchema = z.object({
   startTime: z.string().datetime(),
   comment: z.string().max(500).optional(),
   source: z.enum(['WEBSITE', 'PHONE', 'WALKIN', 'ADMIN']).default('WEBSITE'),
+  locale: z.enum(['de', 'en', 'uk']).default('de'),
 })
 
 export async function POST(req: NextRequest) {
@@ -61,6 +63,7 @@ export async function POST(req: NextRequest) {
         guestPhone: data.guestPhone,
         guestCount: data.guestCount,
         comment: data.comment,
+        locale: data.locale,
         date: dateOnly,
         startTime,
         endTime: allocation.endTime,
@@ -69,6 +72,12 @@ export async function POST(req: NextRequest) {
         tableId: allocation.table.id,
       },
       include: { table: true },
+    })
+
+    // Fire-and-forget — confirmation email in background.
+    // Skipped automatically for WALKIN, fake @phone.local emails, etc.
+    sendConfirmation(reservation.id).catch((err) => {
+      console.error('[reservations] confirmation send error', err)
     })
 
     return NextResponse.json(reservation, { status: 201 })
