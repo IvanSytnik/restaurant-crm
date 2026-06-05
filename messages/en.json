@@ -552,5 +552,68 @@
         "outOfRange": "{key}: value must be between {min} and {max}"
       }
     }
+  },
+  "public": {
+  "nav": {
+    "menu": "Menu",
+    "promotions": "Specials",
+    "gallery": "Gallery",
+    "contact": "Contact",
+    "book": "Book a table"
+  },
+  "hero": {
+    "eyebrow": "Restaurant in Vienna",
+    "cta_book": "Reserve a table",
+    "cta_menu": "View the menu",
+    "scroll": "Discover"
+  },
+  "activePromo": {
+    "label": "Current special",
+    "readMore": "Read more"
+  },
+  "about": {
+    "eyebrow": "About",
+    "title": "A culinary journey",
+    "todayHours": "Open today",
+    "viewMenu": "View the menu"
+  },
+  "menuPreview": {
+    "eyebrow": "Menu",
+    "title": "What we serve",
+    "viewAll": "View full menu"
+  },
+  "galleryPreview": {
+    "eyebrow": "Gallery",
+    "title": "Inside the restaurant",
+    "viewAll": "View all photos"
+  },
+  "reservationCta": {
+    "eyebrow": "Reservation",
+    "title": "Ready for your visit?",
+    "subtitle": "Reserve a table online or give us a call. We look forward to welcoming you.",
+    "button": "Reserve now",
+    "callInstead": "Call us"
+  },
+  "contact": {
+    "eyebrow": "Contact",
+    "title": "Visit us",
+    "address": "Address",
+    "phone": "Phone",
+    "email": "Email",
+    "follow": "Follow us",
+    "openingHours": "Opening hours",
+    "openNow": "Open now",
+    "closedNow": "Closed",
+    "closed": "Closed",
+    "getDirections": "Get directions",
+    "noMap": "Map unavailable"
+  },
+  "footer": {
+    "links": "Navigation",
+    "contact": "Contact",
+    "copyright": "All rights reserved.",
+    "impressum": "Impressum",
+    "privacy": "Privacy"
   }
+}
 }

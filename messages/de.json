@@ -58,8 +58,7 @@
       "guests": "Gäste",
       "contacts": "Kontakte",
       "source": "Quelle",
-      "status": "Status",
-      "emailLanguage": "Sprache der E-Mails"
+      "status": "Status"
     },
     "status": {
       "PENDING": "Ausstehend",
@@ -95,7 +94,9 @@
       "commentPlaceholder": "Besondere Wünsche, Allergien...",
       "selectTime": "Zeit auswählen",
       "createError": "Fehler beim Erstellen",
-      "create": "Reservierung erstellen"
+      "create": "Reservierung erstellen",
+      "emailLanguage": "Sprache der E-Mails"
+
     }
   },
 
@@ -552,5 +553,68 @@
         "outOfRange": "{key}: Wert muss zwischen {min} und {max} liegen"
       }
     }
+  },
+  "public": {
+  "nav": {
+    "menu": "Speisekarte",
+    "promotions": "Aktionen",
+    "gallery": "Galerie",
+    "contact": "Kontakt",
+    "book": "Reservieren"
+  },
+  "hero": {
+    "eyebrow": "Restaurant in Wien",
+    "cta_book": "Tisch reservieren",
+    "cta_menu": "Zur Speisekarte",
+    "scroll": "Entdecken"
+  },
+  "activePromo": {
+    "label": "Aktuelle Aktion",
+    "readMore": "Mehr erfahren"
+  },
+  "about": {
+    "eyebrow": "Über uns",
+    "title": "Eine kulinarische Reise",
+    "todayHours": "Heute geöffnet",
+    "viewMenu": "Speisekarte ansehen"
+  },
+  "menuPreview": {
+    "eyebrow": "Speisekarte",
+    "title": "Was wir servieren",
+    "viewAll": "Ganze Speisekarte"
+  },
+  "galleryPreview": {
+    "eyebrow": "Galerie",
+    "title": "Einblicke",
+    "viewAll": "Alle Bilder"
+  },
+  "reservationCta": {
+    "eyebrow": "Reservierung",
+    "title": "Bereit für Ihren Besuch?",
+    "subtitle": "Reservieren Sie einen Tisch online oder rufen Sie uns an. Wir freuen uns auf Sie.",
+    "button": "Jetzt reservieren",
+    "callInstead": "Anrufen"
+  },
+  "contact": {
+    "eyebrow": "Kontakt",
+    "title": "Besuchen Sie uns",
+    "address": "Adresse",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "follow": "Folgen Sie uns",
+    "openingHours": "Öffnungszeiten",
+    "openNow": "Jetzt geöffnet",
+    "closedNow": "Geschlossen",
+    "closed": "Geschlossen",
+    "getDirections": "Route planen",
+    "noMap": "Karte nicht verfügbar"
+  },
+  "footer": {
+    "links": "Navigation",
+    "contact": "Kontakt",
+    "copyright": "Alle Rechte vorbehalten.",
+    "impressum": "Impressum",
+    "privacy": "Datenschutz"
   }
+}
 }

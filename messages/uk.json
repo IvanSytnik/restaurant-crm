@@ -58,8 +58,7 @@
       "guests": "Гостей",
       "contacts": "Контакти",
       "source": "Джерело",
-      "status": "Статус",
-      "emailLanguage": "Мова email-листів"
+      "status": "Статус"
     },
     "status": {
       "PENDING": "Очікує",
@@ -95,7 +94,8 @@
       "commentPlaceholder": "Особливі побажання, алергії...",
       "selectTime": "Оберіть час",
       "createError": "Помилка створення бронювання",
-      "create": "Створити бронювання"
+      "create": "Створити бронювання",
+      "emailLanguage": "Мова email-листів"
     }
   },
 
@@ -552,5 +552,68 @@
         "outOfRange": "{key}: значення має бути в діапазоні {min}–{max}"
       }
     }
+  },
+  "public": {
+  "nav": {
+    "menu": "Меню",
+    "promotions": "Акції",
+    "gallery": "Галерея",
+    "contact": "Контакти",
+    "book": "Забронювати"
+  },
+  "hero": {
+    "eyebrow": "Ресторан у Відні",
+    "cta_book": "Забронювати столик",
+    "cta_menu": "Переглянути меню",
+    "scroll": "Дізнатися більше"
+  },
+  "activePromo": {
+    "label": "Поточна акція",
+    "readMore": "Дізнатися більше"
+  },
+  "about": {
+    "eyebrow": "Про нас",
+    "title": "Кулінарна подорож",
+    "todayHours": "Сьогодні відкрито",
+    "viewMenu": "Переглянути меню"
+  },
+  "menuPreview": {
+    "eyebrow": "Меню",
+    "title": "Що ми пропонуємо",
+    "viewAll": "Повне меню"
+  },
+  "galleryPreview": {
+    "eyebrow": "Галерея",
+    "title": "Атмосфера",
+    "viewAll": "Усі фото"
+  },
+  "reservationCta": {
+    "eyebrow": "Бронювання",
+    "title": "Готові до візиту?",
+    "subtitle": "Заброньовуйте столик онлайн або телефонуйте. Будемо раді вас бачити.",
+    "button": "Забронювати",
+    "callInstead": "Зателефонувати"
+  },
+  "contact": {
+    "eyebrow": "Контакти",
+    "title": "Завітайте до нас",
+    "address": "Адреса",
+    "phone": "Телефон",
+    "email": "Email",
+    "follow": "Слідкуйте за нами",
+    "openingHours": "Години роботи",
+    "openNow": "Зараз відкрито",
+    "closedNow": "Зачинено",
+    "closed": "Зачинено",
+    "getDirections": "Прокласти маршрут",
+    "noMap": "Карта недоступна"
+  },
+  "footer": {
+    "links": "Навігація",
+    "contact": "Контакти",
+    "copyright": "Усі права захищені.",
+    "impressum": "Impressum",
+    "privacy": "Конфіденційність"
   }
+}
 }

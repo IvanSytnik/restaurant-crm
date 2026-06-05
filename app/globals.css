@@ -1,11 +1,58 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Public site palette */
+  /* Hex variants kept for direct CSS usage (var(--border), etc.) */
+  --cream:      #faf7f2;
+  --cream-soft: #f3ede2;
+  --ink:        #1a1a1a;
+  --ink-soft:   #6b6b66;
+  --accent:     #b8895a;
+  --border:     #e8e3d8;
+
+  /* RGB triplets — used by Tailwind via rgb(var(--xxx-rgb) / <alpha-value>)
+     so that opacity modifiers like text-cream/80 or bg-cream/95 work correctly. */
+  --cream-rgb:      250 247 242;
+  --cream-soft-rgb: 243 237 226;
+  --ink-rgb:        26 26 26;
+  --ink-soft-rgb:   107 107 102;
+  --accent-rgb:     184 137 90;
+  --border-rgb:     232 227 216;
+}
 
 html, body {
   height: 100%;
 }
 
 body {
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: 'DM Sans', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
+
+/* --- Public site utilities --- */
+.font-display {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-feature-settings: "kern", "liga";
+}
+
+.public-eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Smooth fade-in for above-the-fold hero content */
+@keyframes public-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.public-fade-up {
+  animation: public-fade-up 0.8s ease-out both;
+}
+.public-fade-up-delay-1 { animation-delay: 0.15s; }
+.public-fade-up-delay-2 { animation-delay: 0.3s; }
+.public-fade-up-delay-3 { animation-delay: 0.45s; }
