@@ -560,7 +560,14 @@
     "promotions": "Aktionen",
     "gallery": "Galerie",
     "contact": "Kontakt",
-    "book": "Reservieren"
+    "book": "Reservieren",
+    "toggleMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
+  },
+    "notFound": {
+    "title": "Seite nicht gefunden",
+    "subtitle": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "backHome": "Zurück zur Startseite"
   },
   "hero": {
     "eyebrow": "Restaurant in Wien",
@@ -607,7 +614,16 @@
     "closedNow": "Geschlossen",
     "closed": "Geschlossen",
     "getDirections": "Route planen",
-    "noMap": "Karte nicht verfügbar"
+    "noMap": "Karte nicht verfügbar",
+    "days": {
+      "0": "Sonntag",
+      "1": "Montag",
+      "2": "Dienstag",
+      "3": "Mittwoch",
+      "4": "Donnerstag",
+      "5": "Freitag",
+      "6": "Samstag"
+    }
   },
   "footer": {
     "links": "Navigation",
@@ -615,6 +631,63 @@
     "copyright": "Alle Rechte vorbehalten.",
     "impressum": "Impressum",
     "privacy": "Datenschutz"
+  },
+  "menuPage": {
+    "eyebrow": "Speisekarte",
+    "title": "Was wir servieren",
+    "subtitle": "Eine Auswahl unserer Speisen und Getränke.",
+    "empty": "Die Speisekarte ist derzeit nicht verfügbar.",
+    "viewFullMenu": "Ganze Speisekarte",
+    "allergensInfo": "Allergene",
+    "allergensLegend": "A — Glutenhaltiges Getreide · B — Krebstiere · C — Eier · D — Fisch · E — Erdnüsse · F — Soja · G — Milch/Laktose · H — Schalenfrüchte · L — Sellerie · M — Senf · N — Sesam · O — Sulfite · P — Lupinen · R — Weichtiere",
+    "tagVegetarian": "Vegetarisch",
+    "tagVegan": "Vegan"
+  },
+  "promotionsPage": {
+    "eyebrow": "Aktionen",
+    "title": "Unsere Angebote",
+    "subtitle": "Aktuelle und kommende Aktionen in unserem Restaurant.",
+    "empty": "Derzeit keine laufenden Aktionen.",
+    "readMore": "Mehr erfahren",
+    "validFrom": "Gültig",
+    "daysOfWeek": "Wochentage",
+    "hours": "Uhrzeit",
+    "backToList": "Zurück zur Übersicht",
+    "status": {
+      "ACTIVE": "Läuft jetzt",
+      "SCHEDULED": "Geplant",
+      "EXPIRED": "Abgelaufen"
+    },
+    "days": {
+      "sun": "So",
+      "mon": "Mo",
+      "tue": "Di",
+      "wed": "Mi",
+      "thu": "Do",
+      "fri": "Fr",
+      "sat": "Sa"
+    }
+  },
+  "galleryPage": {
+    "eyebrow": "Galerie",
+    "title": "Einblicke",
+    "subtitle": "Atmosphäre, Speisen und Momente aus unserem Lokal.",
+    "empty": "Galerie ist leer.",
+    "filterAll": "Alle",
+    "close": "Schließen",
+    "prev": "Zurück",
+    "next": "Weiter"
+  },
+  "impressum": {
+    "eyebrow": "Rechtliches",
+    "title": "Impressum",
+    "notAvailable": "Impressum ist derzeit nicht verfügbar."
+  },
+  "datenschutz": {
+    "eyebrow": "Rechtliches",
+    "title": "Datenschutzerklärung",
+    "notAvailable": "Datenschutzerklärung ist derzeit nicht verfügbar.",
+    "dataRequestsTitle": "Datenschutz-Anfragen"
   }
 }
 }

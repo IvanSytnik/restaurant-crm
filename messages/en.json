@@ -559,7 +559,14 @@
     "promotions": "Specials",
     "gallery": "Gallery",
     "contact": "Contact",
-    "book": "Book a table"
+    "book": "Book a table",
+    "toggleMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "subtitle": "The page you are looking for doesn't exist or has been moved.",
+    "backHome": "Back to home"
   },
   "hero": {
     "eyebrow": "Restaurant in Vienna",
@@ -606,7 +613,16 @@
     "closedNow": "Closed",
     "closed": "Closed",
     "getDirections": "Get directions",
-    "noMap": "Map unavailable"
+    "noMap": "Map unavailable",
+     "days": {
+      "0": "Sunday",
+      "1": "Monday",
+      "2": "Tuesday",
+      "3": "Wednesday",
+      "4": "Thursday",
+      "5": "Friday",
+      "6": "Saturday"
+    }
   },
   "footer": {
     "links": "Navigation",
@@ -614,6 +630,63 @@
     "copyright": "All rights reserved.",
     "impressum": "Impressum",
     "privacy": "Privacy"
+  },
+  "menuPage": {
+    "eyebrow": "Menu",
+    "title": "What we serve",
+    "subtitle": "A selection of our food and drinks.",
+    "empty": "The menu is currently unavailable.",
+    "viewFullMenu": "Full menu",
+    "allergensInfo": "Allergens",
+    "allergensLegend": "A — Cereals containing gluten · B — Crustaceans · C — Eggs · D — Fish · E — Peanuts · F — Soybeans · G — Milk/Lactose · H — Nuts · L — Celery · M — Mustard · N — Sesame · O — Sulphites · P — Lupin · R — Molluscs",
+    "tagVegetarian": "Vegetarian",
+    "tagVegan": "Vegan"
+  },
+  "promotionsPage": {
+    "eyebrow": "Promotions",
+    "title": "Our offers",
+    "subtitle": "Current and upcoming promotions at our restaurant.",
+    "empty": "No active promotions right now.",
+    "readMore": "Learn more",
+    "validFrom": "Valid",
+    "daysOfWeek": "Days of the week",
+    "hours": "Hours",
+    "backToList": "Back to overview",
+    "status": {
+      "ACTIVE": "Running now",
+      "SCHEDULED": "Scheduled",
+      "EXPIRED": "Expired"
+    },
+    "days": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    }
+  },
+  "galleryPage": {
+    "eyebrow": "Gallery",
+    "title": "Glimpses",
+    "subtitle": "Atmosphere, food and moments from our place.",
+    "empty": "Gallery is empty.",
+    "filterAll": "All",
+    "close": "Close",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "impressum": {
+    "eyebrow": "Legal",
+    "title": "Imprint",
+    "notAvailable": "Imprint is not available."
+  },
+  "datenschutz": {
+    "eyebrow": "Legal",
+    "title": "Privacy policy",
+    "notAvailable": "Privacy policy is not available.",
+    "dataRequestsTitle": "Data requests"
   }
 }
 }

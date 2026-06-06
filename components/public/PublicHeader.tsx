@@ -91,7 +91,7 @@ export function PublicHeader({ locale, contacts }: Props) {
             type="button"
             className={`md:hidden p-2 -mr-2 transition-colors ${linkClass}`}
             onClick={() => setMobileOpen((o) => !o)}
-            aria-label="Toggle menu"
+            aria-label={mobileOpen ? t('closeMenu') : t('toggleMenu')}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               {mobileOpen ? (
@@ -115,7 +115,7 @@ export function PublicHeader({ locale, contacts }: Props) {
               type="button"
               className="p-2 -mr-2 text-ink"
               onClick={() => setMobileOpen(false)}
-              aria-label="Close menu"
+              aria-label={t('closeMenu')}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <path strokeLinecap="round" d="M6 6l12 12M18 6l-12 12" />

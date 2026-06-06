@@ -12,7 +12,8 @@ type Props = {
 
 export async function ContactSection({ locale, contacts, workingHours, isOpenNow }: Props) {
   const t = await getTranslations({ locale, namespace: 'public.contact' })
-  const tDays = await getTranslations({ locale, namespace: 'settings.days' })
+  // Use public.contact.days so the public site doesn't depend on the admin namespace.
+  const tDays = await getTranslations({ locale, namespace: 'public.contact.days' })
 
   const addressLines = [
     contacts.address,
