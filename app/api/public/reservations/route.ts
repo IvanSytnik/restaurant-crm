@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { findBestTable } from '@/lib/booking/table-allocator'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'
+import { sendConfirmation } from '@/lib/email/send'
 
 /**
  * Public booking endpoint — no auth.
@@ -14,6 +15,11 @@ import { rateLimit, getClientIp } from '@/lib/rate-limit'
  *  3) Min fill time: at least 3 seconds between form mount and submit.
  *  4) Zod validation, business rules (guest count, horizon, past time).
  *  5) Source forced to WEBSITE, status forced to CONFIRMED.
+ *
+ * Side effects:
+ *  - On successful create, fires sendConfirmation in the background.
+ *    Email failures (e.g. unverified Resend domain rejecting gmail) do NOT
+ *    affect the response — the guest sees success regardless.
  */
 
 const BookingSchema = z.object({
@@ -121,6 +127,14 @@ export async function POST(req: NextRequest) {
         status: 'CONFIRMED',
         tableId: allocation.table.id,
       },
+    })
+
+    // Fire-and-forget confirmation email.
+    // sendConfirmation already handles known failure modes gracefully
+    // (returns { ok: false, reason }), but we still catch unexpected exceptions
+    // so they cannot break the HTTP response to the guest.
+    sendConfirmation(reservation.id).catch((err) => {
+      console.error('[public/reservations] sendConfirmation threw', err)
     })
 
     return NextResponse.json({ id: reservation.id }, { status: 201 })
