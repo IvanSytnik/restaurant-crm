@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { type Locale } from '@/i18n/config'
 import { type ContactsMap } from '@/lib/contacts'
@@ -14,8 +15,15 @@ type Props = {
   contacts: ContactsMap
 }
 
+// Landing route is exactly `/de`, `/en`, or `/ua` (with optional trailing slash).
+// Subpages like `/de/menu`, `/de/gallery` do NOT match.
+const LANDING_RE = /^\/(de|en|ua)\/?$/
+
 export function PublicHeader({ locale, contacts }: Props) {
   const t = useTranslations('public.nav')
+  const pathname = usePathname() ?? ''
+  const isLanding = LANDING_RE.test(pathname)
+
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
@@ -31,15 +39,19 @@ export function PublicHeader({ locale, contacts }: Props) {
     locale
   ) || 'Restaurant'
 
-  // Header is transparent over hero, cream-with-border once scrolled.
-  // Text colors flip accordingly.
-  const shellClass = scrolled
-    ? 'bg-cream/95 backdrop-blur border-b border-[var(--border)]'
-    : 'bg-transparent'
-  const linkClass = scrolled
-    ? 'text-ink/80 hover:text-ink'
-    : 'text-cream/90 hover:text-cream'
-  const brandClass = scrolled ? 'text-ink' : 'text-cream'
+  // Transparent-over-hero mode is ONLY allowed on the Landing page (which has
+  // a 100svh dark hero image). On every subpage the hero is cream — so a
+  // transparent header would make cream text invisible. There, render the
+  // solid cream-with-border style from the start.
+  const onHeroOverlay = isLanding && !scrolled
+
+  const shellClass = onHeroOverlay
+    ? 'bg-transparent'
+    : 'bg-cream/95 backdrop-blur border-b border-[var(--border)]'
+  const linkClass = onHeroOverlay
+    ? 'text-cream/90 hover:text-cream'
+    : 'text-ink/80 hover:text-ink'
+  const brandClass = onHeroOverlay ? 'text-cream' : 'text-ink'
 
   const links: Array<{ key: string; href: string }> = [
     { key: 'menu', href: pathForLocale(locale, 'menu') },
@@ -73,13 +85,13 @@ export function PublicHeader({ locale, contacts }: Props) {
           </nav>
 
           <div className="hidden md:flex items-center gap-6">
-            <PublicLocaleSwitcher current={locale} variant={scrolled ? 'dark' : 'light'} />
+            <PublicLocaleSwitcher current={locale} variant={onHeroOverlay ? 'light' : 'dark'} />
             <Link
               href={pathForLocale(locale, 'booking')}
               className={`text-xs tracking-widest uppercase px-5 py-2.5 border transition-colors ${
-                scrolled
-                  ? 'border-ink text-ink hover:bg-ink hover:text-cream'
-                  : 'border-cream text-cream hover:bg-cream hover:text-ink'
+                onHeroOverlay
+                  ? 'border-cream text-cream hover:bg-cream hover:text-ink'
+                  : 'border-ink text-ink hover:bg-ink hover:text-cream'
               }`}
             >
               {t('book')}
