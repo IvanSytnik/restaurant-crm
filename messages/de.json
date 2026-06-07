@@ -564,13 +564,14 @@
     "toggleMenu": "Menü öffnen",
     "closeMenu": "Menü schließen"
   },
+
     "notFound": {
     "title": "Seite nicht gefunden",
     "subtitle": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
     "backHome": "Zurück zur Startseite"
   },
   "hero": {
-    "eyebrow": "Restaurant in Wien",
+    "eyebrow": "Restaurant in Graz",
     "cta_book": "Tisch reservieren",
     "cta_menu": "Zur Speisekarte",
     "scroll": "Entdecken"
@@ -688,6 +689,49 @@
     "title": "Datenschutzerklärung",
     "notAvailable": "Datenschutzerklärung ist derzeit nicht verfügbar.",
     "dataRequestsTitle": "Datenschutz-Anfragen"
+  },
+  "booking": {
+    "eyebrow": "Reservierung",
+    "title": "Tisch reservieren",
+    "subtitle": "Reservieren Sie Ihren Tisch online. Die Bestätigung erhalten Sie per E-Mail.",
+    "date": "Datum",
+    "guestCount": "Anzahl Gäste",
+    "largerGroupsCall": "Für mehr als {max} Personen bitte telefonisch reservieren.",
+    "time": "Uhrzeit",
+    "noTime": "Für dieses Datum sind keine Zeiten verfügbar.",
+    "name": "Name",
+    "namePlaceholder": "Max Mustermann",
+    "phone": "Telefon",
+    "phonePlaceholder": "+43 ...",
+    "email": "E-Mail",
+    "emailPlaceholder": "ihre@email.at",
+    "comment": "Anmerkung (optional)",
+    "commentPlaceholder": "Besondere Wünsche, Allergien, Anlass...",
+    "submit": "Reservierung bestätigen",
+    "submitting": "Wird gesendet...",
+    "privacyHint": "Mit dem Absenden stimmen Sie unserer Datenschutzerklärung zu.",
+    "error": {
+      "selectTime": "Bitte wählen Sie eine Uhrzeit.",
+      "tooMany": "Zu viele Versuche. Bitte versuchen Sie es später erneut.",
+      "tooFast": "Bitte füllen Sie das Formular vollständig aus.",
+      "noTable": "Dieser Slot ist nicht mehr verfügbar. Bitte wählen Sie eine andere Zeit.",
+      "pastTime": "Bitte wählen Sie eine zukünftige Zeit.",
+      "beyondHorizon": "Reservierungen sind maximal {days} Tage im Voraus möglich.",
+      "guestCount": "Anzahl Gäste muss zwischen {min} und {max} liegen.",
+      "validation": "Bitte überprüfen Sie Ihre Eingaben.",
+      "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    },
+    "success": {
+      "eyebrow": "Bestätigung",
+      "title": "Reservierung bestätigt",
+      "confirmationSent": "Ihre Reservierung wurde bestätigt. Eine Bestätigung wurde an Ihre E-Mail-Adresse gesendet.",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "guests": "Gäste",
+      "table": "Tisch",
+      "backHome": "Zur Startseite",
+      "viewMenu": "Speisekarte"
+    }
   }
 }
 }

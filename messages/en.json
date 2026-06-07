@@ -569,7 +569,7 @@
     "backHome": "Back to home"
   },
   "hero": {
-    "eyebrow": "Restaurant in Vienna",
+    "eyebrow": "Restaurant in Graz",
     "cta_book": "Reserve a table",
     "cta_menu": "View the menu",
     "scroll": "Discover"
@@ -687,6 +687,49 @@
     "title": "Privacy policy",
     "notAvailable": "Privacy policy is not available.",
     "dataRequestsTitle": "Data requests"
+  },
+  "booking": {
+    "eyebrow": "Reservation",
+    "title": "Book a table",
+    "subtitle": "Reserve your table online. We'll confirm via email.",
+    "date": "Date",
+    "guestCount": "Guests",
+    "largerGroupsCall": "For groups larger than {max}, please call us.",
+    "time": "Time",
+    "noTime": "No times available for this date.",
+    "name": "Name",
+    "namePlaceholder": "John Smith",
+    "phone": "Phone",
+    "phonePlaceholder": "+43 ...",
+    "email": "Email",
+    "emailPlaceholder": "you@example.com",
+    "comment": "Note (optional)",
+    "commentPlaceholder": "Special requests, allergies, occasion...",
+    "submit": "Confirm reservation",
+    "submitting": "Sending...",
+    "privacyHint": "By submitting, you agree to our privacy policy.",
+    "error": {
+      "selectTime": "Please choose a time.",
+      "tooMany": "Too many attempts. Please try again later.",
+      "tooFast": "Please fill out the form completely.",
+      "noTable": "This slot is no longer available. Please choose another time.",
+      "pastTime": "Please choose a future time.",
+      "beyondHorizon": "Reservations can be made up to {days} days in advance.",
+      "guestCount": "Guest count must be between {min} and {max}.",
+      "validation": "Please check your input.",
+      "generic": "Something went wrong. Please try again."
+    },
+    "success": {
+      "eyebrow": "Confirmation",
+      "title": "Reservation confirmed",
+      "confirmationSent": "Your reservation is confirmed. A confirmation has been sent to your email.",
+      "date": "Date",
+      "time": "Time",
+      "guests": "Guests",
+      "table": "Table",
+      "backHome": "Back to home",
+      "viewMenu": "View menu"
+    }
   }
 }
 }
