@@ -1,6 +1,4 @@
 import { render } from '@react-email/components'
-import { format } from 'date-fns'
-import { de as deLocale, enUS as enLocale, uk as ukLocale } from 'date-fns/locale'
 import * as React from 'react'
 
 import { prisma } from '@/lib/prisma'
@@ -12,18 +10,40 @@ import { ConfirmationEmail } from './templates/ConfirmationEmail'
 import { ReminderEmail } from './templates/ReminderEmail'
 import { CancellationEmail } from './templates/CancellationEmail'
 
-function fnsLocale(loc: EmailLocale) {
-  if (loc === 'en') return enLocale
-  if (loc === 'uk') return ukLocale
-  return deLocale
+/**
+ * All date/time formatting in emails is anchored to Europe/Vienna explicitly.
+ *
+ * Earlier this file used `date-fns format()` without a timezone — that
+ * formatter falls back to the runtime's local timezone. Vercel Functions
+ * default to US East (UTC-4/-5), where a Prisma @db.Date value of
+ * 2026-06-07T00:00:00.000Z renders as "Saturday, 6 June" — one day early.
+ * Pinning to Europe/Vienna via Intl.DateTimeFormat fixes both date and time
+ * for any host region.
+ */
+
+const INTL_TAG: Record<EmailLocale, string> = {
+  de: 'de-AT',
+  en: 'en-GB',
+  uk: 'uk-UA',
 }
 
 function formatDate(date: Date, loc: EmailLocale): string {
-  return format(date, 'EEEE, d MMMM yyyy', { locale: fnsLocale(loc) })
+  return new Intl.DateTimeFormat(INTL_TAG[loc], {
+    timeZone: 'Europe/Vienna',
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date)
 }
 
 function formatTime(date: Date): string {
-  return format(date, 'HH:mm')
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Vienna',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  }).format(date)
 }
 
 /**
@@ -93,7 +113,11 @@ export async function sendConfirmation(reservationId: string): Promise<{ ok: boo
   const element = React.createElement(ConfirmationEmail, {
     locale: loc,
     guestName: r.guestName,
-    date: formatDate(r.date, loc),
+    // Render the date label from startTime (which carries the actual wall-clock
+    // moment of the booking) instead of r.date (which is midnight UTC of the
+    // booking calendar day and is sensitive to host tz). Both should agree in
+    // Vienna time, but startTime is the authoritative source.
+    date: formatDate(r.startTime, loc),
     time: formatTime(r.startTime),
     guests: r.guestCount,
     tableName: r.table?.name || '-',
@@ -170,7 +194,7 @@ export async function sendReminder(reservationId: string): Promise<{ ok: boolean
   const element = React.createElement(ReminderEmail, {
     locale: loc,
     guestName: r.guestName,
-    date: formatDate(r.date, loc),
+    date: formatDate(r.startTime, loc),
     time: formatTime(r.startTime),
     guests: r.guestCount,
     tableName: r.table?.name || '-',
@@ -239,7 +263,7 @@ export async function sendCancellation(reservationId: string): Promise<{ ok: boo
   const element = React.createElement(CancellationEmail, {
     locale: loc,
     guestName: r.guestName,
-    date: formatDate(r.date, loc),
+    date: formatDate(r.startTime, loc),
     time: formatTime(r.startTime),
     guests: r.guestCount,
     restaurantName: ctx.name,
