@@ -3,6 +3,12 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { getBookingSettings, type BookingSettings } from '@/lib/booking/settings'
 import { getTableOccupiedDuration } from '@/lib/booking/duration'
+import {
+  viennaOffsetForDate,
+  viennaDayOfWeek,
+  formatViennaTime,
+  formatViennaDate,
+} from '@/lib/public/vienna-time'
 
 const QuerySchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
@@ -38,8 +44,8 @@ async function getAvailableSlots(
   guestCount: number,
   settings: BookingSettings
 ): Promise<string[]> {
-  const date = new Date(`${dateStr}T12:00:00`)
-  const dayOfWeek = date.getDay()
+  // Day-of-week in Vienna, not in server local tz.
+  const dayOfWeek = viennaDayOfWeek(dateStr)
 
   const workingHours = await prisma.workingHours.findUnique({ where: { dayOfWeek } })
   if (!workingHours || !workingHours.isOpen) return []
@@ -52,7 +58,7 @@ async function getAvailableSlots(
   )
 
   const now = new Date()
-  const isToday = dateStr === formatLocalDate(now)
+  const isToday = dateStr === formatViennaDate(now)
   const futureSlots = isToday ? allSlots.filter((s) => s > now) : allSlots
   if (futureSlots.length === 0) return []
 
@@ -68,8 +74,10 @@ async function getAvailableSlots(
   if (suitableTables.length === 0) return []
   const tableIds = suitableTables.map((t) => t.id)
 
-  const dayStart = new Date(`${dateStr}T00:00:00`)
-  const dayEnd = new Date(`${dateStr}T23:59:59`)
+  // Day boundaries in Vienna time, materialised as UTC moments.
+  const offset = viennaOffsetForDate(dateStr)
+  const dayStart = new Date(`${dateStr}T00:00:00${offset}`)
+  const dayEnd = new Date(`${dateStr}T23:59:59${offset}`)
 
   const existingReservations = await prisma.reservation.findMany({
     where: {
@@ -97,39 +105,32 @@ async function getAvailableSlots(
 
     const hasFreeTable = tableIds.some((id) => !occupiedTableIds.has(id))
     if (hasFreeTable) {
-      availableSlots.push(formatTime(slotStart))
+      availableSlots.push(formatViennaTime(slotStart))
     }
   }
 
   return availableSlots
 }
 
+/**
+ * Generate concrete Date objects representing Vienna-local slot times.
+ * Anchored to the Vienna offset (CET/CEST) for the given date, so the result
+ * is identical whether this runs on UTC or CET machines.
+ */
 function generateTimeSlots(
   dateStr: string,
   startTimeStr: string,
   lastSlotStr: string,
   stepMinutes: number
 ): Date[] {
+  const offset = viennaOffsetForDate(dateStr)
   const slots: Date[] = []
-  const current = new Date(`${dateStr}T${startTimeStr}:00`)
-  const lastSlot = new Date(`${dateStr}T${lastSlotStr}:00`)
+  const current = new Date(`${dateStr}T${startTimeStr}:00${offset}`)
+  const lastSlot = new Date(`${dateStr}T${lastSlotStr}:00${offset}`)
 
   while (current <= lastSlot) {
     slots.push(new Date(current))
     current.setMinutes(current.getMinutes() + stepMinutes)
   }
   return slots
-}
-
-function formatTime(date: Date): string {
-  const h = String(date.getHours()).padStart(2, '0')
-  const m = String(date.getMinutes()).padStart(2, '0')
-  return `${h}:${m}`
-}
-
-function formatLocalDate(date: Date): string {
-  const y = date.getFullYear()
-  const m = String(date.getMonth() + 1).padStart(2, '0')
-  const d = String(date.getDate()).padStart(2, '0')
-  return `${y}-${m}-${d}`
 }

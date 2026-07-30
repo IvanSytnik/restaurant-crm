@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { type Locale } from '@/i18n/config'
 import { pathForLocale } from '@/lib/public/locale'
+import { viennaIso } from '@/lib/public/vienna-time'
 
 function todayStr(): string {
   const d = new Date()
@@ -99,11 +100,10 @@ export function PublicBookingForm({ locale, minGuests, maxGuests, bookingHorizon
     setLoading(true)
     setError('')
 
-    // NOTE: same approach as the admin form — date+time interpreted in the
-    // client's local timezone, then toISOString(). For an Austrian restaurant
-    // with Austrian guests this works. Cross-timezone bookings will shift —
-    // handled later via a Europe/Vienna-aware helper.
-    const startTime = new Date(`${form.date}T${form.time}:00`).toISOString()
+    // Interpret the slot as Vienna local time, regardless of the guest's
+    // browser timezone. The /api/availability endpoint emits Vienna-local
+    // labels and we must round-trip them as such.
+    const startTime = viennaIso(form.date, form.time)
 
     let res: Response
     try {
