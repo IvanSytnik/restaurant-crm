@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { getBookingSettings, type BookingSettings } from '@/lib/booking/settings'
 import { getTableOccupiedDuration } from '@/lib/booking/duration'
+import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import {
   viennaOffsetForDate,
   viennaDayOfWeek,
@@ -17,6 +18,19 @@ const QuerySchema = z.object({
 
 export async function GET(req: NextRequest) {
   try {
+    // Unauthenticated endpoint: the public booking form polls it on every
+    // date/guest-count change, so the limit is generous enough for legitimate
+    // browsing while still capping enumeration of the floor's occupancy.
+    // Same best-effort in-memory scope as /api/public/reservations.
+    const ip = getClientIp(req)
+    const rl = rateLimit(`availability:${ip}`, 60, 60 * 1000)
+    if (!rl.allowed) {
+      return NextResponse.json(
+        { error: 'TOO_MANY_REQUESTS' },
+        { status: 429, headers: { 'Retry-After': String(rl.retryAfterSec) } }
+      )
+    }
+
     const { searchParams } = new URL(req.url)
     const query = QuerySchema.parse({
       date: searchParams.get('date'),

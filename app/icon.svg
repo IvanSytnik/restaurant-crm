@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="R">
+  <rect width="64" height="64" rx="14" fill="#1a1a1a"/>
+  <text x="32" y="47"
+        text-anchor="middle"
+        font-family="Playfair Display, Georgia, 'Times New Roman', serif"
+        font-size="42"
+        fill="#b8895a">R</text>
+</svg>

@@ -14,7 +14,17 @@ interface NavItem {
   key: 'reservations' | 'floorPlan' | 'tables' | 'menu' | 'promotions' | 'gallery' | 'analytics' | 'settings' | 'users'
   icon: React.ReactNode
   roles: UserRole[]
+  /** Marks a section that is planned but not built yet. */
+  badge?: 'soon'
 }
+
+// Exported so the page behind a nav entry can render the very same icon.
+export const analyticsIcon = (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 3v18h18" />
+    <path d="m7 16 4-7 4 5 5-9" />
+  </svg>
+)
 
 const NAV: NavItem[] = [
   {
@@ -86,12 +96,8 @@ const NAV: NavItem[] = [
     href: '/admin/analytics',
     key: 'analytics',
     roles: ['OWNER', 'MANAGER'],
-    icon: (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 3v18h18" />
-        <path d="m7 16 4-7 4 5 5-9" />
-      </svg>
-    ),
+    icon: analyticsIcon,
+    badge: 'soon',
   },
   {
     href: '/admin/settings',
@@ -133,6 +139,7 @@ export function AdminShell({
   const pathname = usePathname()
   const t = useTranslations('sidebar')
   const tUser = useTranslations('user')
+  const tComingSoon = useTranslations('comingSoon')
   const items = NAV.filter((item) => item.roles.includes(role))
 
   const roleLabel = tUser(role.toLowerCase() as 'owner' | 'manager' | 'staff')
@@ -212,6 +219,15 @@ export function AdminShell({
                   {item.icon}
                 </span>
                 <span className="font-medium">{t(item.key)}</span>
+                {item.badge === 'soon' && (
+                  <span
+                    className={`ml-auto text-[10px] px-1.5 py-0.5 rounded ${
+                      isActive ? 'bg-white/15 text-white/70' : 'bg-gray-100 text-gray-500'
+                    }`}
+                  >
+                    {tComingSoon('badge')}
+                  </span>
+                )}
               </Link>
             )
           })}

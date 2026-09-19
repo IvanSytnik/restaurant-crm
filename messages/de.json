@@ -142,7 +142,15 @@
       "guestName": "Name des Gastes (optional)",
       "duration": "Dauer des Besuchs",
       "seatButton": "An diesen Tisch platzieren",
-      "seating": "Platzieren..."
+      "seating": "Platzieren...",
+      "seatError": "Der Gast konnte nicht platziert werden. Bitte erneut versuchen.",
+      "errors": {
+        "TABLE_NOT_FOUND": "Tisch nicht gefunden.",
+        "TABLE_INACTIVE": "Tisch ist deaktiviert.",
+        "CAPACITY_EXCEEDED": "An diesem Tisch haben höchstens {max} Gäste Platz.",
+        "TABLE_BUSY_UNTIL": "Tisch ist bis {time} belegt.",
+        "NEXT_RESERVATION": "Nächste Reservierung um {time}, in {minutes} Min. Bitte die Dauer verkürzen."
+      }
     },
     "zone": {
       "INDOOR": "Innen",
@@ -354,6 +362,16 @@
         "isVisible": "Bild sichtbar"
       }
     }
+  },
+
+  "comingSoon": {
+    "badge": "Bald",
+    "title": "Der Küchenchef zählt noch die Tische",
+    "subtitle": "Auslastung, Stoßzeiten und Stammgäste — sobald genug Reservierungen zusammengekommen sind.",
+    "metric1": "Auslastung pro Tag",
+    "metric2": "Stoßzeiten",
+    "metric3": "Stammgäste",
+    "metric4": "Walk-in, Telefon und Website im Vergleich"
   },
 
   "user": {

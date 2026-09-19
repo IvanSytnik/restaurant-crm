@@ -7,6 +7,16 @@ import type { TableWithStatus } from './FloorPlanClient'
 
 type Tab = 'info' | 'walkin'
 
+// Error codes POST /api/reservations/walkin can return, each with a matching
+// floorPlan.modal.errors.* message. Anything else falls back to seatError.
+const WALKIN_ERROR_CODES: readonly string[] = [
+  'TABLE_NOT_FOUND',
+  'TABLE_INACTIVE',
+  'CAPACITY_EXCEEDED',
+  'TABLE_BUSY_UNTIL',
+  'NEXT_RESERVATION',
+]
+
 export function TableModal({
   table,
   onClose,
@@ -162,26 +172,41 @@ function WalkinTab({ table, onSuccess }: { table: TableWithStatus; onSuccess: ()
     setLoading(true)
     setError('')
 
-    const res = await fetch('/api/reservations/walkin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tableId: table.id,
-        guestName: guestName || undefined,
-        guestCount,
-        durationMinutes: duration,
-      }),
-    })
+    try {
+      const res = await fetch('/api/reservations/walkin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tableId: table.id,
+          guestName: guestName || undefined,
+          guestCount,
+          durationMinutes: duration,
+        }),
+      })
 
-    setLoading(false)
+      if (!res.ok) {
+        // Read the body only after the status says it is an error, and never
+        // let a non-JSON body (an HTML error page, an empty 405) throw — fall
+        // back to the generic message instead.
+        let message = ''
+        try {
+          const data = await res.json()
+          if (typeof data?.error === 'string' && WALKIN_ERROR_CODES.includes(data.error)) {
+            message = t(`errors.${data.error}`, data.params ?? {})
+          }
+        } catch {
+          // keep the generic message
+        }
+        setError(message || t('seatError'))
+        return
+      }
 
-    if (!res.ok) {
-      const data = await res.json()
-      setError(data.error || 'Error')
-      return
+      onSuccess()
+    } catch {
+      setError(t('seatError'))
+    } finally {
+      setLoading(false)
     }
-
-    onSuccess()
   }
 
   return (

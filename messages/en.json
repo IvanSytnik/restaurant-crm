@@ -141,7 +141,15 @@
       "guestName": "Guest name (optional)",
       "duration": "Visit duration",
       "seatButton": "Seat at this table",
-      "seating": "Seating..."
+      "seating": "Seating...",
+      "seatError": "Could not seat the guest. Please try again.",
+      "errors": {
+        "TABLE_NOT_FOUND": "Table not found.",
+        "TABLE_INACTIVE": "This table is deactivated.",
+        "CAPACITY_EXCEEDED": "This table seats at most {max} guests.",
+        "TABLE_BUSY_UNTIL": "Table is occupied until {time}.",
+        "NEXT_RESERVATION": "Next reservation at {time}, in {minutes} min. Please shorten the duration."
+      }
     },
     "zone": {
       "INDOOR": "Indoor",
@@ -353,6 +361,16 @@
         "isVisible": "Image visible"
       }
     }
+  },
+
+  "comingSoon": {
+    "badge": "Soon",
+    "title": "The chef is still counting the tables",
+    "subtitle": "Occupancy, peak hours and regulars — as soon as enough reservations have piled up.",
+    "metric1": "Daily occupancy",
+    "metric2": "Peak hours",
+    "metric3": "Regular guests",
+    "metric4": "Walk-in vs. phone vs. website"
   },
 
   "user": {

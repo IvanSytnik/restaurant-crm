@@ -6,19 +6,28 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
 /**
- * Cron endpoint — runs daily on Hobby plan, hourly on Pro.
+ * Cron endpoint — scheduled daily at 09:00 UTC via vercel.json.
  * Sends reminders for all reservations that:
- *  - start in the next 24 hours (Hobby) / next ~3h (with hourly cron)
+ *  - start within REMINDER_HORIZON_HOURS from now (default 24)
  *  - haven't been reminded yet
  *  - status is CONFIRMED or SEATED
  *  - source is not WALKIN
  *
- * Security: protected by CRON_SECRET header (Vercel sets it automatically when configured).
+ * Security: requires `Authorization: Bearer <CRON_SECRET>` (Vercel sends this
+ * header automatically for scheduled invocations once CRON_SECRET is set).
+ * In production a missing CRON_SECRET is a misconfiguration, not a reason to
+ * run unprotected — we refuse to send anything and return 500. In development
+ * the secret is optional so the endpoint stays easy to exercise by hand.
  */
 export async function GET(request: Request) {
-  // Vercel sends Authorization: Bearer <CRON_SECRET>
   const cronSecret = process.env.CRON_SECRET
-  if (cronSecret) {
+
+  if (!cronSecret) {
+    if (process.env.NODE_ENV === 'production') {
+      console.error('[cron/reminders] CRON_SECRET is not set — refusing to run')
+      return NextResponse.json({ error: 'Cron is not configured' }, { status: 500 })
+    }
+  } else {
     const auth = request.headers.get('authorization')
     if (auth !== `Bearer ${cronSecret}`) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })

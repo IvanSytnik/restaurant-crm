@@ -37,6 +37,24 @@ function formatDate(date: Date, loc: EmailLocale): string {
   }).format(date)
 }
 
+/**
+ * Date without the weekday, for subject lines.
+ *
+ * The body can afford "Sunday, 20 September 2026", but a subject embeds the
+ * date into a sentence ("Reservierung am …", "бронювання на …"). Ukrainian
+ * needs the accusative there — "на неділю", not "на неділя" — and Intl only
+ * ever emits the nominative, so the weekday is dropped for subjects and the
+ * phrase reads correctly in all three locales.
+ */
+function formatDateShort(date: Date, loc: EmailLocale): string {
+  return new Intl.DateTimeFormat(INTL_TAG[loc], {
+    timeZone: 'Europe/Vienna',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  }).format(date)
+}
+
 function formatTime(date: Date): string {
   return new Intl.DateTimeFormat('en-GB', {
     timeZone: 'Europe/Vienna',
@@ -191,10 +209,15 @@ export async function sendReminder(reservationId: string): Promise<{ ok: boolean
   const ctx = await getRestaurantContext(loc)
   const t = emailStrings.reminder[loc]
 
+  // Both anchored to Europe/Vienna in the reservation's own locale. The body
+  // keeps the weekday; the subject drops it (see formatDateShort).
+  const dateStr = formatDate(r.startTime, loc)
+  const subjectDate = formatDateShort(r.startTime, loc)
+
   const element = React.createElement(ReminderEmail, {
     locale: loc,
     guestName: r.guestName,
-    date: formatDate(r.startTime, loc),
+    date: dateStr,
     time: formatTime(r.startTime),
     guests: r.guestCount,
     tableName: r.table?.name || '-',
@@ -212,7 +235,7 @@ export async function sendReminder(reservationId: string): Promise<{ ok: boolean
     const { error } = await resend.emails.send({
       from: `${ctx.name} <${FROM_EMAIL}>`,
       to: r.guestEmail,
-      subject: t.subject,
+      subject: t.subject.replace('{date}', subjectDate),
       html,
       text,
     })

@@ -1,10 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { findBestTable } from '@/lib/booking/table-allocator'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { sendConfirmation } from '@/lib/email/send'
 
+/**
+ * Admin-only booking endpoint. Any logged-in role (OWNER/MANAGER/STAFF) may
+ * create a reservation on a guest's behalf.
+ *
+ * `source` deliberately excludes WEBSITE: bookings made by a guest go through
+ * the unauthenticated /api/public/reservations, which forces source=WEBSITE
+ * and carries its own rate limit / honeypot / min-fill-time defenses.
+ */
 const CreateReservationSchema = z.object({
   guestName: z.string().min(2).max(100),
   guestEmail: z.string().email(),
@@ -12,11 +22,16 @@ const CreateReservationSchema = z.object({
   guestCount: z.number().int().min(1).max(10),
   startTime: z.string().datetime(),
   comment: z.string().max(500).optional(),
-  source: z.enum(['WEBSITE', 'PHONE', 'WALKIN', 'ADMIN']).default('WEBSITE'),
+  source: z.enum(['PHONE', 'WALKIN', 'ADMIN']).default('ADMIN'),
   locale: z.enum(['de', 'en', 'uk']).default('de'),
 })
 
 export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions)
+  if (!session) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
   try {
     const body = await req.json()
     const data = CreateReservationSchema.parse(body)
@@ -70,6 +85,9 @@ export async function POST(req: NextRequest) {
         source: data.source,
         status: 'CONFIRMED',
         tableId: allocation.table.id,
+        // Authorship comes from the session only — the schema above does not
+        // accept createdById, so a value in the request body is discarded.
+        createdById: session.user.id,
       },
       include: { table: true },
     })
