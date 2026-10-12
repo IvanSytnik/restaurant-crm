@@ -6,7 +6,10 @@ const prisma = new PrismaClient()
 async function main() {
   // ── Owner ─────────────────────────────────────
   const ownerEmail = process.env.OWNER_EMAIL || 'owner@restaurant.at'
-  const ownerPassword = process.env.OWNER_PASSWORD || 'changeme123'
+  const ownerPassword = process.env.OWNER_PASSWORD
+  if (!ownerPassword || ownerPassword.length < 12) {
+    throw new Error('OWNER_PASSWORD env var is required (min 12 chars)')
+  }
   const passwordHash = await bcrypt.hash(ownerPassword, 10)
 
   await prisma.user.upsert({
@@ -76,7 +79,7 @@ async function main() {
   console.log('✓ Настройки сохранены')
 
   console.log('\n✅ Seed завершён успешно')
-  console.log(`   Войти: ${ownerEmail} / ${ownerPassword}`)
+  console.log(`   Войти: ${ownerEmail}`)
 }
 
 main()
