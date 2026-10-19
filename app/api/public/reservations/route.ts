@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { z } from 'zod'
 import { findBestTable } from '@/lib/booking/table-allocator'
 import { withBookingLock } from '@/lib/booking/lock'
@@ -21,7 +21,7 @@ import { sendConfirmation } from '@/lib/email/send'
  *  5) Source forced to WEBSITE, status forced to CONFIRMED.
  *
  * Side effects:
- *  - On successful create, fires sendConfirmation in the background.
+ *  - On successful create, sends the confirmation via after() (post-response).
  *    Email failures (e.g. unverified Resend domain rejecting gmail) do NOT
  *    affect the response — the guest sees success regardless.
  */
@@ -148,13 +148,14 @@ export async function POST(req: NextRequest) {
     }
     const { reservation } = outcome
 
-    // Fire-and-forget confirmation email.
-    // sendConfirmation already handles known failure modes gracefully
-    // (returns { ok: false, reason }), but we still catch unexpected exceptions
-    // so they cannot break the HTTP response to the guest.
-    sendConfirmation(reservation.id).catch((err) => {
-      console.error('[public/reservations] sendConfirmation threw', err)
-    })
+    // Confirmation email after the response is sent (after() keeps the
+    // function alive on Vercel until it finishes). sendConfirmation handles
+    // known failure modes itself; the catch covers unexpected exceptions.
+    after(() =>
+      sendConfirmation(reservation.id).catch((err) => {
+        console.error('[public/reservations] sendConfirmation threw', err)
+      })
+    )
 
     return NextResponse.json({ id: reservation.id }, { status: 201 })
   } catch (error) {

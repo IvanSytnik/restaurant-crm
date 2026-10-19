@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -88,11 +88,14 @@ export async function PATCH(
       })
     }
 
-    // If status just changed to CANCELLED, notify guest (fire-and-forget)
+    // If status just changed to CANCELLED, notify the guest after responding
     if (updated.status === 'CANCELLED' && existing.status !== 'CANCELLED') {
-      sendCancellation(updated.id).catch((err) => {
-        console.error('[reservations] cancellation send error', err)
-      })
+      const reservationId = updated.id
+      after(() =>
+        sendCancellation(reservationId).catch((err) => {
+          console.error('[reservations] cancellation send error', err)
+        })
+      )
     }
 
     return NextResponse.json(updated)

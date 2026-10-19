@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse, after } from 'next/server'
 import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
@@ -98,11 +98,14 @@ export async function POST(req: NextRequest) {
     }
     const { reservation } = outcome
 
-    // Fire-and-forget — confirmation email in background.
-    // Skipped automatically for WALKIN, fake @phone.local emails, etc.
-    sendConfirmation(reservation.id).catch((err) => {
-      console.error('[reservations] confirmation send error', err)
-    })
+    // Confirmation email after the response is sent. after() keeps the
+    // function alive until it finishes; a bare un-awaited promise can be
+    // frozen on Vercel. Skipped automatically for WALKIN, @phone.local, etc.
+    after(() =>
+      sendConfirmation(reservation.id).catch((err) => {
+        console.error('[reservations] confirmation send error', err)
+      })
+    )
 
     return NextResponse.json(reservation, { status: 201 })
   } catch (error) {
