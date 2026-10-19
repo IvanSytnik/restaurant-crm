@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { errorResponse } from '@/lib/api-route'
 
 const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/
 
@@ -37,6 +38,20 @@ export async function PATCH(
     const { id } = await params
     const data = UpdateSchema.parse(await req.json())
 
+    // Same rule as POST, checked against the dates after the update.
+    if (data.startDate !== undefined || data.endDate !== undefined) {
+      const current = await prisma.promotion.findUnique({
+        where: { id },
+        select: { startDate: true, endDate: true },
+      })
+      if (!current) return NextResponse.json({ error: 'NOT_FOUND' }, { status: 404 })
+      const start = data.startDate ?? current.startDate.toISOString().slice(0, 10)
+      const end = data.endDate ?? current.endDate.toISOString().slice(0, 10)
+      if (end < start) {
+        return NextResponse.json({ error: 'END_BEFORE_START' }, { status: 400 })
+      }
+    }
+
     const updateData: Record<string, unknown> = { ...data }
 
     if ('imageUrl' in updateData) {
@@ -65,11 +80,7 @@ export async function PATCH(
 
     return NextResponse.json(updated)
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'VALIDATION_ERROR' }, { status: 422 })
-    }
-    console.error(error)
-    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
+    return errorResponse(error, 'PATCH /api/promotions/[id]', { uniqueCode: 'SLUG_TAKEN' })
   }
 }
 
@@ -82,7 +93,11 @@ export async function DELETE(
     return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
-  const { id } = await params
-  await prisma.promotion.delete({ where: { id } })
-  return NextResponse.json({ ok: true })
+  try {
+    const { id } = await params
+    await prisma.promotion.delete({ where: { id } })
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    return errorResponse(error, 'DELETE /api/promotions/[id]', { uniqueCode: 'SLUG_TAKEN' })
+  }
 }

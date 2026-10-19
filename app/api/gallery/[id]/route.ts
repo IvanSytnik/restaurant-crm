@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { errorResponse } from '@/lib/api-route'
 
 const UpdateSchema = z.object({
   url: z.string().url().optional(),
@@ -30,11 +31,7 @@ export async function PATCH(
     const updated = await prisma.galleryImage.update({ where: { id }, data })
     return NextResponse.json(updated)
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'VALIDATION_ERROR' }, { status: 422 })
-    }
-    console.error(error)
-    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
+    return errorResponse(error, 'PATCH /api/gallery/[id]')
   }
 }
 
@@ -47,7 +44,11 @@ export async function DELETE(
     return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
-  const { id } = await params
-  await prisma.galleryImage.delete({ where: { id } })
-  return NextResponse.json({ ok: true })
+  try {
+    const { id } = await params
+    await prisma.galleryImage.delete({ where: { id } })
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    return errorResponse(error, 'DELETE /api/gallery/[id]')
+  }
 }

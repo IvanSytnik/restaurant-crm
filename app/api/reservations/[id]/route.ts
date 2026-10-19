@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { errorResponse } from '@/lib/api-route'
 import { sendCancellation } from '@/lib/email/send'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { withBookingLock } from '@/lib/booking/lock'
@@ -106,11 +107,7 @@ export async function PATCH(
         { status: error.status }
       )
     }
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'VALIDATION_ERROR' }, { status: 422 })
-    }
-    console.error(error)
-    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
+    return errorResponse(error, 'PATCH /api/reservations/[id]')
   }
 }
 
@@ -123,7 +120,11 @@ export async function DELETE(
     return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
-  const { id } = await params
-  await prisma.reservation.delete({ where: { id } })
-  return NextResponse.json({ ok: true })
+  try {
+    const { id } = await params
+    await prisma.reservation.delete({ where: { id } })
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    return errorResponse(error, 'DELETE /api/reservations/[id]')
+  }
 }

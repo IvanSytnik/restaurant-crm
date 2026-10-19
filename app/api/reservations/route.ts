@@ -7,6 +7,7 @@ import { withBookingLock } from '@/lib/booking/lock'
 import { viennaDateColumn } from '@/lib/public/vienna-time'
 import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
 import { getBookingSettings } from '@/lib/booking/settings'
+import { errorResponse } from '@/lib/api-route'
 import { sendConfirmation } from '@/lib/email/send'
 
 /**
@@ -106,13 +107,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(reservation, { status: 201 })
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'VALIDATION_ERROR', details: error.errors },
-        { status: 422 }
-      )
-    }
-    console.error('[POST /api/reservations]', error)
-    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
+    return errorResponse(error, 'POST /api/reservations')
   }
 }

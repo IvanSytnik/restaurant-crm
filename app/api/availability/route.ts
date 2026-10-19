@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { errorResponse } from '@/lib/api-route'
 import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
 import { getBookingSettings, type BookingSettings } from '@/lib/booking/settings'
 import { getTableOccupiedDuration } from '@/lib/booking/duration'
@@ -46,14 +47,7 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({ slots })
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'VALIDATION_ERROR', details: error.errors },
-        { status: 422 }
-      )
-    }
-    console.error('[GET /api/availability]', error)
-    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
+    return errorResponse(error, 'GET /api/availability')
   }
 }
 

@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { errorResponse } from '@/lib/api-route'
 
 const UpdateSchema = z.object({
   nameDE: z.string().min(1).max(100).optional(),
@@ -28,11 +29,7 @@ export async function PATCH(
     const updated = await prisma.galleryCategory.update({ where: { id }, data })
     return NextResponse.json(updated)
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'VALIDATION_ERROR' }, { status: 422 })
-    }
-    console.error(error)
-    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
+    return errorResponse(error, 'PATCH /api/gallery/categories/[id]', { uniqueCode: 'SLUG_TAKEN' })
   }
 }
 
@@ -45,17 +42,21 @@ export async function DELETE(
     return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
-  const { id } = await params
+  try {
+    const { id } = await params
 
-  // Защита: нельзя удалить категорию с изображениями
-  const count = await prisma.galleryImage.count({ where: { categoryId: id } })
-  if (count > 0) {
-    return NextResponse.json(
-      { error: 'CATEGORY_NOT_EMPTY', params: { count } },
-      { status: 409 }
-    )
+    // Защита: нельзя удалить категорию с изображениями
+    const count = await prisma.galleryImage.count({ where: { categoryId: id } })
+    if (count > 0) {
+      return NextResponse.json(
+        { error: 'CATEGORY_NOT_EMPTY', params: { count } },
+        { status: 409 }
+      )
+    }
+
+    await prisma.galleryCategory.delete({ where: { id } })
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    return errorResponse(error, 'DELETE /api/gallery/categories/[id]', { uniqueCode: 'SLUG_TAKEN' })
   }
-
-  await prisma.galleryCategory.delete({ where: { id } })
-  return NextResponse.json({ ok: true })
 }

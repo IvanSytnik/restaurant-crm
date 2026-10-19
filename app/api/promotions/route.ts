@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { errorResponse } from '@/lib/api-route'
 
 const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/
 
@@ -72,13 +73,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(promotion, { status: 201 })
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'VALIDATION_ERROR', details: error.errors }, { status: 422 })
-    }
-    if (error instanceof Error && error.message.includes('Unique')) {
-      return NextResponse.json({ error: 'SLUG_TAKEN' }, { status: 409 })
-    }
-    console.error(error)
-    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
+    return errorResponse(error, 'POST /api/promotions', { uniqueCode: 'SLUG_TAKEN' })
   }
 }
