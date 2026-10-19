@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import type { Prisma } from '@prisma/client'
 
 const ALLERGEN_VALUES = [
   'GLUTEN', 'CRUSTACEANS', 'EGGS', 'FISH', 'PEANUTS',
@@ -62,13 +63,8 @@ export async function PATCH(
 
     // Если переданы варианты — полностью заменяем
     const result = await prisma.$transaction(async (tx) => {
-      const updated = await tx.menuItem.update({
-        where: { id },
-        data: {
-          ...itemData,
-          imageUrl,
-        } as any,
-      })
+      const updateData: Prisma.MenuItemUncheckedUpdateInput = { ...itemData, imageUrl }
+      const updated = await tx.menuItem.update({ where: { id }, data: updateData })
 
       if (variants) {
         await tx.menuItemVariant.deleteMany({ where: { itemId: id } })

@@ -1,5 +1,3 @@
-import type { Locale } from '@/i18n/config'
-
 export type EmailLocale = 'de' | 'en' | 'uk'
 
 export function toEmailLocale(input: string | null | undefined): EmailLocale {

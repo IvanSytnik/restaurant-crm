@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
+import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { Reservation, Table } from '@prisma/client'
 import { TableModal } from './TableModal'
@@ -95,9 +96,9 @@ export function FloorPlanClient() {
         ) : tables.length === 0 ? (
           <div className="h-[400px] flex items-center justify-center text-gray-400 text-sm">
             {t('noTables')}.{' '}
-            <a href="/admin/tables" className="ml-1 text-gray-700 underline">
+            <Link href="/admin/tables" className="ml-1 text-gray-700 underline">
               {t('createTable')} →
-            </a>
+            </Link>
           </div>
         ) : (
           <div

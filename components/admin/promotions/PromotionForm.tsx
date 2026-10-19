@@ -194,7 +194,6 @@ export function PromotionForm({ mode, initial }: Props) {
             className={inputClass}
           />
           {form.imageUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
             <img src={form.imageUrl} alt="" className="mt-3 w-40 h-28 rounded-lg object-cover bg-gray-100" />
           )}
         </div>

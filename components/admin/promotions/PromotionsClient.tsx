@@ -148,7 +148,6 @@ export function PromotionsClient({
               <div key={p.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
                 <div className="flex flex-col sm:flex-row">
                   {p.imageUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={p.imageUrl} alt={title} className="w-full sm:w-40 h-32 sm:h-auto object-cover bg-gray-100" />
                   ) : (
                     <div className="w-full sm:w-40 h-32 sm:h-auto bg-gray-100 flex items-center justify-center">

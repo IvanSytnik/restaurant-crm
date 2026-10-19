@@ -48,7 +48,6 @@ export function ProfileClient({ initial }: { initial: Initial }) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name }),
     })
-    const data = await res.json().catch(() => ({}))
     if (!res.ok) {
       setProfileError(tUsers('errors.updateGeneric'))
       setBusy(false)

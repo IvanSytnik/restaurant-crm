@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { Reservation } from '@prisma/client'
 import type { TableWithStatus } from './FloorPlanClient'
@@ -86,14 +87,13 @@ function TabButton({ children, active, disabled, onClick }: { children: React.Re
 
 function InfoTab({ table }: { table: TableWithStatus }) {
   const t = useTranslations('floorPlan.modal')
-  const tCommon = useTranslations('common')
   const { currentReservation, soonReservation, upcomingReservations } = table
 
   if (table.status === 'INACTIVE') {
     return (
       <div className="px-5 py-8 text-center text-sm text-gray-500">
         {t('inactive')}{' '}
-        <a href="/admin/tables" className="text-gray-900 underline">{t('tables')}</a>
+        <Link href="/admin/tables" className="text-gray-900 underline">{t('tables')}</Link>
       </div>
     )
   }

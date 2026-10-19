@@ -16,7 +16,8 @@
     "actions": "Aktionen",
     "status": "Status",
     "refresh": "Aktualisieren",
-    "total": "Gesamt"
+    "total": "Gesamt",
+    "actionFailed": "Aktion fehlgeschlagen. Bitte erneut versuchen."
   },
 
   "login": {

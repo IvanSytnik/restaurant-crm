@@ -254,7 +254,6 @@ export function ItemForm({ mode, categories, initial }: Props) {
         />
         <p className="text-xs text-gray-500 mt-1">{t('imageHint')}</p>
         {form.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={form.imageUrl}
             alt=""
