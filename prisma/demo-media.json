@@ -1,0 +1,70 @@
+{
+  "source": "Unsplash (https://unsplash.com/license)",
+  "images": [
+    {
+      "key": "room-1",
+      "url": "https://images.unsplash.com/photo-1634239034530-698e6f9aa310?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI2fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "vFMwtzHpF-o"
+    },
+    {
+      "key": "room-2",
+      "url": "https://images.unsplash.com/photo-1647296020397-a79cd5127090?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI2fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "9vqDpwaBPQ8"
+    },
+    {
+      "key": "room-3",
+      "url": "https://images.unsplash.com/photo-1663984579869-4929f1c80913?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI2fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "bLmtwYoTB5s"
+    },
+    {
+      "key": "garden-1",
+      "url": "https://images.unsplash.com/photo-1631873376584-dd33d6076975?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI2fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "0TBo6_E4tKM"
+    },
+    {
+      "key": "garden-2",
+      "url": "https://images.unsplash.com/photo-1654383837815-603a6f5ac956?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI3fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "Bp_4Emcjxjs"
+    },
+    {
+      "key": "food-schnitzel",
+      "url": "https://images.unsplash.com/photo-1599921841143-819065a55cc6?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI3fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "MyfbM2QYF4o"
+    },
+    {
+      "key": "food-goulash",
+      "url": "https://images.unsplash.com/photo-1633457027853-106d9bed16ce?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI3fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "nMMbu34xFiM"
+    },
+    {
+      "key": "food-strudel",
+      "url": "https://images.unsplash.com/photo-1731696744138-b52b504aab72?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI3fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "bDeZFhF7OTw"
+    },
+    {
+      "key": "food-kaiserschmarrn",
+      "url": "https://images.unsplash.com/photo-1628412277659-b4bb70d40b7c?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI3fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "bf5BAUO3q2c"
+    },
+    {
+      "key": "food-salad",
+      "url": "https://images.unsplash.com/photo-1588532272851-661585d451e6?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI4fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "6RIpqidEOTc"
+    },
+    {
+      "key": "food-soup",
+      "url": "https://images.unsplash.com/photo-1712502587856-f7bb3d783b15?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI4fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "Vuc8cRavyl4"
+    },
+    {
+      "key": "food-spaetzle",
+      "url": "https://images.unsplash.com/photo-1599148919903-cdeae7193855?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI4fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "paG5Z3cy7xM"
+    },
+    {
+      "key": "drink-wine",
+      "url": "https://images.unsplash.com/photo-1616240580835-85fec1c8188b?ixid=M3wxMTA3MzM2fDB8MXxhbGx8fHx8fHx8fHwxNzkyNDQ1NjI4fA&ixlib=rb-4.1.0&w=1600&q=75&fm=jpg&fit=crop",
+      "unsplashId": "l9Njs0Q3qK0"
+    }
+  ]
+}
