@@ -168,7 +168,7 @@ const MENU: { de: string; en: string; uk: string; slug: string; items: Item[] }[
         price: 7.5, allergens: ['GLUTEN', 'MILK'], vegetarian: true, spicy: 1 },
       { de: 'Kürbiscremesuppe', en: 'Cream of pumpkin soup', uk: 'Крем-суп із гарбуза',
         dDe: 'mit gerösteten Kürbiskernen', dEn: 'with roasted pumpkin seeds', dUk: 'зі смаженим гарбузовим насінням',
-        price: 6.9, allergens: ['CELERY'], vegan: true },
+        price: 6.9, allergens: ['CELERY'], vegan: true, image: 'food-soup' },
     ],
   },
   {
@@ -179,7 +179,7 @@ const MENU: { de: string; en: string; uk: string; slug: string; items: Item[] }[
       { de: 'Grießnockerlsuppe', en: 'Beef broth with semolina dumplings', uk: 'Бульйон із манними галушками',
         price: 5.9, allergens: ['GLUTEN', 'EGGS', 'CELERY'] },
       { de: 'Gulaschsuppe', en: 'Goulash soup', uk: 'Суп-гуляш',
-        price: 6.5, allergens: ['CELERY', 'GLUTEN'], spicy: 2, image: 'food-soup' },
+        price: 6.5, allergens: ['CELERY', 'GLUTEN'], spicy: 2 },
     ],
   },
   {
@@ -451,7 +451,7 @@ async function main() {
         descriptionUK: 'Суп і основна страва дня за 12,90 €. З понеділка по п’ятницю, 11:30–14:30.',
         startDate: dateCol(addDays(today, -14)), endDate: dateCol(addDays(today, 60)),
         daysOfWeek: [1, 2, 3, 4, 5], startTime: '11:30', endTime: '14:30',
-        imageUrl: img('food-soup'),
+        imageUrl: img('food-schnitzel'),
       },
       {
         slug: 'martinigansl',
