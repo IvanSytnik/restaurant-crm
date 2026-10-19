@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "seed": "tsx prisma/seed.ts",
+    "seed": "tsx --env-file-if-exists=.env prisma/seed.ts",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
