@@ -48,12 +48,12 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Некорректные параметры', details: error.errors },
+        { error: 'VALIDATION_ERROR', details: error.errors },
         { status: 422 }
       )
     }
     console.error('[GET /api/availability]', error)
-    return NextResponse.json({ error: 'Внутренняя ошибка' }, { status: 500 })
+    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
   }
 }
 

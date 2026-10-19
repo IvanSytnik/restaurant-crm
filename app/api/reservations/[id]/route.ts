@@ -120,7 +120,7 @@ export async function DELETE(
 ) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   const { id } = await params

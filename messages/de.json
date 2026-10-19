@@ -525,7 +525,13 @@
       "saving": "Speichern...",
       "saveOk": "Gespeichert.",
       "saveError": "Speichern fehlgeschlagen.",
-      "networkError": "Netzwerkfehler. Bitte erneut versuchen."
+      "networkError": "Netzwerkfehler. Bitte erneut versuchen.",
+      "impressumDe": "Impressum (Deutsch)",
+      "impressumEn": "Impressum (Englisch)",
+      "impressumUk": "Impressum (Ukrainisch)",
+      "privacyDe": "Datenschutzerklärung (Deutsch) *",
+      "privacyEn": "Datenschutzerklärung (Englisch)",
+      "privacyUk": "Datenschutzerklärung (Ukrainisch)"
     },
     "hours": {
       "day": "Tag",
@@ -761,6 +767,20 @@
     "TABLE_NOT_FOUND": "Tisch nicht gefunden.",
     "TABLE_INACTIVE": "Dieser Tisch ist deaktiviert.",
     "CAPACITY_EXCEEDED": "Der Tisch bietet höchstens {max} Plätze.",
-    "TABLE_BUSY": "Der Tisch ist zu dieser Zeit bereits belegt."
+    "TABLE_BUSY": "Der Tisch ist zu dieser Zeit bereits belegt.",
+    "FORBIDDEN": "Dafür fehlt Ihnen die Berechtigung.",
+    "UNAUTHORIZED": "Sitzung abgelaufen. Bitte erneut anmelden.",
+    "INVALID_JSON": "Ungültige Anfrage.",
+    "TOO_MANY_REQUESTS": "Zu viele Versuche. Bitte später erneut versuchen.",
+    "PAST_TIME": "Dieser Zeitpunkt liegt in der Vergangenheit.",
+    "BEYOND_HORIZON": "Reservierungen sind höchstens {days} Tage im Voraus möglich.",
+    "NO_TABLE_AVAILABLE": "Zu dieser Zeit ist kein passender Tisch frei.",
+    "MIN_GT_CAPACITY": "Die Mindestbelegung darf die Kapazität nicht übersteigen.",
+    "TABLE_NAME_TAKEN": "Ein Tisch mit diesem Namen existiert bereits.",
+    "TABLE_HAS_RESERVATIONS": "Dieser Tisch hat {count, plural, one {# Reservierung} other {# Reservierungen}} im Verlauf und kann nicht gelöscht werden. Deaktivieren Sie ihn stattdessen.",
+    "SLUG_TAKEN": "Dieser Slug wird bereits verwendet.",
+    "CATEGORY_NOT_EMPTY": "Diese Kategorie enthält noch {count, plural, one {# Eintrag} other {# Einträge}}. Verschieben oder löschen Sie diese zuerst.",
+    "PRICE_REQUIRED": "Geben Sie einen Preis an oder fügen Sie mindestens eine Variante hinzu.",
+    "END_BEFORE_START": "Das Enddatum darf nicht vor dem Startdatum liegen."
   }
 }

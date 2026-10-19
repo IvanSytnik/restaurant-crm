@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
+import { apiErrorMessage, readApiError } from '@/lib/api-error'
 import { pickName } from '@/lib/menu/i18n'
 import type { Locale } from '@/i18n/config'
 
@@ -27,6 +28,7 @@ export function GalleryCategoriesClient({
   const locale = useLocale() as Locale
   const t = useTranslations('gallery.categories')
   const tCommon = useTranslations('common')
+  const tApi = useTranslations('apiErrors')
   const [categories, setCategories] = useState(initialCategories)
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -70,8 +72,7 @@ export function GalleryCategoriesClient({
     setBusy(null)
     if (res.ok) router.refresh()
     else {
-      const data = await res.json()
-      setError(data.error)
+      setError(apiErrorMessage(tApi, await readApiError(res)))
     }
   }
 

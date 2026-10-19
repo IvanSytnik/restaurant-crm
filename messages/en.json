@@ -524,7 +524,13 @@
       "saving": "Saving...",
       "saveOk": "Saved.",
       "saveError": "Failed to save.",
-      "networkError": "Network error. Please try again."
+      "networkError": "Network error. Please try again.",
+      "impressumDe": "Impressum (German)",
+      "impressumEn": "Impressum (English)",
+      "impressumUk": "Impressum (Ukrainian)",
+      "privacyDe": "Privacy policy (German) *",
+      "privacyEn": "Privacy policy (English)",
+      "privacyUk": "Privacy policy (Ukrainian)"
     },
     "hours": {
       "day": "Day",
@@ -759,6 +765,20 @@
     "TABLE_NOT_FOUND": "Table not found.",
     "TABLE_INACTIVE": "This table is deactivated.",
     "CAPACITY_EXCEEDED": "This table seats at most {max}.",
-    "TABLE_BUSY": "The table is already taken at that time."
+    "TABLE_BUSY": "The table is already taken at that time.",
+    "FORBIDDEN": "You don't have permission to do this.",
+    "UNAUTHORIZED": "Your session has expired. Please sign in again.",
+    "INVALID_JSON": "Invalid request.",
+    "TOO_MANY_REQUESTS": "Too many attempts. Please try again later.",
+    "PAST_TIME": "This time is in the past.",
+    "BEYOND_HORIZON": "Reservations can be made at most {days} days in advance.",
+    "NO_TABLE_AVAILABLE": "No suitable table is free at this time.",
+    "MIN_GT_CAPACITY": "Minimum guests cannot exceed the capacity.",
+    "TABLE_NAME_TAKEN": "A table with this name already exists.",
+    "TABLE_HAS_RESERVATIONS": "This table has {count, plural, one {# reservation} other {# reservations}} in its history and cannot be deleted. Deactivate it instead.",
+    "SLUG_TAKEN": "This slug is already in use.",
+    "CATEGORY_NOT_EMPTY": "This category still contains {count, plural, one {# item} other {# items}}. Move or delete them first.",
+    "PRICE_REQUIRED": "Enter a price or add at least one variant.",
+    "END_BEFORE_START": "The end date cannot be before the start date."
   }
 }

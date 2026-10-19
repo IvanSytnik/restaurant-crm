@@ -31,7 +31,7 @@ const CreateReservationSchema = z.object({
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
   }
 
   try {
@@ -42,17 +42,14 @@ export async function POST(req: NextRequest) {
     const startTime = new Date(data.startTime)
 
     if (startTime < new Date()) {
-      return NextResponse.json(
-        { error: 'Невозможно забронировать на прошедшее время' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'PAST_TIME' }, { status: 400 })
     }
 
     const maxDate = new Date()
     maxDate.setDate(maxDate.getDate() + settings.booking_horizon)
     if (startTime > maxDate) {
       return NextResponse.json(
-        { error: `Бронирование возможно не более чем на ${settings.booking_horizon} дней вперёд` },
+        { error: 'BEYOND_HORIZON', params: { days: settings.booking_horizon } },
         { status: 400 }
       )
     }
@@ -92,7 +89,7 @@ export async function POST(req: NextRequest) {
 
     if (!outcome.success) {
       return NextResponse.json(
-        { error: 'На выбранное время нет свободных столов', reason: outcome.reason },
+        { error: 'NO_TABLE_AVAILABLE', reason: outcome.reason },
         { status: 409 }
       )
     }
@@ -111,11 +108,11 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Некорректные данные', details: error.errors },
+        { error: 'VALIDATION_ERROR', details: error.errors },
         { status: 422 }
       )
     }
     console.error('[POST /api/reservations]', error)
-    return NextResponse.json({ error: 'Внутренняя ошибка сервера' }, { status: 500 })
+    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
   }
 }

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
+import { apiErrorMessage, readApiError } from '@/lib/api-error'
 import { LangTabs } from './LangTabs'
 import { pickName } from '@/lib/menu/i18n'
 import { ALLERGEN_LIST, ALLERGEN_CODES, type AllergenKey } from '@/lib/menu/allergens'
@@ -54,6 +55,7 @@ export function ItemForm({ mode, categories, initial }: Props) {
   const t = useTranslations('menu.items.form')
   const tAllergens = useTranslations('menu.allergens')
   const tCommon = useTranslations('common')
+  const tApi = useTranslations('apiErrors')
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -171,8 +173,7 @@ export function ItemForm({ mode, categories, initial }: Props) {
     setLoading(false)
 
     if (!res.ok) {
-      const data = await res.json()
-      setError(data.error || 'Error')
+      setError(apiErrorMessage(tApi, await readApiError(res)))
       return
     }
 

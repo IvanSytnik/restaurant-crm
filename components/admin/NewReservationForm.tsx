@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { apiErrorMessage, readApiError } from '@/lib/api-error'
 import { viennaIso, viennaToday } from '@/lib/public/vienna-time'
 
 type Locale = 'de' | 'en' | 'uk'
@@ -23,6 +24,7 @@ export function NewReservationForm() {
   const today = viennaToday()
   const t = useTranslations('reservations.form')
   const tCommon = useTranslations('common')
+  const tApi = useTranslations('apiErrors')
 
   const [form, setForm] = useState({
     guestName: '',
@@ -89,8 +91,7 @@ export function NewReservationForm() {
     setLoading(false)
 
     if (!res.ok) {
-      const data = await res.json()
-      setError(data.error || t('createError'))
+      setError(apiErrorMessage(tApi, await readApiError(res)))
       return
     }
 

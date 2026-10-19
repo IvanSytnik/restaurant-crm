@@ -18,7 +18,7 @@ const CreateTableSchema = z.object({
 export async function GET() {
   const session = await getServerSession(authOptions)
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
   }
 
   const tables = await prisma.table.findMany({
@@ -31,29 +31,26 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   try {
     const data = CreateTableSchema.parse(await req.json())
 
     if (data.minCapacity > data.capacity) {
-      return NextResponse.json(
-        { error: 'Минимальная вместимость не может быть больше максимальной' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'MIN_GT_CAPACITY' }, { status: 400 })
     }
 
     const table = await prisma.table.create({ data })
     return NextResponse.json(table, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data', details: error.errors }, { status: 422 })
+      return NextResponse.json({ error: 'VALIDATION_ERROR', details: error.errors }, { status: 422 })
     }
     if (error instanceof Error && error.message.includes('Unique')) {
-      return NextResponse.json({ error: 'Стол с таким именем уже существует' }, { status: 409 })
+      return NextResponse.json({ error: 'TABLE_NAME_TAKEN' }, { status: 409 })
     }
     console.error(error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
   }
 }

@@ -12,7 +12,7 @@ const ReorderSchema = z.object({
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   try {
@@ -36,9 +36,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data' }, { status: 422 })
+      return NextResponse.json({ error: 'VALIDATION_ERROR' }, { status: 422 })
     }
     console.error(error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
   }
 }

@@ -123,13 +123,13 @@ export function LegalTab({ initial }: { initial: ContactsMap }) {
           <p className="mt-1 text-sm text-gray-500">{t('customImpressumHint')}</p>
         </div>
 
-        <Field label="Impressum (DE)">
+        <Field label={t('impressumDe')}>
           <textarea className={textareaClass} value={values.impressum_text_de ?? ''} onChange={(e) => set('impressum_text_de', e.target.value)} rows={8} placeholder={t('customImpressumPlaceholder')} />
         </Field>
-        <Field label="Impressum (EN)">
+        <Field label={t('impressumEn')}>
           <textarea className={textareaClass} value={values.impressum_text_en ?? ''} onChange={(e) => set('impressum_text_en', e.target.value)} rows={6} />
         </Field>
-        <Field label="Impressum (UK)">
+        <Field label={t('impressumUk')}>
           <textarea className={textareaClass} value={values.impressum_text_uk ?? ''} onChange={(e) => set('impressum_text_uk', e.target.value)} rows={6} />
         </Field>
       </section>
@@ -150,13 +150,13 @@ export function LegalTab({ initial }: { initial: ContactsMap }) {
           </Field>
         </div>
 
-        <Field label="Datenschutzerklärung (DE) *" hint={t('privacyHint')}>
+        <Field label={t('privacyDe')} hint={t('privacyHint')}>
           <textarea className={textareaClass} value={values.privacy_text_de ?? ''} onChange={(e) => set('privacy_text_de', e.target.value)} rows={10} placeholder={t('privacyPlaceholder')} />
         </Field>
-        <Field label="Privacy policy (EN)">
+        <Field label={t('privacyEn')}>
           <textarea className={textareaClass} value={values.privacy_text_en ?? ''} onChange={(e) => set('privacy_text_en', e.target.value)} rows={8} />
         </Field>
-        <Field label="Політика приватності (UK)">
+        <Field label={t('privacyUk')}>
           <textarea className={textareaClass} value={values.privacy_text_uk ?? ''} onChange={(e) => set('privacy_text_uk', e.target.value)} rows={8} />
         </Field>
       </section>

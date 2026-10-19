@@ -18,7 +18,7 @@ export async function PATCH(
 ) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   try {
@@ -29,10 +29,10 @@ export async function PATCH(
     return NextResponse.json(updated)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data' }, { status: 422 })
+      return NextResponse.json({ error: 'VALIDATION_ERROR' }, { status: 422 })
     }
     console.error(error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
   }
 }
 
@@ -42,7 +42,7 @@ export async function DELETE(
 ) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   const { id } = await params
@@ -51,9 +51,7 @@ export async function DELETE(
   const count = await prisma.menuItem.count({ where: { categoryId: id } })
   if (count > 0) {
     return NextResponse.json(
-      {
-        error: `В этой категории ${count} ${count === 1 ? 'блюдо' : 'блюд'}. Сначала переместите или удалите их.`,
-      },
+      { error: 'CATEGORY_NOT_EMPTY', params: { count } },
       { status: 409 }
     )
   }

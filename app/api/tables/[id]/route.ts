@@ -21,13 +21,13 @@ export async function GET(
 ) {
   const session = await getServerSession(authOptions)
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
   }
 
   const { id } = await params
   const table = await prisma.table.findUnique({ where: { id } })
   if (!table) {
-    return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    return NextResponse.json({ error: 'NOT_FOUND' }, { status: 404 })
   }
   return NextResponse.json(table)
 }
@@ -38,7 +38,7 @@ export async function PATCH(
 ) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   try {
@@ -49,10 +49,10 @@ export async function PATCH(
     return NextResponse.json(updated)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data' }, { status: 422 })
+      return NextResponse.json({ error: 'VALIDATION_ERROR' }, { status: 422 })
     }
     console.error(error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
   }
 }
 
@@ -62,7 +62,7 @@ export async function DELETE(
 ) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   const { id } = await params
@@ -72,7 +72,8 @@ export async function DELETE(
   if (reservationCount > 0) {
     return NextResponse.json(
       {
-        error: `На этом столе есть ${reservationCount} ${reservationCount === 1 ? 'бронь' : 'бронирований'} в истории. Удаление невозможно. Деактивируйте стол вместо удаления.`,
+        error: 'TABLE_HAS_RESERVATIONS',
+        params: { count: reservationCount },
         suggestion: 'deactivate',
       },
       { status: 409 }

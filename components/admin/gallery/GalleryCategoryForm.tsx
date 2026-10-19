@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { apiErrorMessage, readApiError } from '@/lib/api-error'
 import { LangTabs } from '@/components/admin/menu/LangTabs'
 import { slugify } from '@/lib/promotions'
 
@@ -24,6 +25,7 @@ export function GalleryCategoryForm({ mode, initial }: Props) {
   const router = useRouter()
   const t = useTranslations('gallery.categories.form')
   const tCommon = useTranslations('common')
+  const tApi = useTranslations('apiErrors')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -66,8 +68,7 @@ export function GalleryCategoryForm({ mode, initial }: Props) {
     setLoading(false)
 
     if (!res.ok) {
-      const data = await res.json()
-      setError(data.error || 'Error')
+      setError(apiErrorMessage(tApi, await readApiError(res)))
       return
     }
 

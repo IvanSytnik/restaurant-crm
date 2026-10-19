@@ -37,7 +37,7 @@ const CreateItemSchema = z.object({
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!session) return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
 
   const { searchParams } = new URL(req.url)
   const categoryId = searchParams.get('categoryId')
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   try {
@@ -65,10 +65,7 @@ export async function POST(req: NextRequest) {
 
     // Должна быть либо базовая цена, либо хотя бы один вариант
     if (!data.price && data.variants.length === 0) {
-      return NextResponse.json(
-        { error: 'Укажите цену или добавьте хотя бы один вариант' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'PRICE_REQUIRED' }, { status: 400 })
     }
 
     // Веган всегда вегетарианец
@@ -116,9 +113,9 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(item, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data', details: error.errors }, { status: 422 })
+      return NextResponse.json({ error: 'VALIDATION_ERROR', details: error.errors }, { status: 422 })
     }
     console.error(error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return NextResponse.json({ error: 'INTERNAL' }, { status: 500 })
   }
 }

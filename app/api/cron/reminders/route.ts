@@ -25,12 +25,12 @@ export async function GET(request: Request) {
   if (!cronSecret) {
     if (process.env.NODE_ENV === 'production') {
       console.error('[cron/reminders] CRON_SECRET is not set — refusing to run')
-      return NextResponse.json({ error: 'Cron is not configured' }, { status: 500 })
+      return NextResponse.json({ error: 'CRON_NOT_CONFIGURED' }, { status: 500 })
     }
   } else {
     const auth = request.headers.get('authorization')
     if (auth !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+      return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
     }
   }
 

@@ -20,7 +20,7 @@ import { viennaDayRange, viennaToday } from '@/lib/public/vienna-time'
 export async function GET() {
   const session = await getServerSession(authOptions)
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
   }
 
   const now = new Date()
