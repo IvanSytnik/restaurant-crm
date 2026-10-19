@@ -22,8 +22,4 @@ export function pathForLocale(locale: Locale, subpath = ''): string {
   return `/${seg}${tail}`
 }
 
-export function isValidUrlLocaleSegment(seg: string): boolean {
-  return seg in urlToLocale
-}
-
 export { locales }

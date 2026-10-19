@@ -21,7 +21,6 @@
     "@prisma/client": "^5.22.0",
     "@react-email/components": "^0.0.31",
     "bcryptjs": "^2.4.3",
-    "date-fns": "^4.1.0",
     "next": "^15.5.18",
     "next-auth": "^4.24.14",
     "next-intl": "^3.26.5",
