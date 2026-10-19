@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { Reservation } from '@prisma/client'
 import type { TableWithStatus } from './FloorPlanClient'
+import { formatViennaTime } from '@/lib/public/vienna-time'
 
 type Tab = 'info' | 'walkin'
 
@@ -282,5 +283,5 @@ function WalkinTab({ table, onSuccess }: { table: TableWithStatus; onSuccess: ()
 }
 
 function formatTime(d: Date | string): string {
-  return new Date(d).toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' })
+  return formatViennaTime(new Date(d))
 }

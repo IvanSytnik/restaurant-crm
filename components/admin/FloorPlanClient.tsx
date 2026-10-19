@@ -63,7 +63,7 @@ export function FloorPlanClient() {
         <div>
           <h1 className="text-xl sm:text-2xl font-semibold text-gray-900">{t('title')}</h1>
           <p className="text-sm text-gray-500 mt-1">
-            {t('updated')}: {lastUpdate.toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
+            {t('updated')}: {lastUpdate.toLocaleTimeString('de-AT', { timeZone: 'Europe/Vienna', hour: '2-digit', minute: '2-digit', second: '2-digit' })}
             <span className="text-gray-400"> · {t('autoRefresh')}</span>
           </p>
         </div>

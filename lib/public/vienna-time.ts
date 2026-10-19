@@ -14,27 +14,22 @@
  */
 
 /**
- * UTC offset for Vienna on a given calendar date, as a string suffix.
- * '+01:00' in winter (CET), '+02:00' in summer (CEST). DST-aware.
+ * Vienna's UTC offset in minutes at a given instant (+60 in winter, +120 in
+ * summer).
  */
-export function viennaOffsetForDate(dateStr: string): string {
-  // Probe at noon UTC of the given date — it's always inside the same Vienna
-  // calendar day (Vienna is UTC+1 or +2, never crosses midnight from 12:00 UTC).
-  const probe = new Date(`${dateStr}T12:00:00Z`)
-  const tzName = new Intl.DateTimeFormat('en-GB', {
+function viennaOffsetMinutesAt(instant: number): number {
+  const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: 'Europe/Vienna',
-    timeZoneName: 'shortOffset',
-  })
-    .formatToParts(probe)
-    .find((p) => p.type === 'timeZoneName')?.value
-
-  // Examples: 'GMT+1', 'GMT+2'. Older runtimes may emit 'GMT+01:00'.
-  const m = tzName?.match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/)
-  if (!m) return '+01:00'
-  const sign = m[1]
-  const hours = m[2].padStart(2, '0')
-  const minutes = (m[3] ?? '00').padStart(2, '0')
-  return `${sign}${hours}:${minutes}`
+    hourCycle: 'h23',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).formatToParts(new Date(instant))
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value)
+  const asUtc = Date.UTC(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'))
+  return Math.round((asUtc - Math.floor(instant / 60_000) * 60_000) / 60_000)
 }
 
 /**
@@ -43,10 +38,20 @@ export function viennaOffsetForDate(dateStr: string): string {
  *
  *   viennaIso('2026-06-07', '15:00') === '2026-06-07T13:00:00.000Z'  (CEST)
  *   viennaIso('2026-01-07', '15:00') === '2026-01-07T14:00:00.000Z'  (CET)
+ *
+ * The offset is resolved for the wall-clock time itself, not for the whole
+ * day, so times before the 02:00/03:00 switch on DST days are correct too.
+ * A non-existent spring-forward time (02:30 on the last Sunday of March)
+ * resolves to the instant one hour later (03:30 CEST).
  */
 export function viennaIso(dateStr: string, timeStr: string): string {
-  const offset = viennaOffsetForDate(dateStr)
-  return new Date(`${dateStr}T${timeStr}:00${offset}`).toISOString()
+  const [y, mo, d] = dateStr.split('-').map(Number)
+  const [h, mi] = timeStr.split(':').map(Number)
+  const wallAsUtc = Date.UTC(y, mo - 1, d, h, mi)
+  // Two passes: the offset at a first guess, then at the corrected instant.
+  const guess = wallAsUtc - viennaOffsetMinutesAt(wallAsUtc) * 60_000
+  const utc = wallAsUtc - viennaOffsetMinutesAt(guess) * 60_000
+  return new Date(utc).toISOString()
 }
 
 /**
@@ -92,4 +97,35 @@ export function viennaDayOfWeek(dateStr: string): number {
     Sat: 6,
   }
   return map[wd] ?? 1
+}
+
+/** Today's calendar date in Vienna as 'YYYY-MM-DD'. */
+export function viennaToday(): string {
+  return formatViennaDate(new Date())
+}
+
+/** Pure calendar arithmetic on a 'YYYY-MM-DD' string (no timezone involved). */
+export function addDays(dateStr: string, days: number): string {
+  const d = new Date(`${dateStr}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() + days)
+  return d.toISOString().slice(0, 10)
+}
+
+/**
+ * A Vienna calendar day as a half-open UTC interval [start, end). Use with
+ * `{ gte: start, lt: end }`. 23 or 25 hours long on DST change days.
+ */
+export function viennaDayRange(dateStr: string): { start: Date; end: Date } {
+  return {
+    start: new Date(viennaIso(dateStr, '00:00')),
+    end: new Date(viennaIso(addDays(dateStr, 1), '00:00')),
+  }
+}
+
+/**
+ * Value for a Prisma `@db.Date` column: the Vienna calendar day of `instant`,
+ * as UTC midnight. Never derive it with setHours(), which uses the host TZ.
+ */
+export function viennaDateColumn(instant: Date): Date {
+  return new Date(`${formatViennaDate(instant)}T00:00:00.000Z`)
 }

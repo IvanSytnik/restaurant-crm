@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { findBestTable } from '@/lib/booking/table-allocator'
 import { withBookingLock } from '@/lib/booking/lock'
+import { viennaDateColumn } from '@/lib/public/vienna-time'
 import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { sendConfirmation } from '@/lib/email/send'
@@ -56,8 +57,7 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const dateOnly = new Date(startTime)
-    dateOnly.setHours(0, 0, 0, 0)
+    const dateOnly = viennaDateColumn(startTime)
 
     // Same lock as the public endpoint: allocation and insert are atomic.
     const outcome = await withBookingLock(async (tx) => {

@@ -8,8 +8,9 @@ import { NON_BLOCKING_STATUSES, blocks } from '@/lib/booking/table-allocator'
 import { SLOT_STEP_MINUTES } from '@/lib/booking/slots'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import {
-  viennaOffsetForDate,
   viennaDayOfWeek,
+  viennaDayRange,
+  viennaIso,
   formatViennaTime,
   formatViennaDate,
 } from '@/lib/public/vienna-time'
@@ -92,9 +93,7 @@ async function getAvailableSlots(
   const tableIds = suitableTables.map((t) => t.id)
 
   // Day boundaries in Vienna time, materialised as UTC moments.
-  const offset = viennaOffsetForDate(dateStr)
-  const dayStart = new Date(`${dateStr}T00:00:00${offset}`)
-  const dayEnd = new Date(`${dateStr}T23:59:59${offset}`)
+  const { start: dayStart, end: dayEnd } = viennaDayRange(dateStr)
 
   // Everything that overlaps the day, including a reservation that started
   // the evening before and runs past midnight.
@@ -102,7 +101,7 @@ async function getAvailableSlots(
     where: {
       tableId: { in: tableIds },
       status: { notIn: NON_BLOCKING_STATUSES },
-      startTime: { lte: dayEnd },
+      startTime: { lt: dayEnd },
       endTime: { gt: new Date(dayStart.getTime() - settings.buffer_minutes * 60_000) },
     },
     select: { tableId: true, startTime: true, endTime: true },
@@ -132,8 +131,8 @@ async function getAvailableSlots(
 
 /**
  * Generate concrete Date objects representing Vienna-local slot times.
- * Anchored to the Vienna offset (CET/CEST) for the given date, so the result
- * is identical whether this runs on UTC or CET machines.
+ * Both ends are resolved with viennaIso(), so the result is identical
+ * whether this runs on UTC or CET machines, DST days included.
  */
 function generateTimeSlots(
   dateStr: string,
@@ -141,14 +140,12 @@ function generateTimeSlots(
   lastSlotStr: string,
   stepMinutes: number
 ): Date[] {
-  const offset = viennaOffsetForDate(dateStr)
   const slots: Date[] = []
-  const current = new Date(`${dateStr}T${startTimeStr}:00${offset}`)
-  const lastSlot = new Date(`${dateStr}T${lastSlotStr}:00${offset}`)
+  const first = new Date(viennaIso(dateStr, startTimeStr)).getTime()
+  const last = new Date(viennaIso(dateStr, lastSlotStr)).getTime()
 
-  while (current <= lastSlot) {
-    slots.push(new Date(current))
-    current.setMinutes(current.getMinutes() + stepMinutes)
+  for (let t = first; t <= last; t += stepMinutes * 60_000) {
+    slots.push(new Date(t))
   }
   return slots
 }

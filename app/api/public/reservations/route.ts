@@ -2,6 +2,7 @@ import { NextRequest, NextResponse, after } from 'next/server'
 import { z } from 'zod'
 import { findBestTable } from '@/lib/booking/table-allocator'
 import { withBookingLock } from '@/lib/booking/lock'
+import { viennaDateColumn } from '@/lib/public/vienna-time'
 import { checkPublicSlot, viennaWeekdayOf } from '@/lib/booking/slots'
 import { prisma } from '@/lib/prisma'
 import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
@@ -109,8 +110,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'OUTSIDE_HOURS', reason: slot.reason }, { status: 400 })
     }
 
-    const dateOnly = new Date(startTime)
-    dateOnly.setHours(0, 0, 0, 0)
+    const dateOnly = viennaDateColumn(startTime)
 
     // Allocation and insert under one lock, so a concurrent request cannot
     // take the same table between the conflict check and the write.

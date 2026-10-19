@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { Reservation, Table, ReservationStatus } from '@prisma/client'
 import { apiErrorMessage, readApiError } from '@/lib/api-error'
+import { addDays, formatViennaTime, viennaToday } from '@/lib/public/vienna-time'
 
 type ReservationWithTable = Reservation & { table: Table }
 
@@ -26,16 +27,9 @@ function statusOptions(current: ReservationStatus): ReservationStatus[] {
   return STATUSES.includes(current) ? STATUSES : [current, ...STATUSES]
 }
 
-function todayStr(): string {
-  const d = new Date()
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
-
-function tomorrowStr(): string {
-  const d = new Date()
-  d.setDate(d.getDate() + 1)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
+// Dates and times are Vienna's, regardless of the device's timezone.
+const todayStr = viennaToday
+const tomorrowStr = () => addDays(viennaToday(), 1)
 
 export function ReservationsClient({
   initialReservations,
@@ -235,5 +229,5 @@ export function ReservationsClient({
 }
 
 function formatTime(date: Date | string): string {
-  return new Date(date).toLocaleTimeString('de-AT', { hour: '2-digit', minute: '2-digit' })
+  return formatViennaTime(new Date(date))
 }

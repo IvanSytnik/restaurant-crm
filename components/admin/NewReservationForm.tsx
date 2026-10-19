@@ -3,11 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
-
-function todayStr(): string {
-  const d = new Date()
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
+import { viennaIso, viennaToday } from '@/lib/public/vienna-time'
 
 type Locale = 'de' | 'en' | 'uk'
 
@@ -24,7 +20,7 @@ function phonePlaceholderEmail(phone: string): string {
 
 export function NewReservationForm() {
   const router = useRouter()
-  const today = todayStr()
+  const today = viennaToday()
   const t = useTranslations('reservations.form')
   const tCommon = useTranslations('common')
 
@@ -72,7 +68,8 @@ export function NewReservationForm() {
     setLoading(true)
     setError('')
 
-    const startTime = new Date(`${form.date}T${form.time}:00`).toISOString()
+    // Slots are Vienna wall-clock times; never parse them in the device's TZ.
+    const startTime = viennaIso(form.date, form.time)
 
     const res = await fetch('/api/reservations', {
       method: 'POST',

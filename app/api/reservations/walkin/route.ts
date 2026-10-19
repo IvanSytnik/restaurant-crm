@@ -7,7 +7,7 @@ import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { withBookingLock } from '@/lib/booking/lock'
 import { findTableConflicts } from '@/lib/booking/table-allocator'
-import { formatViennaDate, formatViennaTime } from '@/lib/public/vienna-time'
+import { formatViennaTime, viennaDateColumn } from '@/lib/public/vienna-time'
 
 /**
  * POST /api/reservations/walkin
@@ -84,10 +84,7 @@ export async function POST(req: NextRequest) {
 
       if (conflict) return { ok: false as const, conflict }
 
-      // Calendar day in Vienna, materialised as UTC midnight for the @db.Date
-      // column. Never use setHours() here — that would resolve in the server's
-      // local timezone (UTC on Vercel) and misfile late-evening walk-ins.
-      const dateOnly = new Date(`${formatViennaDate(startTime)}T00:00:00.000Z`)
+      const dateOnly = viennaDateColumn(startTime)
 
       const reservation = await tx.reservation.create({
         data: {
