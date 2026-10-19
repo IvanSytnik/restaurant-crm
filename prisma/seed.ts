@@ -23,9 +23,9 @@ async function main() {
       isActive: true,
     },
   })
-  console.log(`✓ Owner создан: ${ownerEmail}`)
+  console.log(`✓ Owner ensured: ${ownerEmail}`)
 
-  // ── Столы ─────────────────────────────────────
+  // ── Tables ───────────────────────────────────
   const tables = [
     { name: 'T1', capacity: 2, minCapacity: 1, zone: 'INDOOR' as const, posX: 20, posY: 30 },
     { name: 'T2', capacity: 3, minCapacity: 2, zone: 'INDOOR' as const, posX: 40, posY: 30 },
@@ -41,9 +41,9 @@ async function main() {
       create: t,
     })
   }
-  console.log('✓ 5 столов созданы')
+  console.log('✓ 5 tables ensured')
 
-  // ── Рабочие часы 11:30–20:00 ──────────────────
+  // ── Working hours 11:30–20:00 ────────────────
   for (let day = 0; day <= 6; day++) {
     await prisma.workingHours.upsert({
       where: { dayOfWeek: day },
@@ -57,9 +57,11 @@ async function main() {
       },
     })
   }
-  console.log('✓ Рабочие часы установлены')
+  console.log('✓ Working hours ensured')
 
-  // ── Настройки ─────────────────────────────────
+  // ── Booking settings ─────────────────────────
+  // Create-only: re-running the seed must never overwrite values the owner
+  // has since changed in the admin panel.
   const settings = [
     { key: 'duration_1_2',    value: '60'  },
     { key: 'duration_3_4',    value: '90'  },
@@ -72,14 +74,14 @@ async function main() {
   for (const s of settings) {
     await prisma.setting.upsert({
       where: { key: s.key },
-      update: { value: s.value },
+      update: {},
       create: s,
     })
   }
-  console.log('✓ Настройки сохранены')
+  console.log('✓ Booking settings ensured (existing values kept)')
 
-  console.log('\n✅ Seed завершён успешно')
-  console.log(`   Войти: ${ownerEmail}`)
+  console.log('\n✅ Seed finished')
+  console.log(`   Sign in as: ${ownerEmail}`)
 }
 
 main()
