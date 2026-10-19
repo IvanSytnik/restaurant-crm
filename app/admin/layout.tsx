@@ -4,6 +4,10 @@ import { getLocale, getMessages } from 'next-intl/server'
 import { AuthProvider } from '@/components/AuthProvider'
 import '../globals.css'
 
+// Every admin page is per-user and session-gated: never prerender at build
+// time (several pages query the database before ProtectedAdminPage runs).
+export const dynamic = 'force-dynamic'
+
 export const metadata: Metadata = {
   title: 'Restaurant CRM',
   description: 'Internal booking system',
