@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { withBookingLock } from '@/lib/booking/lock'
 import { findTableConflicts } from '@/lib/booking/table-allocator'
@@ -33,7 +34,7 @@ const DURATIONS = [60, 90, 120, 150] as const
 const WalkinSchema = z.object({
   tableId: z.string().min(1),
   guestName: z.string().max(100).optional(),
-  guestCount: z.number().int().min(1).max(20),
+  guestCount: z.number().int().min(1).max(MAX_PARTY_SIZE),
   durationMinutes: z.union([
     z.literal(DURATIONS[0]),
     z.literal(DURATIONS[1]),

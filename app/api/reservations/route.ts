@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { findBestTable } from '@/lib/booking/table-allocator'
 import { withBookingLock } from '@/lib/booking/lock'
+import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { sendConfirmation } from '@/lib/email/send'
 
@@ -19,7 +20,7 @@ const CreateReservationSchema = z.object({
   guestName: z.string().min(2).max(100),
   guestEmail: z.string().email(),
   guestPhone: z.string().min(6).max(20),
-  guestCount: z.number().int().min(1).max(10),
+  guestCount: z.number().int().min(1).max(MAX_PARTY_SIZE),
   startTime: z.string().datetime(),
   comment: z.string().max(500).optional(),
   source: z.enum(['PHONE', 'WALKIN', 'ADMIN']).default('ADMIN'),

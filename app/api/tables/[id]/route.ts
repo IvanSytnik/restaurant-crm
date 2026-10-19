@@ -3,11 +3,12 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
 
 const UpdateTableSchema = z.object({
   name: z.string().min(1).max(20).optional(),
-  capacity: z.number().int().min(1).max(20).optional(),
-  minCapacity: z.number().int().min(1).max(20).optional(),
+  capacity: z.number().int().min(1).max(MAX_PARTY_SIZE).optional(),
+  minCapacity: z.number().int().min(1).max(MAX_PARTY_SIZE).optional(),
   zone: z.enum(['INDOOR', 'OUTDOOR', 'TERRACE', 'PRIVATE']).optional(),
   posX: z.number().min(0).max(100).optional(),
   posY: z.number().min(0).max(100).optional(),

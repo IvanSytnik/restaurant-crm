@@ -2,8 +2,13 @@ import { prisma } from '@/lib/prisma'
 
 /**
  * Booking settings stored as integer values in the Setting model.
- * Kept in sync with lib/booking/settings.ts (which is read-only).
+ * Single source of the keys, defaults and limits — lib/booking/settings.ts
+ * reads through getBookingSettingsRaw().
  */
+
+/** Largest party any endpoint accepts; also the maximum table capacity. */
+export const MAX_PARTY_SIZE = 20
+
 export const BOOKING_KEYS = [
   'duration_1_2',
   'duration_3_4',
@@ -23,7 +28,7 @@ export const BOOKING_DEFAULTS: Record<BookingKey, number> = {
   buffer_minutes: 15,
   booking_horizon: 60,
   min_guests: 1,
-  max_guests: 8,
+  max_guests: 4,
 }
 
 export const BOOKING_LIMITS: Record<BookingKey, { min: number; max: number }> = {
@@ -32,8 +37,8 @@ export const BOOKING_LIMITS: Record<BookingKey, { min: number; max: number }> = 
   duration_5_plus: { min: 15, max: 480 },
   buffer_minutes: { min: 0, max: 120 },
   booking_horizon: { min: 1, max: 365 },
-  min_guests: { min: 1, max: 20 },
-  max_guests: { min: 1, max: 50 },
+  min_guests: { min: 1, max: MAX_PARTY_SIZE },
+  max_guests: { min: 1, max: MAX_PARTY_SIZE },
 }
 
 export async function getBookingSettingsRaw(): Promise<Record<BookingKey, number>> {

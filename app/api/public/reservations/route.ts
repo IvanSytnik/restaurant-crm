@@ -4,6 +4,7 @@ import { findBestTable } from '@/lib/booking/table-allocator'
 import { withBookingLock } from '@/lib/booking/lock'
 import { checkPublicSlot, viennaWeekdayOf } from '@/lib/booking/slots'
 import { prisma } from '@/lib/prisma'
+import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import { sendConfirmation } from '@/lib/email/send'
@@ -33,7 +34,7 @@ const BookingSchema = z.object({
     .min(6)
     .max(20)
     .regex(/^[+\d\s\-()]+$/, 'Invalid phone'),
-  guestCount: z.number().int().min(1).max(20),
+  guestCount: z.number().int().min(1).max(MAX_PARTY_SIZE),
   startTime: z.string().datetime(),
   comment: z.string().max(500).optional(),
   locale: z.enum(['de', 'en', 'uk']).default('de'),

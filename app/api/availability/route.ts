@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
 import { getBookingSettings, type BookingSettings } from '@/lib/booking/settings'
 import { getTableOccupiedDuration } from '@/lib/booking/duration'
 import { NON_BLOCKING_STATUSES, blocks } from '@/lib/booking/table-allocator'
@@ -15,7 +16,7 @@ import {
 
 const QuerySchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  guestCount: z.coerce.number().int().min(1).max(10),
+  guestCount: z.coerce.number().int().min(1).max(MAX_PARTY_SIZE),
 })
 
 export async function GET(req: NextRequest) {
