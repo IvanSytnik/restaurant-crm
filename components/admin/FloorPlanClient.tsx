@@ -172,7 +172,13 @@ export function FloorPlanClient() {
                       `}
                       style={{ left: `${tb.posX}%`, top: `${tb.posY}%`, width: tile, height: tile }}
                     >
-                      <span className={`font-bold leading-none ${compact ? 'text-sm' : 'text-lg'}`}>{tb.name}</span>
+                      <span
+                        className={`font-bold leading-none ${
+                          compact ? (tb.name.length > 3 ? 'text-[11px]' : 'text-sm') : 'text-lg'
+                        }`}
+                      >
+                        {tb.name}
+                      </span>
                       {!compact && (
                         <span className="text-[11px] mt-1 opacity-80">
                           {tb.minCapacity}–{tb.capacity}
