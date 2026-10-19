@@ -148,6 +148,9 @@ model Reservation {
   updatedAt DateTime @updatedAt
 
   @@index([date])
+  // Day views (floor plan, reservation list, reminder cron) filter by time
+  // across all tables; the allocator uses the tableId-led index below.
+  @@index([startTime])
   @@index([tableId, startTime, endTime])
   @@index([status])
   @@map("reservations")
