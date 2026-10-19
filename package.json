@@ -14,7 +14,8 @@
     "postinstall": "prisma generate",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check:i18n": "tsx scripts/check-i18n.ts"
+    "check:i18n": "tsx scripts/check-i18n.ts",
+    "seed:demo": "tsx --env-file-if-exists=.env prisma/seed-demo.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
