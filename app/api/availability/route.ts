@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma'
 import { getBookingSettings, type BookingSettings } from '@/lib/booking/settings'
 import { getTableOccupiedDuration } from '@/lib/booking/duration'
 import { NON_BLOCKING_STATUSES, blocks } from '@/lib/booking/table-allocator'
+import { SLOT_STEP_MINUTES } from '@/lib/booking/slots'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import {
   viennaOffsetForDate,
@@ -69,7 +70,7 @@ async function getAvailableSlots(
     dateStr,
     workingHours.openTime,
     workingHours.lastBookingTime,
-    15
+    SLOT_STEP_MINUTES
   )
 
   const now = new Date()

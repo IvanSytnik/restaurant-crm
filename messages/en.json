@@ -736,7 +736,8 @@
       "beyondHorizon": "Reservations can be made up to {days} days in advance.",
       "guestCount": "Guest count must be between {min} and {max}.",
       "validation": "Please check your input.",
-      "generic": "Something went wrong. Please try again."
+      "generic": "Something went wrong. Please try again.",
+      "outsideHours": "Reservations are not possible at this time. Please choose one of the offered times."
     },
     "success": {
       "eyebrow": "Confirmation",

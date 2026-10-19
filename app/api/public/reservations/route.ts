@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { findBestTable } from '@/lib/booking/table-allocator'
 import { withBookingLock } from '@/lib/booking/lock'
+import { checkPublicSlot, viennaWeekdayOf } from '@/lib/booking/slots'
+import { prisma } from '@/lib/prisma'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import { sendConfirmation } from '@/lib/email/send'
@@ -13,7 +15,8 @@ import { sendConfirmation } from '@/lib/email/send'
  *  1) Rate limit: 5 requests / 10 min / IP (per Vercel instance, best-effort).
  *  2) Honeypot: hidden field `website` must be empty. If filled — silent ok.
  *  3) Min fill time: at least 3 seconds between form mount and submit.
- *  4) Zod validation, business rules (guest count, horizon, past time).
+ *  4) Zod validation, business rules (guest count, horizon, past time,
+ *     opening hours and the 15-minute slot grid in Vienna time).
  *  5) Source forced to WEBSITE, status forced to CONFIRMED.
  *
  * Side effects:
@@ -94,6 +97,15 @@ export async function POST(req: NextRequest) {
         { error: 'BEYOND_HORIZON', horizon: settings.booking_horizon },
         { status: 400 }
       )
+    }
+
+    // A direct POST must not be able to book a time the form never offers.
+    const hours = await prisma.workingHours.findUnique({
+      where: { dayOfWeek: viennaWeekdayOf(startTime) },
+    })
+    const slot = checkPublicSlot(startTime, hours)
+    if (!slot.ok) {
+      return NextResponse.json({ error: 'OUTSIDE_HOURS', reason: slot.reason }, { status: 400 })
     }
 
     const dateOnly = new Date(startTime)

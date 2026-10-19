@@ -152,6 +152,10 @@ export function PublicBookingForm({ locale, minGuests, maxGuests, bookingHorizon
           setError(tErr('pastTime'))
           await refreshSlots()
           break
+        case 'OUTSIDE_HOURS':
+          setError(tErr('outsideHours'))
+          await refreshSlots()
+          break
         case 'BEYOND_HORIZON':
           setError(tErr('beyondHorizon', { days: data.horizon ?? bookingHorizon }))
           break

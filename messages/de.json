@@ -738,7 +738,8 @@
       "beyondHorizon": "Reservierungen sind maximal {days} Tage im Voraus möglich.",
       "guestCount": "Anzahl Gäste muss zwischen {min} und {max} liegen.",
       "validation": "Bitte überprüfen Sie Ihre Eingaben.",
-      "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+      "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "outsideHours": "Zu dieser Zeit sind keine Reservierungen möglich. Bitte wählen Sie eine angebotene Uhrzeit."
     },
     "success": {
       "eyebrow": "Bestätigung",
