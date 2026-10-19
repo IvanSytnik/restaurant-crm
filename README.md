@@ -9,7 +9,7 @@ Self-hosted reservations, a live floor plan, a trilingual menu and the public we
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Neon-336791)
 ![Vercel](https://img.shields.io/badge/deploy-Vercel-000000)
 
-**Live demo:** https://&lt;subdomain&gt;.sytnik-studio.com
+**Live demo:** https://restaurant.sytnik-studio.com
 
 <p align="center">
   <img src="docs/media/demo.gif" width="760" alt="Floor plan: a free table is opened, a walk-in party is seated, the table turns red and the walk-in appears in the reservation list">
