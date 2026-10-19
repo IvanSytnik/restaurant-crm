@@ -9,6 +9,8 @@ import { NON_BLOCKING_STATUSES, blocks } from '@/lib/booking/table-allocator'
 import { SLOT_STEP_MINUTES } from '@/lib/booking/slots'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import {
+  addDays,
+  viennaToday,
   viennaDayOfWeek,
   viennaDayRange,
   viennaIso,
@@ -43,6 +45,15 @@ export async function GET(req: NextRequest) {
     })
 
     const settings = await getBookingSettings()
+
+    // Only the bookable window (today … today + horizon in Vienna) is
+    // answered; other dates get no slots, so the endpoint cannot be used to
+    // map past or far-future occupancy.
+    const today = viennaToday()
+    if (query.date < today || query.date > addDays(today, settings.booking_horizon)) {
+      return NextResponse.json({ slots: [] })
+    }
+
     const slots = await getAvailableSlots(query.date, query.guestCount, settings)
 
     return NextResponse.json({ slots })
