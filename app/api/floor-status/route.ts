@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getBookingSettings } from '@/lib/booking/settings'
+import { NON_BLOCKING_STATUSES } from '@/lib/booking/table-allocator'
 
 /**
  * GET /api/floor-status
@@ -37,7 +38,7 @@ export async function GET() {
     prisma.reservation.findMany({
       where: {
         startTime: { gte: dayStart, lte: dayEnd },
-        status: { notIn: ['CANCELLED', 'NO_SHOW', 'COMPLETED'] },
+        status: { notIn: NON_BLOCKING_STATUSES },
       },
       orderBy: { startTime: 'asc' },
     }),

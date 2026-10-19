@@ -5,6 +5,7 @@ import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { withBookingLock } from '@/lib/booking/lock'
+import { findTableConflicts } from '@/lib/booking/table-allocator'
 import { formatViennaDate, formatViennaTime } from '@/lib/public/vienna-time'
 
 /**
@@ -69,29 +70,15 @@ export async function POST(req: NextRequest) {
     const endTime = new Date(startTime.getTime() + data.durationMinutes * 60_000)
     const tableFreedAt = new Date(endTime.getTime() + settings.buffer_minutes * 60_000)
 
-    // Same 4h neighbourhood and overlap formula as the allocator's private
-    // checkTableConflict(), but narrowed to this one table. COMPLETED is
-    // excluded as well: a finished visit no longer blocks the table, which is
-    // also how /api/floor-status decides a table is free.
-    const windowStart = new Date(startTime.getTime() - 4 * 60 * 60 * 1000)
-    const windowEnd = new Date(tableFreedAt.getTime() + 4 * 60 * 60 * 1000)
-
     // Conflict check and insert under the booking lock (lib/booking/lock.ts),
-    // so a web booking cannot land on this table in between.
+    // so a web booking cannot land on this table in between. Same overlap
+    // rule and blocking statuses as the allocator.
     const outcome = await withBookingLock(async (tx) => {
-      const neighbours = await tx.reservation.findMany({
-        where: {
-          tableId: table.id,
-          status: { notIn: ['CANCELLED', 'NO_SHOW', 'COMPLETED'] },
-          startTime: { gte: windowStart, lte: windowEnd },
-        },
-        select: { startTime: true, endTime: true },
-        orderBy: { startTime: 'asc' },
-      })
-
-      const conflict = neighbours.find((r) => {
-        const resFreedAt = new Date(r.endTime.getTime() + settings.buffer_minutes * 60_000)
-        return startTime < resFreedAt && tableFreedAt > r.startTime
+      const [conflict] = await findTableConflicts(tx, {
+        tableIds: [table.id],
+        start: startTime,
+        freedAt: tableFreedAt,
+        bufferMinutes: settings.buffer_minutes,
       })
 
       if (conflict) return { ok: false as const, conflict }

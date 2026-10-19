@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
 import { getBookingSettings, type BookingSettings } from '@/lib/booking/settings'
 import { getTableOccupiedDuration } from '@/lib/booking/duration'
+import { NON_BLOCKING_STATUSES, blocks } from '@/lib/booking/table-allocator'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import {
   viennaOffsetForDate,
@@ -93,11 +94,14 @@ async function getAvailableSlots(
   const dayStart = new Date(`${dateStr}T00:00:00${offset}`)
   const dayEnd = new Date(`${dateStr}T23:59:59${offset}`)
 
+  // Everything that overlaps the day, including a reservation that started
+  // the evening before and runs past midnight.
   const existingReservations = await prisma.reservation.findMany({
     where: {
       tableId: { in: tableIds },
-      status: { notIn: ['CANCELLED', 'NO_SHOW'] },
-      startTime: { gte: dayStart, lte: dayEnd },
+      status: { notIn: NON_BLOCKING_STATUSES },
+      startTime: { lte: dayEnd },
+      endTime: { gt: new Date(dayStart.getTime() - settings.buffer_minutes * 60_000) },
     },
     select: { tableId: true, startTime: true, endTime: true },
   })
@@ -110,11 +114,9 @@ async function getAvailableSlots(
     const occupiedTableIds = new Set<string>()
 
     for (const res of existingReservations) {
-      const resFreedAt = new Date(
-        res.endTime.getTime() + settings.buffer_minutes * 60_000
-      )
-      const overlaps = slotStart < resFreedAt && slotFreedAt > res.startTime
-      if (overlaps) occupiedTableIds.add(res.tableId)
+      if (blocks(res, slotStart, slotFreedAt, settings.buffer_minutes)) {
+        occupiedTableIds.add(res.tableId)
+      }
     }
 
     const hasFreeTable = tableIds.some((id) => !occupiedTableIds.has(id))
