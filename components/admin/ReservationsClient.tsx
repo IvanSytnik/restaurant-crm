@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl'
 import type { Reservation, Table, ReservationStatus } from '@prisma/client'
 import { apiErrorMessage, readApiError } from '@/lib/api-error'
 import { addDays, formatViennaTime, viennaToday } from '@/lib/public/vienna-time'
+import { isRealGuestEmail, isRealGuestPhone } from '@/lib/guest-contact'
 
 type ReservationWithTable = Reservation & { table: Table }
 
@@ -164,8 +165,10 @@ export function ReservationsClient({
                     </td>
                     <td className="px-4 py-3 text-center font-medium">{r.guestCount}</td>
                     <td className="px-4 py-3 text-gray-600">
-                      <div className="text-sm">{r.guestPhone}</div>
-                      <div className="text-xs text-gray-500">{r.guestEmail}</div>
+                      {isRealGuestPhone(r.guestPhone) && <div className="text-sm">{r.guestPhone}</div>}
+                      {isRealGuestEmail(r.guestEmail) && (
+                        <div className="text-xs text-gray-500">{r.guestEmail}</div>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-gray-600 text-xs">{t(`source.${r.source}`)}</td>
                     <td className="px-4 py-3">
@@ -204,8 +207,10 @@ export function ReservationsClient({
                 </div>
                 <div className="mb-3">
                   <div className="font-medium text-gray-900">{r.guestName}</div>
-                  <div className="text-sm text-gray-600 mt-0.5">{r.guestPhone}</div>
-                  {r.guestEmail && !r.guestEmail.endsWith('@phone.local') && (
+                  {isRealGuestPhone(r.guestPhone) && (
+                    <div className="text-sm text-gray-600 mt-0.5">{r.guestPhone}</div>
+                  )}
+                  {isRealGuestEmail(r.guestEmail) && (
                     <div className="text-xs text-gray-500 mt-0.5 truncate">{r.guestEmail}</div>
                   )}
                   {r.comment && <p className="text-xs text-gray-500 mt-2 italic">{r.comment}</p>}

@@ -6,6 +6,7 @@ import { useTranslations } from 'next-intl'
 import type { Reservation } from '@prisma/client'
 import type { TableWithStatus } from './FloorPlanClient'
 import { formatViennaTime } from '@/lib/public/vienna-time'
+import { isRealGuestPhone } from '@/lib/guest-contact'
 
 type Tab = 'info' | 'walkin'
 
@@ -178,7 +179,7 @@ function ReservationCard({ r, highlight }: { r: Reservation; highlight?: 'red' |
         <div className="text-xs text-gray-500">{r.guestCount}</div>
       </div>
       <div className="text-sm text-gray-700 mt-1">{r.guestName}</div>
-      {r.guestPhone && r.guestPhone !== '-' && <div className="text-xs text-gray-500 mt-0.5">{r.guestPhone}</div>}
+      {isRealGuestPhone(r.guestPhone) && <div className="text-xs text-gray-500 mt-0.5">{r.guestPhone}</div>}
       {r.comment && <div className="text-xs text-gray-500 mt-1 italic">{r.comment}</div>}
     </div>
   )

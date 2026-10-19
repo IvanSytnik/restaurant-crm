@@ -5,6 +5,7 @@ import { prisma } from '@/lib/prisma'
 import { getAllContacts } from '@/lib/contacts'
 import { resend, FROM_EMAIL, isEmailEnabled } from './client'
 import { toEmailLocale, emailStrings, type EmailLocale } from './i18n'
+import { isRealGuestEmail } from '@/lib/guest-contact'
 
 import { ConfirmationEmail } from './templates/ConfirmationEmail'
 import { ReminderEmail } from './templates/ReminderEmail'
@@ -64,17 +65,6 @@ function formatTime(date: Date): string {
   }).format(date)
 }
 
-/**
- * Returns true if guestEmail is a real email worth sending to.
- * The CRM form auto-fills `${phone}@phone.local` when guest didn't share email — skip those.
- */
-function isRealGuestEmail(email: string | null | undefined): boolean {
-  if (!email) return false
-  if (!email.includes('@')) return false
-  if (email.endsWith('@phone.local')) return false
-  if (email.endsWith('@walkin.local')) return false
-  return true
-}
 
 async function getRestaurantContext(loc: EmailLocale) {
   const c = await getAllContacts()
