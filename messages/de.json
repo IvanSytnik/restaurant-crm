@@ -17,7 +17,10 @@
     "status": "Status",
     "refresh": "Aktualisieren",
     "total": "Gesamt",
-    "actionFailed": "Aktion fehlgeschlagen. Bitte erneut versuchen."
+    "actionFailed": "Aktion fehlgeschlagen. Bitte erneut versuchen.",
+    "openMenu": "Menü öffnen",
+    "moveUp": "Nach oben verschieben",
+    "moveDown": "Nach unten verschieben"
   },
 
   "login": {

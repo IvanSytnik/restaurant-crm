@@ -19,7 +19,8 @@ const STATUS_STYLES: Record<TableStatus, { bg: string; border: string; text: str
   FREE:     { bg: 'bg-green-100',  border: 'border-green-400',  text: 'text-green-900' },
   SOON:     { bg: 'bg-amber-100',  border: 'border-amber-400',  text: 'text-amber-900' },
   OCCUPIED: { bg: 'bg-red-100',    border: 'border-red-400',    text: 'text-red-900' },
-  INACTIVE: { bg: 'bg-gray-100',   border: 'border-gray-300',   text: 'text-gray-500' },
+  // gray-600 on gray-100 keeps small text above WCAG AA 4.5:1
+  INACTIVE: { bg: 'bg-gray-100',   border: 'border-gray-300',   text: 'text-gray-600' },
 }
 
 export function FloorPlanClient() {
@@ -29,6 +30,7 @@ export function FloorPlanClient() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date())
   const t = useTranslations('floorPlan')
   const tCommon = useTranslations('common')
+  const tModal = useTranslations('floorPlan.modal')
 
   const fetchData = useCallback(async () => {
     try {
@@ -112,10 +114,13 @@ export function FloorPlanClient() {
                 <button
                   key={tb.id}
                   onClick={() => setSelectedTable(tb)}
+                  // Colour alone does not tell a screen-reader user the status
+                  aria-label={`${tModal('table')} ${tb.name}, ${tb.minCapacity}–${tb.capacity}: ${statusLabel}`}
                   className={`
                     absolute -translate-x-1/2 -translate-y-1/2
                     flex flex-col items-center justify-center
                     rounded-2xl border-2 transition-all hover:scale-110 hover:shadow-lg
+                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2
                     ${style.bg} ${style.border} ${style.text}
                   `}
                   style={{ left: `${tb.posX}%`, top: `${tb.posY}%`, width: '88px', height: '88px' }}

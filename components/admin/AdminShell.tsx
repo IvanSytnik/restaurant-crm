@@ -140,6 +140,7 @@ export function AdminShell({
   const t = useTranslations('sidebar')
   const tUser = useTranslations('user')
   const tComingSoon = useTranslations('comingSoon')
+  const tCommon = useTranslations('common')
   const items = NAV.filter((item) => item.roles.includes(role))
 
   const roleLabel = tUser(role.toLowerCase() as 'owner' | 'manager' | 'staff')
@@ -151,7 +152,7 @@ export function AdminShell({
         <button
           onClick={() => setMobileOpen(true)}
           className="p-2 -ml-2 rounded-lg hover:bg-gray-100 active:bg-gray-200"
-          aria-label="Menu"
+          aria-label={tCommon('openMenu')}
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="4" y1="6" x2="20" y2="6" />
@@ -190,7 +191,7 @@ export function AdminShell({
           <button
             onClick={() => setMobileOpen(false)}
             className="lg:hidden p-1.5 -mr-1 rounded-lg hover:bg-gray-100"
-            aria-label="Close"
+            aria-label={tCommon('close')}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />

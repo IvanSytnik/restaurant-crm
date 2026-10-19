@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useId } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { apiErrorMessage, readApiError } from '@/lib/api-error'
@@ -102,8 +102,9 @@ export function NewReservationForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5 bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field label={t('guestName')} required>
+        <Field htmlFor="nr-guest-name" label={t('guestName')} required>
           <input
+            id="nr-guest-name"
             value={form.guestName}
             onChange={(e) => setForm({ ...form, guestName: e.target.value })}
             required
@@ -111,8 +112,9 @@ export function NewReservationForm() {
             className={inputClass}
           />
         </Field>
-        <Field label={t('phone')} required>
+        <Field htmlFor="nr-phone" label={t('phone')} required>
           <input
+            id="nr-phone"
             type="tel"
             value={form.guestPhone}
             onChange={(e) => setForm({ ...form, guestPhone: e.target.value })}
@@ -123,8 +125,9 @@ export function NewReservationForm() {
         </Field>
       </div>
 
-      <Field label={t('email')}>
+      <Field htmlFor="nr-email" label={t('email')}>
         <input
+          id="nr-email"
           type="email"
           value={form.guestEmail}
           onChange={(e) => setForm({ ...form, guestEmail: e.target.value })}
@@ -134,8 +137,9 @@ export function NewReservationForm() {
       </Field>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field label={t('date')} required>
+        <Field htmlFor="nr-date" label={t('date')} required>
           <input
+            id="nr-date"
             type="date"
             value={form.date}
             min={today}
@@ -151,6 +155,7 @@ export function NewReservationForm() {
                 key={n}
                 type="button"
                 onClick={() => setForm({ ...form, guestCount: n })}
+                aria-pressed={form.guestCount === n}
                 className={`flex-1 rounded-lg border py-2.5 text-sm font-medium transition-colors ${
                   form.guestCount === n
                     ? 'border-gray-900 bg-gray-900 text-white'
@@ -180,6 +185,7 @@ export function NewReservationForm() {
                 key={time}
                 type="button"
                 onClick={() => setForm({ ...form, time })}
+                aria-pressed={form.time === time}
                 className={`rounded-lg border py-2.5 text-sm font-medium transition-colors ${
                   form.time === time
                     ? 'border-gray-900 bg-gray-900 text-white'
@@ -194,8 +200,9 @@ export function NewReservationForm() {
       </Field>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field label={t('source')}>
+        <Field htmlFor="nr-source" label={t('source')}>
           <select
+            id="nr-source"
             value={form.source}
             onChange={(e) => setForm({ ...form, source: e.target.value as 'PHONE' | 'WALKIN' | 'ADMIN' })}
             className={inputClass}
@@ -205,8 +212,9 @@ export function NewReservationForm() {
             <option value="ADMIN">{t('sourceOther')}</option>
           </select>
         </Field>
-        <Field label={t('emailLanguage')}>
+        <Field htmlFor="nr-locale" label={t('emailLanguage')}>
           <select
+            id="nr-locale"
             value={form.locale}
             onChange={(e) => setForm({ ...form, locale: e.target.value as Locale })}
             className={inputClass}
@@ -218,8 +226,9 @@ export function NewReservationForm() {
         </Field>
       </div>
 
-      <Field label={t('comment')}>
+      <Field htmlFor="nr-comment" label={t('comment')}>
         <textarea
+          id="nr-comment"
           value={form.comment}
           onChange={(e) => setForm({ ...form, comment: e.target.value })}
           rows={2}
@@ -257,20 +266,42 @@ export function NewReservationForm() {
 const inputClass =
   'w-full rounded-lg border border-gray-200 px-3 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent'
 
+/**
+ * Labelled form row. With `htmlFor` the label is bound to that control; without
+ * it (button groups) the row becomes a named group for assistive tech.
+ */
 function Field({
   label,
   required,
+  htmlFor,
   children,
 }: {
   label: string
   required?: boolean
+  htmlFor?: string
   children: React.ReactNode
 }) {
+  const groupLabelId = useId()
+  const text = (
+    <>
+      {label} {required && <span className="text-red-500" aria-hidden="true">*</span>}
+    </>
+  )
+  if (htmlFor) {
+    return (
+      <div>
+        <label htmlFor={htmlFor} className="text-sm font-medium text-gray-700 mb-1.5 block">
+          {text}
+        </label>
+        {children}
+      </div>
+    )
+  }
   return (
-    <div>
-      <label className="text-sm font-medium text-gray-700 mb-1.5 block">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
+    <div role="group" aria-labelledby={groupLabelId}>
+      <span id={groupLabelId} className="text-sm font-medium text-gray-700 mb-1.5 block">
+        {text}
+      </span>
       {children}
     </div>
   )

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { Reservation } from '@prisma/client'
@@ -30,26 +30,53 @@ export function TableModal({
 }) {
   const t = useTranslations('floorPlan.modal')
   const tZone = useTranslations('floorPlan.zone')
+  const tCommon = useTranslations('common')
   const [tab, setTab] = useState<Tab>(table.status === 'FREE' ? 'walkin' : 'info')
+  const titleId = useId()
+  const closeRef = useRef<HTMLButtonElement>(null)
+  // The parent passes a new onClose on every render (it polls floor status),
+  // so keep the latest one in a ref instead of re-running the effect below.
+  const onCloseRef = useRef(onClose)
+  useEffect(() => {
+    onCloseRef.current = onClose
+  }, [onClose])
+
+  // Dialog basics: focus moves into the dialog, Escape closes it, and focus
+  // returns to the table button that opened it.
+  useEffect(() => {
+    const opener = document.activeElement as HTMLElement | null
+    closeRef.current?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCloseRef.current()
+    }
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      opener?.focus()
+    }
+  }, [])
 
   const canWalkin = table.isActive && table.status !== 'OCCUPIED'
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4" onClick={onClose}>
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
         className="w-full sm:max-w-lg bg-white rounded-t-2xl sm:rounded-2xl overflow-hidden shadow-xl max-h-[90vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold text-gray-900">
+            <h2 id={titleId} className="text-lg font-semibold text-gray-900">
               {t('table')} {table.name}
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
               {table.minCapacity}–{table.capacity} {t('seats')} · {tZone(table.zone)}
             </p>
           </div>
-          <button onClick={onClose} className="p-2 -mr-1 rounded-lg hover:bg-gray-100 active:bg-gray-200" aria-label="Close">
+          <button ref={closeRef} onClick={onClose} className="p-2 -mr-1 rounded-lg hover:bg-gray-100 active:bg-gray-200" aria-label={tCommon('close')}>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />
               <line x1="6" y1="6" x2="18" y2="18" />
@@ -57,7 +84,7 @@ export function TableModal({
           </button>
         </div>
 
-        <div className="px-5 pt-3 flex gap-2 border-b border-gray-200">
+        <div role="tablist" className="px-5 pt-3 flex gap-2 border-b border-gray-200">
           <TabButton active={tab === 'info'} onClick={() => setTab('info')}>{t('tabInfo')}</TabButton>
           <TabButton active={tab === 'walkin'} onClick={() => canWalkin && setTab('walkin')} disabled={!canWalkin}>
             {t('tabWalkin')}
@@ -75,6 +102,8 @@ export function TableModal({
 function TabButton({ children, active, disabled, onClick }: { children: React.ReactNode; active: boolean; disabled?: boolean; onClick: () => void }) {
   return (
     <button
+      role="tab"
+      aria-selected={active}
       onClick={onClick}
       disabled={disabled}
       className={`px-3 py-2 text-sm font-medium border-b-2 transition-colors ${
@@ -165,6 +194,7 @@ function WalkinTab({ table, onSuccess }: { table: TableWithStatus; onSuccess: ()
   const [duration, setDuration] = useState(() => (Math.max(minGuests, 2) <= 2 ? 60 : 90))
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const ids = useId()
 
   const guestOptions: number[] = []
   for (let i = minGuests; i <= maxGuests; i++) guestOptions.push(i)
@@ -217,14 +247,15 @@ function WalkinTab({ table, onSuccess }: { table: TableWithStatus; onSuccess: ()
         <span className="font-medium text-gray-900">{t('walkinSeated')}</span>.
       </div>
 
-      <div>
-        <label className="text-sm font-medium text-gray-700 mb-1.5 block">{t('guestCount')}</label>
+      <div role="group" aria-labelledby={`${ids}-count`}>
+        <span id={`${ids}-count`} className="text-sm font-medium text-gray-700 mb-1.5 block">{t('guestCount')}</span>
         <div className="flex gap-2 flex-wrap">
           {guestOptions.map((n) => (
             <button
               key={n}
               type="button"
               onClick={() => setGuestCount(n)}
+              aria-pressed={guestCount === n}
               className={`flex-1 min-w-[50px] rounded-lg border py-2.5 text-sm font-medium transition-colors ${
                 guestCount === n
                   ? 'border-gray-900 bg-gray-900 text-white'
@@ -238,8 +269,9 @@ function WalkinTab({ table, onSuccess }: { table: TableWithStatus; onSuccess: ()
       </div>
 
       <div>
-        <label className="text-sm font-medium text-gray-700 mb-1.5 block">{t('guestName')}</label>
+        <label htmlFor={`${ids}-name`} className="text-sm font-medium text-gray-700 mb-1.5 block">{t('guestName')}</label>
         <input
+          id={`${ids}-name`}
           value={guestName}
           onChange={(e) => setGuestName(e.target.value)}
           placeholder="Walk-in"
@@ -247,14 +279,15 @@ function WalkinTab({ table, onSuccess }: { table: TableWithStatus; onSuccess: ()
         />
       </div>
 
-      <div>
-        <label className="text-sm font-medium text-gray-700 mb-1.5 block">{t('duration')}</label>
+      <div role="group" aria-labelledby={`${ids}-duration`}>
+        <span id={`${ids}-duration`} className="text-sm font-medium text-gray-700 mb-1.5 block">{t('duration')}</span>
         <div className="flex gap-2">
           {[60, 90, 120, 150].map((m) => (
             <button
               key={m}
               type="button"
               onClick={() => setDuration(m)}
+              aria-pressed={duration === m}
               className={`flex-1 rounded-lg border py-2.5 text-sm font-medium transition-colors ${
                 duration === m
                   ? 'border-gray-900 bg-gray-900 text-white'
@@ -268,7 +301,7 @@ function WalkinTab({ table, onSuccess }: { table: TableWithStatus; onSuccess: ()
       </div>
 
       {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 px-3 py-2.5 text-sm text-red-700">{error}</div>
+        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-3 py-2.5 text-sm text-red-700">{error}</div>
       )}
 
       <button
