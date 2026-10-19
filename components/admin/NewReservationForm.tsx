@@ -19,7 +19,11 @@ function phonePlaceholderEmail(phone: string): string {
   return `${local}@phone.local`
 }
 
-export function NewReservationForm() {
+// Quick-pick buttons cover the common party sizes; anything up to maxGuests
+// can be typed into the number field next to them.
+const QUICK_PICKS = 4
+
+export function NewReservationForm({ maxGuests }: { maxGuests: number }) {
   const router = useRouter()
   const today = viennaToday()
   const t = useTranslations('reservations.form')
@@ -150,7 +154,7 @@ export function NewReservationForm() {
         </Field>
         <Field label={t('guestCount')} required>
           <div className="flex gap-2">
-            {[1, 2, 3, 4].map((n) => (
+            {Array.from({ length: Math.min(QUICK_PICKS, maxGuests) }, (_, i) => i + 1).map((n) => (
               <button
                 key={n}
                 type="button"
@@ -165,6 +169,21 @@ export function NewReservationForm() {
                 {n}
               </button>
             ))}
+            <input
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={maxGuests}
+              value={form.guestCount}
+              onChange={(e) => {
+                const n = Number.parseInt(e.target.value, 10)
+                if (Number.isInteger(n) && n >= 1 && n <= maxGuests) {
+                  setForm({ ...form, guestCount: n })
+                }
+              }}
+              aria-label={t('guestCountExact', { max: maxGuests })}
+              className="w-20 shrink-0 rounded-lg border border-gray-200 px-3 py-2.5 text-sm text-center bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
+            />
           </div>
         </Field>
       </div>

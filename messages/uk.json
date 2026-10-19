@@ -100,7 +100,8 @@
       "selectTime": "Оберіть час",
       "createError": "Помилка створення бронювання",
       "create": "Створити бронювання",
-      "emailLanguage": "Мова email-листів"
+      "emailLanguage": "Мова email-листів",
+      "guestCountExact": "Кількість гостей (1–{max})"
     }
   },
 

@@ -100,7 +100,8 @@
       "selectTime": "Zeit auswählen",
       "createError": "Fehler beim Erstellen",
       "create": "Reservierung erstellen",
-      "emailLanguage": "Sprache der E-Mails"
+      "emailLanguage": "Sprache der E-Mails",
+      "guestCountExact": "Anzahl der Gäste (1–{max})"
 
     }
   },
