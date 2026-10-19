@@ -5,6 +5,14 @@
  *   npm run build && npm start                       # in one terminal
  *   npx tsx --env-file-if-exists=.env scripts/screenshots.ts [--gif-only | --no-gif]
  *
+ * For a realistic evening service at any real time of day, run the seed, the
+ * server and this script with the same DEMO_CLOCK (see scripts/demo-clock.cjs):
+ *
+ *   export DEMO_CLOCK=2026-10-20T16:40:00Z
+ *   NODE_OPTIONS="--require ./scripts/demo-clock.cjs" npm run seed:demo
+ *   NODE_OPTIONS="--require ./scripts/demo-clock.cjs" npx next start
+ *   npx tsx --env-file-if-exists=.env scripts/screenshots.ts
+ *
  * Env: BASE_URL (default http://localhost:3000), DEMO_EMAIL
  * (default owner@lindenhof.example), DEMO_PASSWORD (required).
  * Output: docs/media/*.png (palette-compressed, target < 300 KB) and
@@ -23,12 +31,21 @@ const PASSWORD = process.env.DEMO_PASSWORD ?? ''
 const OUT = join(process.cwd(), 'docs', 'media')
 const MAX_BYTES = 300 * 1024
 
+const DEMO_CLOCK = process.env.DEMO_CLOCK
+
 const DESKTOP = { width: 1440, height: 900 }
 const MOBILE = { width: 390, height: 844 }
 
 if (!PASSWORD) {
   console.error('DEMO_PASSWORD is not set.')
   process.exit(1)
+}
+
+/** browser.newContext() with the page clock set to DEMO_CLOCK, if given. */
+async function newContext(browser: Browser, options: Parameters<Browser['newContext']>[0]) {
+  const context = await browser.newContext(options)
+  if (DEMO_CLOCK) await context.clock.install({ time: new Date(DEMO_CLOCK) })
+  return context
 }
 
 async function settle(page: Page) {
@@ -40,8 +57,11 @@ async function settle(page: Page) {
 async function save(page: Page, name: string) {
   const raw = await page.screenshot({ type: 'png' })
   let out = await sharp(raw).png({ palette: true, quality: 85, effort: 10, compressionLevel: 9 }).toBuffer()
-  if (out.length > MAX_BYTES) {
-    out = await sharp(raw).png({ palette: true, quality: 60, colours: 128, effort: 10, compressionLevel: 9 }).toBuffer()
+  // Photo-heavy shots (hero images) need fewer colours and no dithering to
+  // stay under the size budget; UI shots never reach these fallbacks.
+  for (const opts of [{ colours: 128, dither: 1 }, { colours: 96, dither: 0 }]) {
+    if (out.length <= MAX_BYTES) break
+    out = await sharp(raw).png({ palette: true, quality: 60, effort: 10, compressionLevel: 9, ...opts }).toBuffer()
   }
   writeFileSync(join(OUT, `${name}.png`), out)
   const kb = Math.round(out.length / 1024)
@@ -64,7 +84,7 @@ async function setAdminLocale(context: BrowserContext, locale: 'de' | 'en' | 'uk
 
 async function adminShots(browser: Browser, device: 'desktop' | 'mobile') {
   const viewport = device === 'desktop' ? DESKTOP : MOBILE
-  const context = await browser.newContext({
+  const context = await newContext(browser, {
     viewport,
     deviceScaleFactor: device === 'desktop' ? 1 : 2,
     isMobile: device === 'mobile',
@@ -114,7 +134,7 @@ async function adminShots(browser: Browser, device: 'desktop' | 'mobile') {
 }
 
 async function publicShots(browser: Browser, device: 'desktop' | 'mobile') {
-  const context = await browser.newContext({
+  const context = await newContext(browser, {
     viewport: device === 'desktop' ? DESKTOP : MOBILE,
     deviceScaleFactor: device === 'desktop' ? 1 : 2,
     isMobile: device === 'mobile',
@@ -136,7 +156,7 @@ async function publicShots(browser: Browser, device: 'desktop' | 'mobile') {
 
 /** Floor plan → free table → walk-in → table turns red → reservation list. */
 async function demoGif(browser: Browser) {
-  const auth = await browser.newContext({ viewport: { width: 1280, height: 800 } })
+  const auth = await newContext(browser, { viewport: { width: 1280, height: 800 } })
   await login(auth)
   await setAdminLocale(auth, 'en')
   const state = await auth.storageState()
@@ -144,15 +164,20 @@ async function demoGif(browser: Browser) {
 
   const videoDir = join(OUT, '.video')
   rmSync(videoDir, { recursive: true, force: true })
-  const context = await browser.newContext({
+  const context = await newContext(browser, {
     viewport: { width: 1280, height: 800 },
     storageState: state,
     timezoneId: 'Europe/Vienna',
     recordVideo: { dir: videoDir, size: { width: 1280, height: 800 } },
   })
+  // The video starts with the context; remember when the plan is on screen
+  // so the blank page load can be trimmed from the GIF.
+  const recordingStart = Date.now()
   const page = await context.newPage()
   await page.goto(`${BASE}/admin/floor-plan`)
+  await page.waitForSelector('button[aria-label^="Table T1,"]')
   await settle(page)
+  const trimSeconds = Math.max(0, (Date.now() - recordingStart) / 1000 - 0.2)
   await page.waitForTimeout(1500)
 
   // T1 is free in the demo seed
@@ -183,6 +208,7 @@ async function demoGif(browser: Browser) {
   const gif = join(OUT, 'demo.gif')
   execFileSync('ffmpeg', [
     '-y', '-loglevel', 'error',
+    '-ss', trimSeconds.toFixed(2),
     '-i', join(videoDir, webm),
     '-vf', 'fps=10,scale=960:-1:flags=lanczos,split[a][b];[a]palettegen=max_colors=96:stats_mode=diff[p];[b][p]paletteuse=dither=bayer:bayer_scale=4:diff_mode=rectangle',
     '-loop', '0',
