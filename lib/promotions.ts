@@ -1,32 +1,66 @@
+import { formatViennaDate, formatViennaTime, viennaDayOfWeek } from '@/lib/public/vienna-time'
+
 /**
- * Определяет текущий статус акции:
- * - ARCHIVED: явно архивирована админом
+ * Promotion status by calendar date, evaluated on the Vienna calendar:
+ * - ARCHIVED: archived by an admin
  * - INACTIVE: isActive = false
- * - SCHEDULED: ещё не началась (startDate > сейчас)
- * - ACTIVE: идёт прямо сейчас
- * - EXPIRED: закончилась (endDate < сейчас), но не архивирована
+ * - SCHEDULED: today is before startDate
+ * - ACTIVE: startDate <= today <= endDate (endDate is inclusive)
+ * - EXPIRED: today is after endDate, not archived
+ *
+ * startDate/endDate are @db.Date columns, i.e. UTC midnight of the calendar
+ * day; they are compared as 'YYYY-MM-DD' strings, never in the host timezone.
+ * Weekdays and hours are not part of the status — see isPromotionLiveNow().
  */
 
 export type PromotionStatus = 'ARCHIVED' | 'INACTIVE' | 'SCHEDULED' | 'ACTIVE' | 'EXPIRED'
 
-export function getPromotionStatus(p: {
+type PromotionDates = {
   isActive: boolean
   isArchived: boolean
   startDate: Date | string
   endDate: Date | string
-}): PromotionStatus {
+}
+
+type PromotionSchedule = PromotionDates & {
+  daysOfWeek: number[]
+  startTime: string | null
+  endTime: string | null
+}
+
+/** 'YYYY-MM-DD' of a @db.Date value (Date or its JSON-serialized string). */
+function calendarDay(value: Date | string): string {
+  return (typeof value === 'string' ? value : value.toISOString()).slice(0, 10)
+}
+
+export function getPromotionStatus(p: PromotionDates, now: Date = new Date()): PromotionStatus {
   if (p.isArchived) return 'ARCHIVED'
   if (!p.isActive) return 'INACTIVE'
 
-  const now = new Date()
-  const start = new Date(p.startDate)
-  const end = new Date(p.endDate)
-  // endDate включается полностью — до конца дня
-  end.setHours(23, 59, 59, 999)
-
-  if (now < start) return 'SCHEDULED'
-  if (now > end) return 'EXPIRED'
+  const today = formatViennaDate(now)
+  if (today < calendarDay(p.startDate)) return 'SCHEDULED'
+  if (today > calendarDay(p.endDate)) return 'EXPIRED'
   return 'ACTIVE'
+}
+
+/**
+ * Is the offer valid at this very moment? ACTIVE by date, and — if set — on
+ * one of its weekdays (0 = Sunday) and within [startTime, endTime) in Vienna
+ * time. Used for the "current special" banner, so a Mon–Fri lunch offer is not
+ * advertised on Sunday evening.
+ */
+export function isPromotionLiveNow(p: PromotionSchedule, now: Date = new Date()): boolean {
+  if (getPromotionStatus(p, now) !== 'ACTIVE') return false
+
+  if (p.daysOfWeek.length > 0 && !p.daysOfWeek.includes(viennaDayOfWeek(formatViennaDate(now)))) {
+    return false
+  }
+
+  if (p.startTime && p.endTime) {
+    const hhmm = formatViennaTime(now)
+    if (hhmm < p.startTime || hhmm >= p.endTime) return false
+  }
+  return true
 }
 
 /**

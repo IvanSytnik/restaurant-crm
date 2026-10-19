@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
+import { apiErrorMessage, readApiError } from '@/lib/api-error'
 import type { Table } from '@prisma/client'
 
 type Zone = 'INDOOR' | 'OUTDOOR' | 'TERRACE' | 'PRIVATE'
@@ -17,6 +18,7 @@ export function TableForm({ mode, initial }: TableFormProps) {
   const t = useTranslations('tables.form')
   const tZone = useTranslations('floorPlan.zone')
   const tCommon = useTranslations('common')
+  const tApi = useTranslations('apiErrors')
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -54,8 +56,7 @@ export function TableForm({ mode, initial }: TableFormProps) {
     setLoading(false)
 
     if (!res.ok) {
-      const data = await res.json()
-      setError(data.error || t('saveError'))
+      setError(apiErrorMessage(tApi, await readApiError(res)))
       return
     }
 

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
+import { apiErrorMessage, readApiError } from '@/lib/api-error'
 import type { Table } from '@prisma/client'
 
 type TableWithCount = Table & { _count: { reservations: number } }
@@ -13,6 +14,7 @@ export function TablesClient({ initialTables }: { initialTables: TableWithCount[
   const t = useTranslations('tables')
   const tZone = useTranslations('floorPlan.zone')
   const tCommon = useTranslations('common')
+  const tApi = useTranslations('apiErrors')
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -27,8 +29,7 @@ export function TablesClient({ initialTables }: { initialTables: TableWithCount[
     setBusy(null)
     if (res.ok) router.refresh()
     else {
-      const data = await res.json()
-      setError(data.error)
+      setError(apiErrorMessage(tApi, await readApiError(res)))
     }
   }
 
@@ -46,8 +47,7 @@ export function TablesClient({ initialTables }: { initialTables: TableWithCount[
 
     if (res.ok) router.refresh()
     else {
-      const data = await res.json()
-      setError(data.error)
+      setError(apiErrorMessage(tApi, await readApiError(res)))
     }
   }
 

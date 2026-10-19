@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import { type Locale } from '@/i18n/config'
 import { pickTitle, pickDescription } from '@/lib/menu/i18n'
-import { getPromotionStatus, type PromotionStatus } from '@/lib/promotions'
+import { getPromotionStatus, isPromotionLiveNow, type PromotionStatus } from '@/lib/promotions'
 import { pathForLocale } from '@/lib/public/locale'
 import { formatDateRange } from '@/lib/format'
 import { PromotionStatusBadge } from './PromotionStatusBadge'
@@ -20,12 +20,16 @@ type Promo = {
   endDate: Date | string
   isActive: boolean
   isArchived: boolean
+  daysOfWeek: number[]
+  startTime: string | null
+  endTime: string | null
 }
 
 type Props = {
   promo: Promo
   locale: Locale
   labels: {
+    live: string
     active: string
     scheduled: string
     expired: string
@@ -35,6 +39,7 @@ type Props = {
 
 export function PromotionCard({ promo, locale, labels }: Props) {
   const status: PromotionStatus = getPromotionStatus(promo)
+  const live = status === 'ACTIVE' && isPromotionLiveNow(promo)
   const title = pickTitle({ titleDE: promo.titleDE, titleEN: promo.titleEN, titleUK: promo.titleUK }, locale)
   const description = pickDescription(
     {
@@ -70,6 +75,8 @@ export function PromotionCard({ promo, locale, labels }: Props) {
         <div className="flex items-center justify-between gap-4 mb-3">
           <PromotionStatusBadge
             status={status}
+            live={live}
+            labelLive={labels.live}
             labelActive={labels.active}
             labelScheduled={labels.scheduled}
             labelExpired={labels.expired}

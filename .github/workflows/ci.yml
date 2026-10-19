@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    # Dummy values only: nothing here connects to a database or sends email.
+    # The build is database-free (public pages are ISR-on-demand, admin pages
+    # are dynamic), and tests mock Prisma; the DB-backed concurrency test is
+    # skipped because TEST_DATABASE_URL is not set.
+    env:
+      DATABASE_URL: postgresql://ci:ci@127.0.0.1:5432/ci?pgbouncer=true
+      DIRECT_URL: postgresql://ci:ci@127.0.0.1:5432/ci
+      NEXTAUTH_SECRET: ci-only-dummy-secret
+      NEXTAUTH_URL: http://localhost:3000
+      NEXT_TELEMETRY_DISABLED: 1
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Prisma client
+        run: npx prisma generate
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Lint
+        run: npm run lint
+
+      - name: i18n parity
+        run: npm run check:i18n
+
+      - name: Tests
+        run: npm test
+
+      - name: Build
+        run: npm run build

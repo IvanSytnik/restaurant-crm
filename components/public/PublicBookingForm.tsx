@@ -5,18 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useTranslations } from 'next-intl'
 import { type Locale } from '@/i18n/config'
 import { pathForLocale } from '@/lib/public/locale'
-import { viennaIso } from '@/lib/public/vienna-time'
-
-function todayStr(): string {
-  const d = new Date()
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
-
-function addDaysStr(daysFromToday: number): string {
-  const d = new Date()
-  d.setDate(d.getDate() + daysFromToday)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
+import { addDays, viennaIso, viennaToday } from '@/lib/public/vienna-time'
 
 type Props = {
   locale: Locale
@@ -30,8 +19,10 @@ export function PublicBookingForm({ locale, minGuests, maxGuests, bookingHorizon
   const t = useTranslations('public.booking')
   const tErr = useTranslations('public.booking.error')
 
-  const today = todayStr()
-  const maxDate = addDaysStr(bookingHorizon)
+  // The restaurant's calendar, not the guest's: a guest abroad late in the
+  // evening must not be offered "today" when it is already tomorrow in Vienna.
+  const today = viennaToday()
+  const maxDate = addDays(today, bookingHorizon)
   const defaultGuests = Math.min(Math.max(2, minGuests), maxGuests)
 
   // Captured once at mount; sent to server to verify min fill time.
@@ -150,6 +141,10 @@ export function PublicBookingForm({ locale, minGuests, maxGuests, bookingHorizon
           break
         case 'PAST_TIME':
           setError(tErr('pastTime'))
+          await refreshSlots()
+          break
+        case 'OUTSIDE_HOURS':
+          setError(tErr('outsideHours'))
           await refreshSlots()
           break
         case 'BEYOND_HORIZON':

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
+import { apiErrorMessage, readApiError } from '@/lib/api-error'
 import { LangTabs } from '@/components/admin/menu/LangTabs'
 import { pickName } from '@/lib/menu/i18n'
 import type { Locale } from '@/i18n/config'
@@ -36,6 +37,7 @@ export function ImageForm({ mode, categories, initial }: Props) {
   const locale = useLocale() as Locale
   const t = useTranslations('gallery.images.form')
   const tCommon = useTranslations('common')
+  const tApi = useTranslations('apiErrors')
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -75,8 +77,7 @@ export function ImageForm({ mode, categories, initial }: Props) {
     setLoading(false)
 
     if (!res.ok) {
-      const data = await res.json()
-      setError(data.error || 'Error')
+      setError(apiErrorMessage(tApi, await readApiError(res)))
       return
     }
 
@@ -101,7 +102,6 @@ export function ImageForm({ mode, categories, initial }: Props) {
           />
           <p className="text-xs text-gray-500 mt-1">{t('urlHint')}</p>
           {form.url && (
-            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={form.url}
               alt=""

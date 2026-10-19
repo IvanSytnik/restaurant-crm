@@ -1,7 +1,7 @@
 import { type Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { prisma } from '@/lib/prisma'
 import { resolvePublicLocale, pathForLocale } from '@/lib/public/locale'
 import { pickName } from '@/lib/menu/i18n'
@@ -9,7 +9,14 @@ import { PageHero } from '@/components/public/PageHero'
 import { MenuCategorySection } from '@/components/public/MenuCategorySection'
 import type { AllergenKey } from '@/lib/menu/allergens'
 
-export const dynamic = 'force-dynamic'
+// ISR: served from cache, refreshed every 5 minutes and on admin edits
+// (lib/public/revalidate.ts).
+export const revalidate = 300
+
+// Rendered on first request, then cached (see [locale]/layout.tsx).
+export function generateStaticParams() {
+  return []
+}
 
 type Params = { locale: string; category: string }
 
@@ -25,6 +32,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function MenuCategoryPage({ params }: { params: Promise<Params> }) {
   const { locale: urlSeg, category: slug } = await params
   const locale = resolvePublicLocale(urlSeg)
+  // Lets next-intl resolve the locale without reading request headers,
+  // which would opt the page out of ISR.
+  setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'public.menuPage' })
 
   const cat = await prisma.menuCategory.findUnique({

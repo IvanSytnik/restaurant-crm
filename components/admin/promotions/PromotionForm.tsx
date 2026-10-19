@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useTranslations, useLocale } from 'next-intl'
+import { apiErrorMessage, readApiError } from '@/lib/api-error'
 import { LangTabs } from '@/components/admin/menu/LangTabs'
 import { slugify } from '@/lib/promotions'
 import type { Locale } from '@/i18n/config'
@@ -35,6 +36,7 @@ export function PromotionForm({ mode, initial }: Props) {
   const locale = useLocale() as Locale
   const t = useTranslations('promotions.form')
   const tCommon = useTranslations('common')
+  const tApi = useTranslations('apiErrors')
 
   const today = new Date().toISOString().slice(0, 10)
   const nextMonth = new Date()
@@ -115,8 +117,7 @@ export function PromotionForm({ mode, initial }: Props) {
     setLoading(false)
 
     if (!res.ok) {
-      const data = await res.json()
-      setError(data.error || 'Error')
+      setError(apiErrorMessage(tApi, await readApiError(res)))
       return
     }
 
@@ -194,7 +195,6 @@ export function PromotionForm({ mode, initial }: Props) {
             className={inputClass}
           />
           {form.imageUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
             <img src={form.imageUrl} alt="" className="mt-3 w-40 h-28 rounded-lg object-cover bg-gray-100" />
           )}
         </div>

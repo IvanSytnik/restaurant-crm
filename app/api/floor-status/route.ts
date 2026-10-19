@@ -3,6 +3,8 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getBookingSettings } from '@/lib/booking/settings'
+import { NON_BLOCKING_STATUSES } from '@/lib/booking/table-allocator'
+import { viennaDayRange, viennaToday } from '@/lib/public/vienna-time'
 
 /**
  * GET /api/floor-status
@@ -18,15 +20,13 @@ import { getBookingSettings } from '@/lib/booking/settings'
 export async function GET() {
   const session = await getServerSession(authOptions)
   if (!session) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
   }
 
   const now = new Date()
   const soonThreshold = new Date(now.getTime() + 30 * 60_000) // +30 мин
-  const dayStart = new Date(now)
-  dayStart.setHours(0, 0, 0, 0)
-  const dayEnd = new Date(now)
-  dayEnd.setHours(23, 59, 59, 999)
+  // "Today" is the Vienna calendar day, not the server's (UTC on Vercel).
+  const { start: dayStart, end: dayEnd } = viennaDayRange(viennaToday())
 
   const settings = await getBookingSettings()
 
@@ -36,8 +36,8 @@ export async function GET() {
     }),
     prisma.reservation.findMany({
       where: {
-        startTime: { gte: dayStart, lte: dayEnd },
-        status: { notIn: ['CANCELLED', 'NO_SHOW', 'COMPLETED'] },
+        startTime: { gte: dayStart, lt: dayEnd },
+        status: { notIn: NON_BLOCKING_STATUSES },
       },
       orderBy: { startTime: 'asc' },
     }),

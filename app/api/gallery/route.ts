@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePublicSite } from '@/lib/public/revalidate'
+import { errorResponse } from '@/lib/api-route'
 
 const CreateSchema = z.object({
   url: z.string().url(),
@@ -16,7 +18,7 @@ const CreateSchema = z.object({
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!session) return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
 
   const { searchParams } = new URL(req.url)
   const categoryId = searchParams.get('categoryId')
@@ -35,7 +37,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   try {
@@ -56,12 +58,9 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    revalidatePublicSite()
     return NextResponse.json(image, { status: 201 })
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data', details: error.errors }, { status: 422 })
-    }
-    console.error(error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return errorResponse(error, 'POST /api/gallery')
   }
 }

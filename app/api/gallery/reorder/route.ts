@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePublicSite } from '@/lib/public/revalidate'
+import { errorResponse } from '@/lib/api-route'
 
 const ReorderSchema = z.object({
   type: z.enum(['category', 'image']),
@@ -12,7 +14,7 @@ const ReorderSchema = z.object({
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   try {
@@ -33,12 +35,9 @@ export async function POST(req: NextRequest) {
       })
     )
 
+    revalidatePublicSite()
     return NextResponse.json({ ok: true })
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data' }, { status: 422 })
-    }
-    console.error(error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return errorResponse(error, 'POST /api/gallery/reorder')
   }
 }

@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server'
 import { type Locale } from '@/i18n/config'
 import { type ContactsMap } from '@/lib/contacts'
-import { pickName, pickDescription } from '@/lib/menu/i18n'
+import { pickDescription } from '@/lib/menu/i18n'
 import { type DayHours } from '@/lib/public/hours'
 
 type Props = {

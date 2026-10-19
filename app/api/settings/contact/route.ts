@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { z } from 'zod'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePublicSite } from '@/lib/public/revalidate'
 import { CONTACT_KEYS, getAllContacts, type ContactKey } from '@/lib/contacts'
 
 export const dynamic = 'force-dynamic'
@@ -13,8 +14,8 @@ const patchSchema = z.record(z.string(), z.string().max(20000))
 
 export async function GET() {
   const session = await getServerSession(authOptions)
-  if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (session.user.role !== 'OWNER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session?.user) return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
+  if (session.user.role !== 'OWNER') return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
 
   const data = await getAllContacts()
   return NextResponse.json(data)
@@ -22,19 +23,19 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   const session = await getServerSession(authOptions)
-  if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (session.user.role !== 'OWNER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session?.user) return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
+  if (session.user.role !== 'OWNER') return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
 
   let body: unknown
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+    return NextResponse.json({ error: 'INVALID_JSON' }, { status: 400 })
   }
 
   const parsed = patchSchema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Validation failed', details: parsed.error.flatten() }, { status: 400 })
+    return NextResponse.json({ error: 'VALIDATION_ERROR', details: parsed.error.flatten() }, { status: 400 })
   }
 
   const updates = parsed.data
@@ -57,5 +58,6 @@ export async function PATCH(request: Request) {
 
   await prisma.$transaction(ops)
   const fresh = await getAllContacts()
+  revalidatePublicSite()
   return NextResponse.json(fresh)
 }

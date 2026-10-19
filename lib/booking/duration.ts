@@ -29,15 +29,3 @@ export function getTableOccupiedDuration(
   const c = { ...DEFAULT_CONFIG, ...config }
   return getGuestDuration(guestCount, c) + c.buffer_minutes
 }
-
-export function calculateBookingTimes(
-  startTime: Date,
-  guestCount: number,
-  config: Partial<DurationConfig> = {}
-): { endTime: Date; tableFreedAt: Date } {
-  const guestMinutes = getGuestDuration(guestCount, config)
-  const occupiedMinutes = getTableOccupiedDuration(guestCount, config)
-  const endTime = new Date(startTime.getTime() + guestMinutes * 60_000)
-  const tableFreedAt = new Date(startTime.getTime() + occupiedMinutes * 60_000)
-  return { endTime, tableFreedAt }
-}

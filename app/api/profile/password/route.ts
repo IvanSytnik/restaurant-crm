@@ -4,6 +4,7 @@ import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -14,22 +15,31 @@ const schema = z.object({
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!session?.user?.id) return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
 
   let body: unknown
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+    return NextResponse.json({ error: 'INVALID_JSON' }, { status: 400 })
   }
 
   const parsed = schema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Validation failed', details: parsed.error.flatten() }, { status: 400 })
+    return NextResponse.json({ error: 'VALIDATION_ERROR', details: parsed.error.flatten() }, { status: 400 })
+  }
+
+  // Limits guessing the current password with a stolen session.
+  const rl = rateLimit(`password-change:${session.user.id}`, 5, 15 * 60_000)
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'TOO_MANY_REQUESTS' },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfterSec) } }
+    )
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id } })
-  if (!user || !user.password) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+  if (!user || !user.password) return NextResponse.json({ error: 'NOT_FOUND' }, { status: 404 })
 
   const ok = await bcrypt.compare(parsed.data.currentPassword, user.password)
   if (!ok) return NextResponse.json({ error: 'WRONG_CURRENT_PASSWORD' }, { status: 400 })

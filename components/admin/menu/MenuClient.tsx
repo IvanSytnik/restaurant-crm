@@ -171,7 +171,6 @@ export function MenuClient({ initialCategories }: { initialCategories: Category[
                       >
                         {/* Image */}
                         {item.imageUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={item.imageUrl}
                             alt={itemName}

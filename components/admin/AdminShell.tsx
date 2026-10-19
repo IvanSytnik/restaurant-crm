@@ -128,11 +128,14 @@ export function AdminShell({
   role,
   userName,
   locale,
+  restaurantName,
   children,
 }: {
   role: UserRole
   userName: string
   locale: Locale
+  /** From settings (Contact name_*), already localized; falls back to "Restaurant CRM". */
+  restaurantName: string
   children: React.ReactNode
 }) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -140,6 +143,7 @@ export function AdminShell({
   const t = useTranslations('sidebar')
   const tUser = useTranslations('user')
   const tComingSoon = useTranslations('comingSoon')
+  const tCommon = useTranslations('common')
   const items = NAV.filter((item) => item.roles.includes(role))
 
   const roleLabel = tUser(role.toLowerCase() as 'owner' | 'manager' | 'staff')
@@ -151,7 +155,7 @@ export function AdminShell({
         <button
           onClick={() => setMobileOpen(true)}
           className="p-2 -ml-2 rounded-lg hover:bg-gray-100 active:bg-gray-200"
-          aria-label="Menu"
+          aria-label={tCommon('openMenu')}
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <line x1="4" y1="6" x2="20" y2="6" />
@@ -159,7 +163,7 @@ export function AdminShell({
             <line x1="4" y1="18" x2="20" y2="18" />
           </svg>
         </button>
-        <p className="font-semibold text-gray-900 text-sm">Restaurant CRM</p>
+        <p className="font-semibold text-gray-900 text-sm truncate max-w-[60vw]">{restaurantName}</p>
         <div className="w-10" />
       </header>
 
@@ -182,7 +186,7 @@ export function AdminShell({
       >
         <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
-            <p className="font-semibold text-gray-900 text-[15px]">Restaurant CRM</p>
+            <p className="font-semibold text-gray-900 text-[15px] truncate">{restaurantName}</p>
             <p className="text-xs text-gray-500 mt-0.5 truncate max-w-[180px]">
               {userName} · {roleLabel}
             </p>
@@ -190,7 +194,7 @@ export function AdminShell({
           <button
             onClick={() => setMobileOpen(false)}
             className="lg:hidden p-1.5 -mr-1 rounded-lg hover:bg-gray-100"
-            aria-label="Close"
+            aria-label={tCommon('close')}
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="18" y1="6" x2="6" y2="18" />

@@ -1,19 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { prisma } from '@/lib/prisma'
+import { errorResponse } from '@/lib/api-route'
+import { MAX_PARTY_SIZE } from '@/lib/settings-booking'
 import { getBookingSettings, type BookingSettings } from '@/lib/booking/settings'
 import { getTableOccupiedDuration } from '@/lib/booking/duration'
+import { NON_BLOCKING_STATUSES, blocks } from '@/lib/booking/table-allocator'
+import { SLOT_STEP_MINUTES } from '@/lib/booking/slots'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import {
-  viennaOffsetForDate,
+  addDays,
+  viennaToday,
   viennaDayOfWeek,
+  viennaDayRange,
+  viennaIso,
   formatViennaTime,
   formatViennaDate,
 } from '@/lib/public/vienna-time'
 
 const QuerySchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  guestCount: z.coerce.number().int().min(1).max(10),
+  guestCount: z.coerce.number().int().min(1).max(MAX_PARTY_SIZE),
 })
 
 export async function GET(req: NextRequest) {
@@ -38,18 +45,20 @@ export async function GET(req: NextRequest) {
     })
 
     const settings = await getBookingSettings()
+
+    // Only the bookable window (today … today + horizon in Vienna) is
+    // answered; other dates get no slots, so the endpoint cannot be used to
+    // map past or far-future occupancy.
+    const today = viennaToday()
+    if (query.date < today || query.date > addDays(today, settings.booking_horizon)) {
+      return NextResponse.json({ slots: [] })
+    }
+
     const slots = await getAvailableSlots(query.date, query.guestCount, settings)
 
     return NextResponse.json({ slots })
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Некорректные параметры', details: error.errors },
-        { status: 422 }
-      )
-    }
-    console.error('[GET /api/availability]', error)
-    return NextResponse.json({ error: 'Внутренняя ошибка' }, { status: 500 })
+    return errorResponse(error, 'GET /api/availability')
   }
 }
 
@@ -68,7 +77,7 @@ async function getAvailableSlots(
     dateStr,
     workingHours.openTime,
     workingHours.lastBookingTime,
-    15
+    SLOT_STEP_MINUTES
   )
 
   const now = new Date()
@@ -89,15 +98,16 @@ async function getAvailableSlots(
   const tableIds = suitableTables.map((t) => t.id)
 
   // Day boundaries in Vienna time, materialised as UTC moments.
-  const offset = viennaOffsetForDate(dateStr)
-  const dayStart = new Date(`${dateStr}T00:00:00${offset}`)
-  const dayEnd = new Date(`${dateStr}T23:59:59${offset}`)
+  const { start: dayStart, end: dayEnd } = viennaDayRange(dateStr)
 
+  // Everything that overlaps the day, including a reservation that started
+  // the evening before and runs past midnight.
   const existingReservations = await prisma.reservation.findMany({
     where: {
       tableId: { in: tableIds },
-      status: { notIn: ['CANCELLED', 'NO_SHOW'] },
-      startTime: { gte: dayStart, lte: dayEnd },
+      status: { notIn: NON_BLOCKING_STATUSES },
+      startTime: { lt: dayEnd },
+      endTime: { gt: new Date(dayStart.getTime() - settings.buffer_minutes * 60_000) },
     },
     select: { tableId: true, startTime: true, endTime: true },
   })
@@ -110,11 +120,9 @@ async function getAvailableSlots(
     const occupiedTableIds = new Set<string>()
 
     for (const res of existingReservations) {
-      const resFreedAt = new Date(
-        res.endTime.getTime() + settings.buffer_minutes * 60_000
-      )
-      const overlaps = slotStart < resFreedAt && slotFreedAt > res.startTime
-      if (overlaps) occupiedTableIds.add(res.tableId)
+      if (blocks(res, slotStart, slotFreedAt, settings.buffer_minutes)) {
+        occupiedTableIds.add(res.tableId)
+      }
     }
 
     const hasFreeTable = tableIds.some((id) => !occupiedTableIds.has(id))
@@ -128,8 +136,8 @@ async function getAvailableSlots(
 
 /**
  * Generate concrete Date objects representing Vienna-local slot times.
- * Anchored to the Vienna offset (CET/CEST) for the given date, so the result
- * is identical whether this runs on UTC or CET machines.
+ * Both ends are resolved with viennaIso(), so the result is identical
+ * whether this runs on UTC or CET machines, DST days included.
  */
 function generateTimeSlots(
   dateStr: string,
@@ -137,14 +145,12 @@ function generateTimeSlots(
   lastSlotStr: string,
   stepMinutes: number
 ): Date[] {
-  const offset = viennaOffsetForDate(dateStr)
   const slots: Date[] = []
-  const current = new Date(`${dateStr}T${startTimeStr}:00${offset}`)
-  const lastSlot = new Date(`${dateStr}T${lastSlotStr}:00${offset}`)
+  const first = new Date(viennaIso(dateStr, startTimeStr)).getTime()
+  const last = new Date(viennaIso(dateStr, lastSlotStr)).getTime()
 
-  while (current <= lastSlot) {
-    slots.push(new Date(current))
-    current.setMinutes(current.getMinutes() + stepMinutes)
+  for (let t = first; t <= last; t += stepMinutes * 60_000) {
+    slots.push(new Date(t))
   }
   return slots
 }

@@ -13,7 +13,6 @@ yarn-error.log*
 .vercel
 *.tsbuildinfo
 next-env.d.ts
-.DS_Store
 
 # local dev notes
 CLAUDE.md
@@ -22,3 +21,4 @@ HANDOFF.md
 PROJECT_MEMORY.md
 AUDIT_REPORT.md
 .claude/
+restaurant-crm-audit-prompt.md

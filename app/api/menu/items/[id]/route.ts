@@ -3,6 +3,9 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePublicSite } from '@/lib/public/revalidate'
+import { errorResponse } from '@/lib/api-route'
+import type { Prisma } from '@prisma/client'
 
 const ALLERGEN_VALUES = [
   'GLUTEN', 'CRUSTACEANS', 'EGGS', 'FISH', 'PEANUTS',
@@ -42,7 +45,7 @@ export async function PATCH(
 ) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   try {
@@ -62,13 +65,8 @@ export async function PATCH(
 
     // Если переданы варианты — полностью заменяем
     const result = await prisma.$transaction(async (tx) => {
-      const updated = await tx.menuItem.update({
-        where: { id },
-        data: {
-          ...itemData,
-          imageUrl,
-        } as any,
-      })
+      const updateData: Prisma.MenuItemUncheckedUpdateInput = { ...itemData, imageUrl }
+      const updated = await tx.menuItem.update({ where: { id }, data: updateData })
 
       if (variants) {
         await tx.menuItemVariant.deleteMany({ where: { itemId: id } })
@@ -92,13 +90,10 @@ export async function PATCH(
       })
     })
 
+    revalidatePublicSite()
     return NextResponse.json(result)
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data', details: error.errors }, { status: 422 })
-    }
-    console.error(error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return errorResponse(error, 'PATCH /api/menu/items/[id]')
   }
 }
 
@@ -108,10 +103,15 @@ export async function DELETE(
 ) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
-  const { id } = await params
-  await prisma.menuItem.delete({ where: { id } })
-  return NextResponse.json({ ok: true })
+  try {
+    const { id } = await params
+    await prisma.menuItem.delete({ where: { id } })
+    revalidatePublicSite()
+    return NextResponse.json({ ok: true })
+  } catch (error) {
+    return errorResponse(error, 'DELETE /api/menu/items/[id]')
+  }
 }

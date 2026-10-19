@@ -1,15 +1,22 @@
 import { type Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { prisma } from '@/lib/prisma'
 import { resolvePublicLocale, pathForLocale } from '@/lib/public/locale'
 import { pickTitle, pickDescription } from '@/lib/menu/i18n'
-import { getPromotionStatus } from '@/lib/promotions'
+import { getPromotionStatus, isPromotionLiveNow } from '@/lib/promotions'
 import { formatDateRange } from '@/lib/format'
 import { PromotionStatusBadge } from '@/components/public/PromotionStatusBadge'
 
-export const dynamic = 'force-dynamic'
+// ISR: served from cache, refreshed every 5 minutes and on admin edits
+// (lib/public/revalidate.ts).
+export const revalidate = 300
+
+// Rendered on first request, then cached (see [locale]/layout.tsx).
+export function generateStaticParams() {
+  return []
+}
 
 type Params = { locale: string; slug: string }
 
@@ -31,6 +38,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function PromotionDetailPage({ params }: { params: Promise<Params> }) {
   const { locale: urlSeg, slug } = await params
   const locale = resolvePublicLocale(urlSeg)
+  // Lets next-intl resolve the locale without reading request headers,
+  // which would opt the page out of ISR.
+  setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'public.promotionsPage' })
   const tStatus = await getTranslations({ locale, namespace: 'public.promotionsPage.status' })
   const tDays = await getTranslations({ locale, namespace: 'public.promotionsPage.days' })
@@ -39,6 +49,7 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
   if (!promo || promo.isArchived) notFound()
 
   const status = getPromotionStatus(promo)
+  const live = status === 'ACTIVE' && isPromotionLiveNow(promo)
   const title = pickTitle({ titleDE: promo.titleDE, titleEN: promo.titleEN, titleUK: promo.titleUK }, locale)
   const description = pickDescription(
     {
@@ -67,6 +78,8 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
             <div className="max-w-5xl mx-auto">
               <PromotionStatusBadge
                 status={status}
+                live={live}
+                labelLive={tStatus('LIVE')}
                 labelActive={tStatus('ACTIVE')}
                 labelScheduled={tStatus('SCHEDULED')}
                 labelExpired={tStatus('EXPIRED')}
@@ -82,6 +95,8 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
           <div className="max-w-5xl mx-auto px-6 lg:px-12">
             <PromotionStatusBadge
               status={status}
+              live={live}
+              labelLive={tStatus('LIVE')}
               labelActive={tStatus('ACTIVE')}
               labelScheduled={tStatus('SCHEDULED')}
               labelExpired={tStatus('EXPIRED')}

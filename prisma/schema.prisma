@@ -6,9 +6,13 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// DATABASE_URL: pooled connection (Neon "-pooler" host, ?pgbouncer=true) used
+// by the app at runtime. DIRECT_URL: direct connection used by the Prisma CLI
+// (db push, studio), which PgBouncer in transaction mode cannot serve.
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 // ─────────────────────────────────────────────
@@ -148,6 +152,9 @@ model Reservation {
   updatedAt DateTime @updatedAt
 
   @@index([date])
+  // Day views (floor plan, reservation list, reminder cron) filter by time
+  // across all tables; the allocator uses the tableId-led index below.
+  @@index([startTime])
   @@index([tableId, startTime, endTime])
   @@index([status])
   @@map("reservations")

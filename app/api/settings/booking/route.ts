@@ -13,8 +13,8 @@ const patchSchema = z.record(z.string(), z.number().int())
 
 export async function GET() {
   const session = await getServerSession(authOptions)
-  if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (session.user.role !== 'OWNER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session?.user) return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
+  if (session.user.role !== 'OWNER') return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
 
   const data = await getBookingSettingsRaw()
   return NextResponse.json(data)
@@ -22,19 +22,19 @@ export async function GET() {
 
 export async function PATCH(request: Request) {
   const session = await getServerSession(authOptions)
-  if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-  if (session.user.role !== 'OWNER') return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+  if (!session?.user) return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
+  if (session.user.role !== 'OWNER') return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
 
   let body: unknown
   try {
     body = await request.json()
   } catch {
-    return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 })
+    return NextResponse.json({ error: 'INVALID_JSON' }, { status: 400 })
   }
 
   const parsed = patchSchema.safeParse(body)
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Validation failed', details: parsed.error.flatten() }, { status: 400 })
+    return NextResponse.json({ error: 'VALIDATION_ERROR', details: parsed.error.flatten() }, { status: 400 })
   }
 
   const updates = parsed.data

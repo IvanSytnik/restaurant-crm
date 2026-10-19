@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto'
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { sendReminder } from '@/lib/email/send'
@@ -15,23 +16,19 @@ export const maxDuration = 60
  *
  * Security: requires `Authorization: Bearer <CRON_SECRET>` (Vercel sends this
  * header automatically for scheduled invocations once CRON_SECRET is set).
- * In production a missing CRON_SECRET is a misconfiguration, not a reason to
- * run unprotected — we refuse to send anything and return 500. In development
- * the secret is optional so the endpoint stays easy to exercise by hand.
+ * A missing CRON_SECRET is a misconfiguration in every environment, not a
+ * reason to run unprotected: the endpoint refuses to send anything. To call it
+ * by hand in development, set any CRON_SECRET and pass the header.
  */
 export async function GET(request: Request) {
   const cronSecret = process.env.CRON_SECRET
 
   if (!cronSecret) {
-    if (process.env.NODE_ENV === 'production') {
-      console.error('[cron/reminders] CRON_SECRET is not set — refusing to run')
-      return NextResponse.json({ error: 'Cron is not configured' }, { status: 500 })
-    }
-  } else {
-    const auth = request.headers.get('authorization')
-    if (auth !== `Bearer ${cronSecret}`) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    console.error('[cron/reminders] CRON_SECRET is not set — refusing to run')
+    return NextResponse.json({ error: 'CRON_NOT_CONFIGURED' }, { status: 500 })
+  }
+  if (!isAuthorized(request.headers.get('authorization'), cronSecret)) {
+    return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
   }
 
   const now = new Date()
@@ -70,4 +67,11 @@ export async function GET(request: Request) {
     horizonHours,
     results,
   })
+}
+
+/** Constant-time comparison of the Authorization header with the secret. */
+function isAuthorized(header: string | null, secret: string): boolean {
+  const expected = Buffer.from(`Bearer ${secret}`)
+  const actual = Buffer.from(header ?? '')
+  return actual.length === expected.length && timingSafeEqual(actual, expected)
 }

@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePublicSite } from '@/lib/public/revalidate'
+import { errorResponse } from '@/lib/api-route'
 
 const TIME_REGEX = /^([01]\d|2[0-3]):[0-5]\d$/
 
@@ -25,7 +27,7 @@ const CreatePromotionSchema = z.object({
 
 export async function GET(req: NextRequest) {
   const session = await getServerSession(authOptions)
-  if (!session) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!session) return NextResponse.json({ error: 'UNAUTHORIZED' }, { status: 401 })
 
   const { searchParams } = new URL(req.url)
   const showArchived = searchParams.get('archived') === 'true'
@@ -41,17 +43,14 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session || session.user.role === 'STAFF') {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    return NextResponse.json({ error: 'FORBIDDEN' }, { status: 403 })
   }
 
   try {
     const data = CreatePromotionSchema.parse(await req.json())
 
     if (new Date(data.endDate) < new Date(data.startDate)) {
-      return NextResponse.json(
-        { error: 'Дата окончания не может быть раньше даты начала' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'END_BEFORE_START' }, { status: 400 })
     }
 
     const promotion = await prisma.promotion.create({
@@ -73,15 +72,9 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    revalidatePublicSite()
     return NextResponse.json(promotion, { status: 201 })
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: 'Invalid data', details: error.errors }, { status: 422 })
-    }
-    if (error instanceof Error && error.message.includes('Unique')) {
-      return NextResponse.json({ error: 'Акция с таким slug уже существует' }, { status: 409 })
-    }
-    console.error(error)
-    return NextResponse.json({ error: 'Server error' }, { status: 500 })
+    return errorResponse(error, 'POST /api/promotions', { uniqueCode: 'SLUG_TAKEN' })
   }
 }

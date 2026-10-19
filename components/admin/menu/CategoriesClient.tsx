@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
+import { apiErrorMessage, readApiError } from '@/lib/api-error'
 import { pickName } from '@/lib/menu/i18n'
 import type { Locale } from '@/i18n/config'
 
@@ -23,6 +24,7 @@ export function CategoriesClient({ initialCategories }: { initialCategories: Cat
   const locale = useLocale() as Locale
   const t = useTranslations('menu.categories')
   const tCommon = useTranslations('common')
+  const tApi = useTranslations('apiErrors')
   const [categories, setCategories] = useState(initialCategories)
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -72,8 +74,7 @@ export function CategoriesClient({ initialCategories }: { initialCategories: Cat
     setBusy(null)
     if (res.ok) router.refresh()
     else {
-      const data = await res.json()
-      setError(data.error)
+      setError(apiErrorMessage(tApi, await readApiError(res)))
     }
   }
 
@@ -125,7 +126,7 @@ export function CategoriesClient({ initialCategories }: { initialCategories: Cat
                     onClick={() => move(idx, -1)}
                     disabled={idx === 0}
                     className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
-                    aria-label="Move up"
+                    aria-label={tCommon('moveUp')}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="18 15 12 9 6 15" />
@@ -135,7 +136,7 @@ export function CategoriesClient({ initialCategories }: { initialCategories: Cat
                     onClick={() => move(idx, 1)}
                     disabled={idx === categories.length - 1}
                     className="p-1 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed"
-                    aria-label="Move down"
+                    aria-label={tCommon('moveDown')}
                   >
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="6 9 12 15 18 9" />

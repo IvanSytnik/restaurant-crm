@@ -37,6 +37,15 @@ export function GalleryClient({ initialCategories }: { initialCategories: Catego
   const [busy, setBusy] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
+  function handleResult(res: Response) {
+    if (res.ok) {
+      setError(null)
+      router.refresh()
+    } else {
+      setError(tCommon('actionFailed'))
+    }
+  }
+
   async function toggleFeatured(image: Image) {
     setBusy(image.id)
     const res = await fetch(`/api/gallery/${image.id}`, {
@@ -45,7 +54,7 @@ export function GalleryClient({ initialCategories }: { initialCategories: Catego
       body: JSON.stringify({ isFeatured: !image.isFeatured }),
     })
     setBusy(null)
-    if (res.ok) router.refresh()
+    handleResult(res)
   }
 
   async function toggleVisible(image: Image) {
@@ -56,7 +65,7 @@ export function GalleryClient({ initialCategories }: { initialCategories: Catego
       body: JSON.stringify({ isVisible: !image.isVisible }),
     })
     setBusy(null)
-    if (res.ok) router.refresh()
+    handleResult(res)
   }
 
   async function deleteImage(image: Image) {
@@ -64,7 +73,7 @@ export function GalleryClient({ initialCategories }: { initialCategories: Catego
     setBusy(image.id)
     const res = await fetch(`/api/gallery/${image.id}`, { method: 'DELETE' })
     setBusy(null)
-    if (res.ok) router.refresh()
+    handleResult(res)
   }
 
   const totalImages = initialCategories.reduce((sum, c) => sum + c.images.length, 0)
@@ -157,7 +166,6 @@ export function GalleryClient({ initialCategories }: { initialCategories: Catego
                         !img.isVisible ? 'opacity-40' : ''
                       }`}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src={img.url}
                         alt={img.altDE ?? ''}
