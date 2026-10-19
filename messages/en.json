@@ -296,7 +296,8 @@
     "unarchive": "Restore",
     "confirmDelete": "Permanently delete \"{title}\"?",
     "status": {
-      "ACTIVE": "Running now",
+      "LIVE": "Live now",
+      "ACTIVE": "Active",
       "SCHEDULED": "Scheduled",
       "EXPIRED": "Expired",
       "ARCHIVED": "Archived",

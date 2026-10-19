@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations, useLocale } from 'next-intl'
 import { pickTitle, pickDescription } from '@/lib/menu/i18n'
-import { getPromotionStatus, type PromotionStatus } from '@/lib/promotions'
+import { getPromotionStatus, isPromotionLiveNow, type PromotionStatus } from '@/lib/promotions'
 import type { Locale } from '@/i18n/config'
 
 type Promotion = {
@@ -27,8 +27,13 @@ type Promotion = {
   isArchived: boolean
 }
 
-const STATUS_STYLES: Record<PromotionStatus, string> = {
-  ACTIVE:    'bg-green-50 text-green-800 border-green-200',
+// LIVE = in its date range and valid right now (weekday and hours);
+// ACTIVE = in its date range but outside its weekdays/hours at the moment.
+type Badge = PromotionStatus | 'LIVE'
+
+const STATUS_STYLES: Record<Badge, string> = {
+  LIVE:      'bg-green-50 text-green-800 border-green-200',
+  ACTIVE:    'bg-emerald-50/50 text-emerald-700 border-emerald-100',
   SCHEDULED: 'bg-blue-50 text-blue-800 border-blue-200',
   EXPIRED:   'bg-amber-50 text-amber-800 border-amber-200',
   ARCHIVED:  'bg-gray-100 text-gray-600 border-gray-200',
@@ -140,7 +145,8 @@ export function PromotionsClient({
       ) : (
         <div className="space-y-3">
           {initialPromotions.map((p) => {
-            const status = getPromotionStatus(p)
+            const dateStatus = getPromotionStatus(p)
+            const status: Badge = dateStatus === 'ACTIVE' && isPromotionLiveNow(p) ? 'LIVE' : dateStatus
             const title = pickTitle(p, locale)
             const desc = pickDescription(p, locale)
             const days = DAY_SHORT[locale]

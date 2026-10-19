@@ -297,7 +297,8 @@
     "unarchive": "Wiederherstellen",
     "confirmDelete": "Aktion \"{title}\" endgültig löschen?",
     "status": {
-      "ACTIVE": "Läuft jetzt",
+      "LIVE": "Läuft jetzt",
+      "ACTIVE": "Aktiv",
       "SCHEDULED": "Geplant",
       "EXPIRED": "Abgelaufen",
       "ARCHIVED": "Archiv",

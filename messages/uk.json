@@ -296,7 +296,8 @@
     "unarchive": "Розархівувати",
     "confirmDelete": "Видалити акцію \"{title}\" назавжди?",
     "status": {
-      "ACTIVE": "Зараз діє",
+      "LIVE": "Зараз діє",
+      "ACTIVE": "Активна",
       "SCHEDULED": "Запланована",
       "EXPIRED": "Завершена",
       "ARCHIVED": "Архів",
