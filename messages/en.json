@@ -751,5 +751,14 @@
       "viewMenu": "View menu"
     }
   }
-}
+},
+  "apiErrors": {
+    "INTERNAL": "Something went wrong. Please try again.",
+    "VALIDATION_ERROR": "Please check your input.",
+    "NOT_FOUND": "Item not found.",
+    "TABLE_NOT_FOUND": "Table not found.",
+    "TABLE_INACTIVE": "This table is deactivated.",
+    "CAPACITY_EXCEEDED": "This table seats at most {max}.",
+    "TABLE_BUSY": "The table is already taken at that time."
+  }
 }

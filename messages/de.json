@@ -753,5 +753,14 @@
       "viewMenu": "Speisekarte"
     }
   }
-}
+},
+  "apiErrors": {
+    "INTERNAL": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+    "VALIDATION_ERROR": "Bitte überprüfen Sie Ihre Eingaben.",
+    "NOT_FOUND": "Eintrag nicht gefunden.",
+    "TABLE_NOT_FOUND": "Tisch nicht gefunden.",
+    "TABLE_INACTIVE": "Dieser Tisch ist deaktiviert.",
+    "CAPACITY_EXCEEDED": "Der Tisch bietet höchstens {max} Plätze.",
+    "TABLE_BUSY": "Der Tisch ist zu dieser Zeit bereits belegt."
+  }
 }

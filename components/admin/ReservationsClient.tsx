@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { Reservation, Table, ReservationStatus } from '@prisma/client'
+import { apiErrorMessage, readApiError } from '@/lib/api-error'
 
 type ReservationWithTable = Reservation & { table: Table }
 
@@ -17,7 +18,13 @@ const STATUS_COLORS: Record<ReservationStatus, string> = {
   NO_SHOW:   'bg-red-50 text-red-700 border-red-200',
 }
 
-const STATUSES: ReservationStatus[] = ['PENDING', 'CONFIRMED', 'SEATED', 'COMPLETED', 'CANCELLED', 'NO_SHOW']
+// PENDING is never offered: reservations are auto-confirmed. A legacy PENDING
+// row still renders its current value (see statusOptions).
+const STATUSES: ReservationStatus[] = ['CONFIRMED', 'SEATED', 'COMPLETED', 'CANCELLED', 'NO_SHOW']
+
+function statusOptions(current: ReservationStatus): ReservationStatus[] {
+  return STATUSES.includes(current) ? STATUSES : [current, ...STATUSES]
+}
 
 function todayStr(): string {
   const d = new Date()
@@ -40,6 +47,8 @@ export function ReservationsClient({
   const router = useRouter()
   const [date, setDate] = useState(initialDate)
   const t = useTranslations('reservations')
+  const tApi = useTranslations('apiErrors')
+  const [error, setError] = useState('')
 
   function handleDateChange(newDate: string) {
     setDate(newDate)
@@ -52,7 +61,12 @@ export function ReservationsClient({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ status }),
     })
-    if (res.ok) router.refresh()
+    if (res.ok) {
+      setError('')
+      router.refresh()
+    } else {
+      setError(apiErrorMessage(tApi, await readApiError(res)))
+    }
   }
 
   const isToday = date === todayStr()
@@ -105,6 +119,12 @@ export function ReservationsClient({
           className="rounded-lg border border-gray-200 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent"
         />
       </div>
+
+      {error && (
+        <div role="alert" className="rounded-lg bg-red-50 border border-red-200 px-3 py-2.5 text-sm text-red-700 mb-4">
+          {error}
+        </div>
+      )}
 
       {initialReservations.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-200 px-6 py-16 text-center">
@@ -160,7 +180,7 @@ export function ReservationsClient({
                         onChange={(e) => updateStatus(r.id, e.target.value as ReservationStatus)}
                         className={`text-xs px-2 py-1.5 rounded-md border cursor-pointer ${STATUS_COLORS[r.status]}`}
                       >
-                        {STATUSES.map((s) => (
+                        {statusOptions(r.status).map((s) => (
                           <option key={s} value={s}>{t(`status.${s}`)}</option>
                         ))}
                       </select>
@@ -201,7 +221,7 @@ export function ReservationsClient({
                   onChange={(e) => updateStatus(r.id, e.target.value as ReservationStatus)}
                   className={`w-full text-sm px-3 py-2 rounded-lg border cursor-pointer ${STATUS_COLORS[r.status]}`}
                 >
-                  {STATUSES.map((s) => (
+                  {statusOptions(r.status).map((s) => (
                     <option key={s} value={s}>{t(`status.${s}`)}</option>
                   ))}
                 </select>
