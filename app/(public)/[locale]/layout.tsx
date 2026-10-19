@@ -5,6 +5,7 @@ import { getAllContacts } from '@/lib/contacts'
 import { PublicHeader } from '@/components/public/PublicHeader'
 import { PublicFooter } from '@/components/public/PublicFooter'
 import { pickName, pickDescription } from '@/lib/menu/i18n'
+import '../../globals.css'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,17 +44,22 @@ export default async function PublicLocaleLayout({ children, params }: Props) {
   const { locale: urlSeg } = await params
   const locale = resolvePublicLocale(urlSeg)
 
-  // Override the root NextIntlClientProvider with URL-driven locale + messages.
+  // Root layout of the public site: locale and <html lang> come from the URL
+  // segment (/ua -> uk), never from an admin session or cookie.
   const messages = (await import(`@/messages/${locale}.json`)).default
   const contacts = await getAllContacts()
 
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      <div className="bg-cream text-ink min-h-screen flex flex-col">
-        <PublicHeader locale={locale} contacts={contacts} />
-        <main className="flex-1">{children}</main>
-        <PublicFooter locale={locale} contacts={contacts} />
-      </div>
-    </NextIntlClientProvider>
+    <html lang={locale}>
+      <body className="antialiased">
+        <NextIntlClientProvider locale={locale} messages={messages}>
+          <div className="bg-cream text-ink min-h-screen flex flex-col">
+            <PublicHeader locale={locale} contacts={contacts} />
+            <main className="flex-1">{children}</main>
+            <PublicFooter locale={locale} contacts={contacts} />
+          </div>
+        </NextIntlClientProvider>
+      </body>
+    </html>
   )
 }
