@@ -11,6 +11,17 @@ function todayStr(): string {
 
 type Locale = 'de' | 'en' | 'uk'
 
+/**
+ * Placeholder address for guests who gave no email. Only digits and a leading
+ * '+' survive, so "+43 664 123-45" becomes "+4366412345@phone.local", which
+ * passes email validation (spaces and parentheses would not).
+ * lib/email/send.ts skips every @phone.local address.
+ */
+function phonePlaceholderEmail(phone: string): string {
+  const local = phone.trim().replace(/(?!^\+)[^\d]/g, '') || 'unknown'
+  return `${local}@phone.local`
+}
+
 export function NewReservationForm() {
   const router = useRouter()
   const today = todayStr()
@@ -68,7 +79,7 @@ export function NewReservationForm() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         guestName: form.guestName,
-        guestEmail: form.guestEmail || `${form.guestPhone}@phone.local`,
+        guestEmail: form.guestEmail.trim() || phonePlaceholderEmail(form.guestPhone),
         guestPhone: form.guestPhone,
         guestCount: form.guestCount,
         startTime,
