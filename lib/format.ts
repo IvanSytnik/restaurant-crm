@@ -22,13 +22,15 @@ export function formatPrice(value: unknown, locale: Locale = 'de'): string {
 
 /**
  * Format a date range like "12. Mai – 30. Juni 2025" using locale-aware month names.
+ * Inputs are @db.Date values (UTC midnight of the calendar day), so they are
+ * formatted in UTC; the host or browser timezone would shift them by a day.
  */
 export function formatDateRange(start: Date | string, end: Date | string, locale: Locale = 'de'): string {
   const s = new Date(start)
   const e = new Date(end)
   const tag = locale === 'uk' ? 'uk-UA' : locale === 'en' ? 'en-GB' : 'de-AT'
-  const fmt = new Intl.DateTimeFormat(tag, { day: 'numeric', month: 'long', year: 'numeric' })
-  if (s.getFullYear() === e.getFullYear() && s.getMonth() === e.getMonth() && s.getDate() === e.getDate()) {
+  const fmt = new Intl.DateTimeFormat(tag, { timeZone: 'UTC', day: 'numeric', month: 'long', year: 'numeric' })
+  if (s.toISOString().slice(0, 10) === e.toISOString().slice(0, 10)) {
     return fmt.format(s)
   }
   return `${fmt.format(s)} – ${fmt.format(e)}`

@@ -76,7 +76,8 @@ export function PromotionsClient({
   }
 
   function formatDate(d: string): string {
-    return new Date(d).toLocaleDateString('de-AT', { day: '2-digit', month: '2-digit', year: 'numeric' })
+    // @db.Date value (UTC midnight): format in UTC, not the browser's timezone
+    return new Date(d).toLocaleDateString('de-AT', { timeZone: 'UTC', day: '2-digit', month: '2-digit', year: 'numeric' })
   }
 
   return (

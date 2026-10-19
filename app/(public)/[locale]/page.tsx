@@ -2,7 +2,7 @@ import { prisma } from '@/lib/prisma'
 import { getAllContacts } from '@/lib/contacts'
 import { resolvePublicLocale } from '@/lib/public/locale'
 import { getWorkingHours, computeOpenNow } from '@/lib/public/hours'
-import { getPromotionStatus } from '@/lib/promotions'
+import { isPromotionLiveNow } from '@/lib/promotions'
 
 import { Hero } from '@/components/public/Hero'
 import { ActivePromoBanner } from '@/components/public/ActivePromoBanner'
@@ -61,11 +61,8 @@ export default async function LandingPage({ params }: Props) {
 
   const heroImage = featuredImages[0] ?? null
 
-  // Pick the first ACTIVE promotion right now
-  const activePromo =
-    activePromotions
-      .map((p) => ({ p, status: getPromotionStatus(p) }))
-      .find((x) => x.status === 'ACTIVE')?.p ?? null
+  // Pick the first promotion valid right now (date, weekday and hours)
+  const activePromo = activePromotions.find((p) => isPromotionLiveNow(p)) ?? null
 
   const { isOpenNow, today } = computeOpenNow(workingHours)
 
