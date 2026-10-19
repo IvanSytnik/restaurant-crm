@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePublicSite } from '@/lib/public/revalidate'
 import { errorResponse } from '@/lib/api-route'
 
 const UpdateSchema = z.object({
@@ -29,6 +30,7 @@ export async function PATCH(
     const data = UpdateSchema.parse(await req.json())
 
     const updated = await prisma.galleryImage.update({ where: { id }, data })
+    revalidatePublicSite()
     return NextResponse.json(updated)
   } catch (error) {
     return errorResponse(error, 'PATCH /api/gallery/[id]')
@@ -47,6 +49,7 @@ export async function DELETE(
   try {
     const { id } = await params
     await prisma.galleryImage.delete({ where: { id } })
+    revalidatePublicSite()
     return NextResponse.json({ ok: true })
   } catch (error) {
     return errorResponse(error, 'DELETE /api/gallery/[id]')

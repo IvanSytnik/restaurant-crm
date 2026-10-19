@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePublicSite } from '@/lib/public/revalidate'
 import { errorResponse } from '@/lib/api-route'
 
 const CreateSchema = z.object({
@@ -57,6 +58,7 @@ export async function POST(req: NextRequest) {
       },
     })
 
+    revalidatePublicSite()
     return NextResponse.json(image, { status: 201 })
   } catch (error) {
     return errorResponse(error, 'POST /api/gallery')

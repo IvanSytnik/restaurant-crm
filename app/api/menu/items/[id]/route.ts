@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePublicSite } from '@/lib/public/revalidate'
 import { errorResponse } from '@/lib/api-route'
 import type { Prisma } from '@prisma/client'
 
@@ -89,6 +90,7 @@ export async function PATCH(
       })
     })
 
+    revalidatePublicSite()
     return NextResponse.json(result)
   } catch (error) {
     return errorResponse(error, 'PATCH /api/menu/items/[id]')
@@ -107,6 +109,7 @@ export async function DELETE(
   try {
     const { id } = await params
     await prisma.menuItem.delete({ where: { id } })
+    revalidatePublicSite()
     return NextResponse.json({ ok: true })
   } catch (error) {
     return errorResponse(error, 'DELETE /api/menu/items/[id]')

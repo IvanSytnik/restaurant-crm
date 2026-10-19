@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { z } from 'zod'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { revalidatePublicSite } from '@/lib/public/revalidate'
 
 export const dynamic = 'force-dynamic'
 
@@ -93,5 +94,6 @@ export async function PATCH(request: Request) {
   )
 
   const fresh = await prisma.workingHours.findMany({ orderBy: { dayOfWeek: 'asc' } })
+  revalidatePublicSite()
   return NextResponse.json(fresh)
 }

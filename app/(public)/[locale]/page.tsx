@@ -1,3 +1,4 @@
+import { setRequestLocale } from 'next-intl/server'
 import { prisma } from '@/lib/prisma'
 import { getAllContacts } from '@/lib/contacts'
 import { resolvePublicLocale } from '@/lib/public/locale'
@@ -14,11 +15,16 @@ import { ContactSection } from '@/components/public/ContactSection'
 
 type Props = { params: Promise<{ locale: string }> }
 
-export const dynamic = 'force-dynamic'
+// ISR: served from cache, refreshed every 5 minutes and on admin edits
+// (lib/public/revalidate.ts).
+export const revalidate = 300
 
 export default async function LandingPage({ params }: Props) {
   const { locale: urlSeg } = await params
   const locale = resolvePublicLocale(urlSeg)
+  // Lets next-intl resolve the locale without reading request headers,
+  // which would opt the page out of ISR.
+  setRequestLocale(locale)
 
   const [
     contacts,

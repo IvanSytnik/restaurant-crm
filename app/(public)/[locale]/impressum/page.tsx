@@ -1,10 +1,12 @@
 import { type Metadata } from 'next'
-import { getTranslations } from 'next-intl/server'
+import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { resolvePublicLocale } from '@/lib/public/locale'
 import { getAllContacts, renderImpressum } from '@/lib/contacts'
 import { PageHero } from '@/components/public/PageHero'
 
-export const dynamic = 'force-dynamic'
+// ISR: served from cache, refreshed every 5 minutes and on admin edits
+// (lib/public/revalidate.ts).
+export const revalidate = 300
 
 type Params = { locale: string }
 
@@ -18,6 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<Params> }):
 export default async function ImpressumPage({ params }: { params: Promise<Params> }) {
   const { locale: urlSeg } = await params
   const locale = resolvePublicLocale(urlSeg)
+  // Lets next-intl resolve the locale without reading request headers,
+  // which would opt the page out of ISR.
+  setRequestLocale(locale)
   const t = await getTranslations({ locale, namespace: 'public.impressum' })
 
   const contacts = await getAllContacts()
