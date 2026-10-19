@@ -4,6 +4,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { getBookingSettings } from '@/lib/booking/settings'
+import { withBookingLock } from '@/lib/booking/lock'
 import { formatViennaDate, formatViennaTime } from '@/lib/public/vienna-time'
 
 /**
@@ -75,22 +76,56 @@ export async function POST(req: NextRequest) {
     const windowStart = new Date(startTime.getTime() - 4 * 60 * 60 * 1000)
     const windowEnd = new Date(tableFreedAt.getTime() + 4 * 60 * 60 * 1000)
 
-    const neighbours = await prisma.reservation.findMany({
-      where: {
-        tableId: table.id,
-        status: { notIn: ['CANCELLED', 'NO_SHOW', 'COMPLETED'] },
-        startTime: { gte: windowStart, lte: windowEnd },
-      },
-      select: { startTime: true, endTime: true },
-      orderBy: { startTime: 'asc' },
+    // Conflict check and insert under the booking lock (lib/booking/lock.ts),
+    // so a web booking cannot land on this table in between.
+    const outcome = await withBookingLock(async (tx) => {
+      const neighbours = await tx.reservation.findMany({
+        where: {
+          tableId: table.id,
+          status: { notIn: ['CANCELLED', 'NO_SHOW', 'COMPLETED'] },
+          startTime: { gte: windowStart, lte: windowEnd },
+        },
+        select: { startTime: true, endTime: true },
+        orderBy: { startTime: 'asc' },
+      })
+
+      const conflict = neighbours.find((r) => {
+        const resFreedAt = new Date(r.endTime.getTime() + settings.buffer_minutes * 60_000)
+        return startTime < resFreedAt && tableFreedAt > r.startTime
+      })
+
+      if (conflict) return { ok: false as const, conflict }
+
+      // Calendar day in Vienna, materialised as UTC midnight for the @db.Date
+      // column. Never use setHours() here — that would resolve in the server's
+      // local timezone (UTC on Vercel) and misfile late-evening walk-ins.
+      const dateOnly = new Date(`${formatViennaDate(startTime)}T00:00:00.000Z`)
+
+      const reservation = await tx.reservation.create({
+        data: {
+          guestName: data.guestName?.trim() || 'Walk-in',
+          // Placeholder contacts — same @phone.local convention the admin
+          // booking form uses when a guest leaves no email (isRealGuestEmail()
+          // in lib/email/send.ts treats these as non-deliverable). '-' is the
+          // no-phone marker TableModal already renders as "no phone".
+          guestEmail: 'walkin@phone.local',
+          guestPhone: '-',
+          guestCount: data.guestCount,
+          date: dateOnly,
+          startTime,
+          endTime,
+          source: 'WALKIN',
+          status: 'SEATED',
+          tableId: table.id,
+          createdById: session.user.id,
+        },
+        include: { table: true },
+      })
+      return { ok: true as const, reservation }
     })
 
-    const conflict = neighbours.find((r) => {
-      const resFreedAt = new Date(r.endTime.getTime() + settings.buffer_minutes * 60_000)
-      return startTime < resFreedAt && tableFreedAt > r.startTime
-    })
-
-    if (conflict) {
+    if (!outcome.ok) {
+      const { conflict } = outcome
       const body =
         conflict.startTime <= startTime
           ? {
@@ -109,33 +144,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(body, { status: 409 })
     }
 
-    // Calendar day in Vienna, materialised as UTC midnight for the @db.Date
-    // column. Never use setHours() here — that would resolve in the server's
-    // local timezone (UTC on Vercel) and misfile late-evening walk-ins.
-    const dateOnly = new Date(`${formatViennaDate(startTime)}T00:00:00.000Z`)
-
-    const reservation = await prisma.reservation.create({
-      data: {
-        guestName: data.guestName?.trim() || 'Walk-in',
-        // Placeholder contacts — same @phone.local convention the admin
-        // booking form uses when a guest leaves no email (isRealGuestEmail()
-        // in lib/email/send.ts treats these as non-deliverable). '-' is the
-        // no-phone marker TableModal already renders as "no phone".
-        guestEmail: 'walkin@phone.local',
-        guestPhone: '-',
-        guestCount: data.guestCount,
-        date: dateOnly,
-        startTime,
-        endTime,
-        source: 'WALKIN',
-        status: 'SEATED',
-        tableId: table.id,
-        createdById: session.user.id,
-      },
-      include: { table: true },
-    })
-
-    return NextResponse.json(reservation, { status: 201 })
+    return NextResponse.json(outcome.reservation, { status: 201 })
   } catch (error) {
     if (error instanceof z.ZodError) {
       return NextResponse.json(

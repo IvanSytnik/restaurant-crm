@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
 import { findBestTable } from '@/lib/booking/table-allocator'
+import { withBookingLock } from '@/lib/booking/lock'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { sendConfirmation } from '@/lib/email/send'
 
@@ -55,42 +55,47 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const allocation = await findBestTable({
-      guestCount: data.guestCount,
-      startTime,
-      settings,
-    })
-
-    if (!allocation.success) {
-      return NextResponse.json(
-        { error: 'На выбранное время нет свободных столов', reason: allocation.reason },
-        { status: 409 }
-      )
-    }
-
     const dateOnly = new Date(startTime)
     dateOnly.setHours(0, 0, 0, 0)
 
-    const reservation = await prisma.reservation.create({
-      data: {
-        guestName: data.guestName,
-        guestEmail: data.guestEmail,
-        guestPhone: data.guestPhone,
-        guestCount: data.guestCount,
-        comment: data.comment,
-        locale: data.locale,
-        date: dateOnly,
-        startTime,
-        endTime: allocation.endTime,
-        source: data.source,
-        status: 'CONFIRMED',
-        tableId: allocation.table.id,
-        // Authorship comes from the session only — the schema above does not
-        // accept createdById, so a value in the request body is discarded.
-        createdById: session.user.id,
-      },
-      include: { table: true },
+    // Same lock as the public endpoint: allocation and insert are atomic.
+    const outcome = await withBookingLock(async (tx) => {
+      const allocation = await findBestTable(
+        { guestCount: data.guestCount, startTime, settings },
+        tx
+      )
+      if (!allocation.success) return allocation
+
+      const reservation = await tx.reservation.create({
+        data: {
+          guestName: data.guestName,
+          guestEmail: data.guestEmail,
+          guestPhone: data.guestPhone,
+          guestCount: data.guestCount,
+          comment: data.comment,
+          locale: data.locale,
+          date: dateOnly,
+          startTime,
+          endTime: allocation.endTime,
+          source: data.source,
+          status: 'CONFIRMED',
+          tableId: allocation.table.id,
+          // Authorship comes from the session only — the schema above does not
+          // accept createdById, so a value in the request body is discarded.
+          createdById: session.user.id,
+        },
+        include: { table: true },
+      })
+      return { success: true as const, reservation }
     })
+
+    if (!outcome.success) {
+      return NextResponse.json(
+        { error: 'На выбранное время нет свободных столов', reason: outcome.reason },
+        { status: 409 }
+      )
+    }
+    const { reservation } = outcome
 
     // Fire-and-forget — confirmation email in background.
     // Skipped automatically for WALKIN, fake @phone.local emails, etc.

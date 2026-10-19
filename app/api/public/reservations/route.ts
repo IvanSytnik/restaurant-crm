@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { z } from 'zod'
-import { prisma } from '@/lib/prisma'
 import { findBestTable } from '@/lib/booking/table-allocator'
+import { withBookingLock } from '@/lib/booking/lock'
 import { getBookingSettings } from '@/lib/booking/settings'
 import { rateLimit, getClientIp } from '@/lib/rate-limit'
 import { sendConfirmation } from '@/lib/email/send'
@@ -96,38 +96,44 @@ export async function POST(req: NextRequest) {
       )
     }
 
-    const allocation = await findBestTable({
-      guestCount: data.guestCount,
-      startTime,
-      settings,
-    })
-
-    if (!allocation.success) {
-      return NextResponse.json(
-        { error: 'NO_TABLE_AVAILABLE', reason: allocation.reason },
-        { status: 409 }
-      )
-    }
-
     const dateOnly = new Date(startTime)
     dateOnly.setHours(0, 0, 0, 0)
 
-    const reservation = await prisma.reservation.create({
-      data: {
-        guestName: data.guestName,
-        guestEmail: data.guestEmail,
-        guestPhone: data.guestPhone,
-        guestCount: data.guestCount,
-        comment: data.comment,
-        locale: data.locale,
-        date: dateOnly,
-        startTime,
-        endTime: allocation.endTime,
-        source: 'WEBSITE',
-        status: 'CONFIRMED',
-        tableId: allocation.table.id,
-      },
+    // Allocation and insert under one lock, so a concurrent request cannot
+    // take the same table between the conflict check and the write.
+    const outcome = await withBookingLock(async (tx) => {
+      const allocation = await findBestTable(
+        { guestCount: data.guestCount, startTime, settings },
+        tx
+      )
+      if (!allocation.success) return allocation
+
+      const reservation = await tx.reservation.create({
+        data: {
+          guestName: data.guestName,
+          guestEmail: data.guestEmail,
+          guestPhone: data.guestPhone,
+          guestCount: data.guestCount,
+          comment: data.comment,
+          locale: data.locale,
+          date: dateOnly,
+          startTime,
+          endTime: allocation.endTime,
+          source: 'WEBSITE',
+          status: 'CONFIRMED',
+          tableId: allocation.table.id,
+        },
+      })
+      return { success: true as const, reservation }
     })
+
+    if (!outcome.success) {
+      return NextResponse.json(
+        { error: 'NO_TABLE_AVAILABLE', reason: outcome.reason },
+        { status: 409 }
+      )
+    }
+    const { reservation } = outcome
 
     // Fire-and-forget confirmation email.
     // sendConfirmation already handles known failure modes gracefully

@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import type { Db } from './lock'
 import { getTableOccupiedDuration } from './duration'
 import type { BookingSettings } from './settings'
 import type { Table } from '@prisma/client'
@@ -22,8 +23,13 @@ export interface AllocationFailure {
   reason: 'NO_SUITABLE_TABLE' | 'ALL_TABLES_OCCUPIED'
 }
 
+/**
+ * Pass the transaction client from withBookingLock() when the result is going
+ * to be written; the default client is only fine for read-only previews.
+ */
 export async function findBestTable(
-  input: AllocationInput
+  input: AllocationInput,
+  db: Db = prisma
 ): Promise<AllocationResult | AllocationFailure> {
   const { guestCount, startTime, settings, excludeReservationId } = input
 
@@ -32,7 +38,7 @@ export async function findBestTable(
   const guestMinutes = occupiedMinutes - settings.buffer_minutes
   const endTime = new Date(startTime.getTime() + guestMinutes * 60_000)
 
-  const suitableTables = await prisma.table.findMany({
+  const suitableTables = await db.table.findMany({
     where: {
       isActive: true,
       capacity: { gte: guestCount },
@@ -46,7 +52,7 @@ export async function findBestTable(
   }
 
   for (const table of suitableTables) {
-    const hasConflict = await checkTableConflict({
+    const hasConflict = await checkTableConflict(db, {
       tableId: table.id,
       startTime,
       tableFreedAt,
@@ -62,7 +68,7 @@ export async function findBestTable(
   return { success: false, reason: 'ALL_TABLES_OCCUPIED' }
 }
 
-async function checkTableConflict({
+async function checkTableConflict(db: Db, {
   tableId,
   startTime,
   tableFreedAt,
@@ -79,7 +85,7 @@ async function checkTableConflict({
   const windowStart = new Date(startTime.getTime() - 4 * 60 * 60 * 1000)
   const windowEnd = new Date(tableFreedAt.getTime() + 4 * 60 * 60 * 1000)
 
-  const reservations = await prisma.reservation.findMany({
+  const reservations = await db.reservation.findMany({
     where: {
       tableId,
       status: { notIn: ['CANCELLED', 'NO_SHOW'] },
