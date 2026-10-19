@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
 import type { Reservation, Table } from '@prisma/client'
@@ -23,6 +23,17 @@ const STATUS_STYLES: Record<TableStatus, { bg: string; border: string; text: str
   INACTIVE: { bg: 'bg-gray-100',   border: 'border-gray-300',   text: 'text-gray-600' },
 }
 
+// Table tiles scale with the canvas: 8.8% of its width (88px on a ~1000px
+// canvas), never below a 44px tap target. MIN_CANVAS_WIDTH is the width at
+// which a tile reaches that floor; narrower screens scroll horizontally.
+const TILE_RATIO = 0.088
+const TILE_MAX = 88
+const TILE_MIN = 44
+const MIN_CANVAS_WIDTH = Math.ceil(TILE_MIN / TILE_RATIO) // 500px
+// Below this tile size only the table name fits; status stays in the colour
+// and the aria-label.
+const COMPACT_BELOW = 72
+
 export function FloorPlanClient() {
   const [tables, setTables] = useState<TableWithStatus[]>([])
   const [loading, setLoading] = useState(true)
@@ -31,6 +42,33 @@ export function FloorPlanClient() {
   const t = useTranslations('floorPlan')
   const tCommon = useTranslations('common')
   const tModal = useTranslations('floorPlan.modal')
+
+  const canvasRef = useRef<HTMLDivElement>(null)
+  const scrollerRef = useRef<HTMLDivElement>(null)
+  const [tile, setTile] = useState(TILE_MAX)
+  const [moreRight, setMoreRight] = useState(false)
+
+  const updateScrollHint = useCallback(() => {
+    const el = scrollerRef.current
+    if (!el) return
+    setMoreRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 1)
+  }, [])
+
+  // Size tiles from the canvas width and show the edge hint while there is
+  // more plan to scroll to.
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width
+      setTile(Math.round(Math.min(TILE_MAX, Math.max(TILE_MIN, width * TILE_RATIO))))
+      updateScrollHint()
+    })
+    observer.observe(canvas)
+    return () => observer.disconnect()
+  }, [loading, tables.length, updateScrollHint])
+
+  const compact = tile < COMPACT_BELOW
 
   const fetchData = useCallback(async () => {
     try {
@@ -103,40 +141,60 @@ export function FloorPlanClient() {
             </Link>
           </div>
         ) : (
-          <div
-            className="relative bg-gray-50 rounded-lg border border-dashed border-gray-200 overflow-hidden"
-            style={{ aspectRatio: '16 / 9', minHeight: '400px' }}
-          >
-            {tables.map((tb) => {
-              const style = STATUS_STYLES[tb.status]
-              const statusLabel = t(`status.${tb.status}`)
-              return (
-                <button
-                  key={tb.id}
-                  onClick={() => setSelectedTable(tb)}
-                  // Colour alone does not tell a screen-reader user the status
-                  aria-label={`${tModal('table')} ${tb.name}, ${tb.minCapacity}–${tb.capacity}: ${statusLabel}`}
-                  className={`
-                    absolute -translate-x-1/2 -translate-y-1/2
-                    flex flex-col items-center justify-center
-                    rounded-2xl border-2 transition-all hover:scale-110 hover:shadow-lg
-                    focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2
-                    ${style.bg} ${style.border} ${style.text}
-                  `}
-                  style={{ left: `${tb.posX}%`, top: `${tb.posY}%`, width: '88px', height: '88px' }}
-                >
-                  <span className="font-bold text-lg leading-none">{tb.name}</span>
-                  <span className="text-[11px] mt-1 opacity-80">
-                    {tb.minCapacity}–{tb.capacity}
-                  </span>
-                  {tb.status !== 'INACTIVE' && tb.status !== 'FREE' && (
-                    <span className="text-[10px] mt-1 font-medium uppercase tracking-wide">
-                      {statusLabel}
-                    </span>
-                  )}
-                </button>
-              )
-            })}
+          <div className="relative">
+            <div
+              ref={scrollerRef}
+              onScroll={updateScrollHint}
+              className="overflow-x-auto rounded-lg border border-dashed border-gray-200 bg-gray-50"
+            >
+              <div
+                ref={canvasRef}
+                className="relative"
+                // Full width at a fixed 16:9 ratio; never narrower than the width
+                // that keeps tiles at the 44px minimum (then the scroller kicks in).
+                style={{ aspectRatio: '16 / 9', minWidth: `${MIN_CANVAS_WIDTH}px` }}
+              >
+                {tables.map((tb) => {
+                  const style = STATUS_STYLES[tb.status]
+                  const statusLabel = t(`status.${tb.status}`)
+                  return (
+                    <button
+                      key={tb.id}
+                      onClick={() => setSelectedTable(tb)}
+                      // Colour alone does not tell a screen-reader user the status
+                      aria-label={`${tModal('table')} ${tb.name}, ${tb.minCapacity}–${tb.capacity}: ${statusLabel}`}
+                      className={`
+                        absolute -translate-x-1/2 -translate-y-1/2
+                        flex flex-col items-center justify-center
+                        ${compact ? 'rounded-xl' : 'rounded-2xl'} border-2 transition-all hover:scale-110 hover:shadow-lg
+                        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2
+                        ${style.bg} ${style.border} ${style.text}
+                      `}
+                      style={{ left: `${tb.posX}%`, top: `${tb.posY}%`, width: tile, height: tile }}
+                    >
+                      <span className={`font-bold leading-none ${compact ? 'text-sm' : 'text-lg'}`}>{tb.name}</span>
+                      {!compact && (
+                        <span className="text-[11px] mt-1 opacity-80">
+                          {tb.minCapacity}–{tb.capacity}
+                        </span>
+                      )}
+                      {!compact && tb.status !== 'INACTIVE' && tb.status !== 'FREE' && (
+                        <span className="text-[10px] mt-1 font-medium uppercase tracking-wide">
+                          {statusLabel}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+            {moreRight && (
+              // Edge fade: tells touch users the plan continues to the right.
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-y-0 right-0 w-10 rounded-r-lg bg-gradient-to-l from-gray-300/70 to-transparent"
+              />
+            )}
           </div>
         )}
 
