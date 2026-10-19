@@ -128,11 +128,14 @@ export function AdminShell({
   role,
   userName,
   locale,
+  restaurantName,
   children,
 }: {
   role: UserRole
   userName: string
   locale: Locale
+  /** From settings (Contact name_*), already localized; falls back to "Restaurant CRM". */
+  restaurantName: string
   children: React.ReactNode
 }) {
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -160,7 +163,7 @@ export function AdminShell({
             <line x1="4" y1="18" x2="20" y2="18" />
           </svg>
         </button>
-        <p className="font-semibold text-gray-900 text-sm">Restaurant CRM</p>
+        <p className="font-semibold text-gray-900 text-sm truncate max-w-[60vw]">{restaurantName}</p>
         <div className="w-10" />
       </header>
 
@@ -183,7 +186,7 @@ export function AdminShell({
       >
         <div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
           <div>
-            <p className="font-semibold text-gray-900 text-[15px]">Restaurant CRM</p>
+            <p className="font-semibold text-gray-900 text-[15px] truncate">{restaurantName}</p>
             <p className="text-xs text-gray-500 mt-0.5 truncate max-w-[180px]">
               {userName} · {roleLabel}
             </p>
