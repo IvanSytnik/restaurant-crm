@@ -3,7 +3,7 @@
  * seeded with `npm run seed:demo`.
  *
  *   npm run build && npm start                       # in one terminal
- *   npx tsx --env-file-if-exists=.env scripts/screenshots.ts [--gif-only | --no-gif]
+ *   npx tsx --env-file-if-exists=.env scripts/screenshots.ts [--gif-only | --no-gif] [--admin-only]
  *
  * For a realistic evening service at any real time of day, run the seed, the
  * server and this script with the same DEMO_CLOCK (see scripts/demo-clock.cjs):
@@ -226,7 +226,7 @@ async function main() {
     if (!process.argv.includes('--gif-only')) {
       for (const device of ['desktop', 'mobile'] as const) {
         await adminShots(browser, device)
-        await publicShots(browser, device)
+        if (!process.argv.includes('--admin-only')) await publicShots(browser, device)
       }
     }
     if (!process.argv.includes('--no-gif')) await demoGif(browser)
