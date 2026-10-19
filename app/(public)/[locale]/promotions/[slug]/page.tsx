@@ -5,7 +5,7 @@ import { getTranslations, setRequestLocale } from 'next-intl/server'
 import { prisma } from '@/lib/prisma'
 import { resolvePublicLocale, pathForLocale } from '@/lib/public/locale'
 import { pickTitle, pickDescription } from '@/lib/menu/i18n'
-import { getPromotionStatus } from '@/lib/promotions'
+import { getPromotionStatus, isPromotionLiveNow } from '@/lib/promotions'
 import { formatDateRange } from '@/lib/format'
 import { PromotionStatusBadge } from '@/components/public/PromotionStatusBadge'
 
@@ -49,6 +49,7 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
   if (!promo || promo.isArchived) notFound()
 
   const status = getPromotionStatus(promo)
+  const live = status === 'ACTIVE' && isPromotionLiveNow(promo)
   const title = pickTitle({ titleDE: promo.titleDE, titleEN: promo.titleEN, titleUK: promo.titleUK }, locale)
   const description = pickDescription(
     {
@@ -77,6 +78,8 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
             <div className="max-w-5xl mx-auto">
               <PromotionStatusBadge
                 status={status}
+                live={live}
+                labelLive={tStatus('LIVE')}
                 labelActive={tStatus('ACTIVE')}
                 labelScheduled={tStatus('SCHEDULED')}
                 labelExpired={tStatus('EXPIRED')}
@@ -92,6 +95,8 @@ export default async function PromotionDetailPage({ params }: { params: Promise<
           <div className="max-w-5xl mx-auto px-6 lg:px-12">
             <PromotionStatusBadge
               status={status}
+              live={live}
+              labelLive={tStatus('LIVE')}
               labelActive={tStatus('ACTIVE')}
               labelScheduled={tStatus('SCHEDULED')}
               labelExpired={tStatus('EXPIRED')}

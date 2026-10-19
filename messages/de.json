@@ -686,7 +686,8 @@
     "hours": "Uhrzeit",
     "backToList": "Zurück zur Übersicht",
     "status": {
-      "ACTIVE": "Läuft jetzt",
+      "LIVE": "Jetzt verfügbar",
+      "ACTIVE": "Aktuelles Angebot",
       "SCHEDULED": "Geplant",
       "EXPIRED": "Abgelaufen"
     },

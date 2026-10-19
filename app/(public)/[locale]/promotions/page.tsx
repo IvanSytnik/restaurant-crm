@@ -45,6 +45,7 @@ export default async function PromotionsPage({ params }: { params: Promise<Param
   })
 
   const labels = {
+    live: tStatus('LIVE'),
     active: tStatus('ACTIVE'),
     scheduled: tStatus('SCHEDULED'),
     expired: tStatus('EXPIRED'),
