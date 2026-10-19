@@ -5,6 +5,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/prisma'
 import type { UserRole } from '@prisma/client'
+import { rateLimit, getClientIpFromRecord } from '@/lib/rate-limit'
 
 // How long a role/isActive lookup is reused within one server instance.
 const ACCOUNT_RECHECK_MS = 60_000
@@ -52,13 +53,22 @@ export const authOptions: NextAuthOptions = {
         email: { label: 'Email', type: 'email' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
+      async authorize(credentials, req) {
         if (!credentials?.email || !credentials?.password) {
           return null
         }
+        const email = credentials.email.toLowerCase()
+
+        // Brute-force brake (best-effort, per instance like the public
+        // endpoints): 10 attempts per account+IP and 30 per IP in 15 minutes.
+        // The thrown message reaches the login page as `result.error`.
+        const ip = getClientIpFromRecord(req?.headers)
+        const perAccount = rateLimit(`login:${ip}:${email}`, 10, 15 * 60_000)
+        const perIp = rateLimit(`login:${ip}`, 30, 15 * 60_000)
+        if (!perAccount.allowed || !perIp.allowed) throw new Error('TOO_MANY_REQUESTS')
 
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase() },
+          where: { email },
         })
 
         if (!user || !user.password || !user.isActive) {

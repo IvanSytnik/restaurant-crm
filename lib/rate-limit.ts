@@ -49,12 +49,28 @@ export function rateLimit(
 }
 
 /**
- * Get the client IP from request headers. Works on Vercel via x-forwarded-for.
+ * Get the client IP from request headers. On Vercel the platform sets
+ * x-forwarded-for itself, so the first entry is the real client. Behind a
+ * proxy that passes the header through unchanged it would be spoofable.
  */
 export function getClientIp(req: Request): string {
-  const fwd = req.headers.get('x-forwarded-for')
+  return clientIpFromHeaders((name) => req.headers.get(name))
+}
+
+/** Same as getClientIp, for NextAuth's plain-object request headers. */
+export function getClientIpFromRecord(
+  headers: Record<string, string | string[] | undefined> | undefined
+): string {
+  return clientIpFromHeaders((name) => {
+    const v = headers?.[name]
+    return Array.isArray(v) ? v[0] : (v ?? null)
+  })
+}
+
+function clientIpFromHeaders(get: (name: string) => string | null): string {
+  const fwd = get('x-forwarded-for')
   if (fwd) return fwd.split(',')[0].trim()
-  const real = req.headers.get('x-real-ip')
+  const real = get('x-real-ip')
   if (real) return real.trim()
   return 'unknown'
 }

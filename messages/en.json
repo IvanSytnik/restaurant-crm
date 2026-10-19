@@ -27,7 +27,8 @@
     "password": "Password",
     "submit": "Sign in",
     "loading": "Signing in...",
-    "error": "Invalid email or password"
+    "error": "Invalid email or password",
+    "tooMany": "Too many sign-in attempts. Please try again in 15 minutes."
   },
 
   "sidebar": {

@@ -24,6 +24,7 @@ export function ProfileClient({ initial }: { initial: Initial }) {
   const t = useTranslations('profile')
   const tUsers = useTranslations('users')
   const tUser = useTranslations('user')
+  const tApi = useTranslations('apiErrors')
   const router = useRouter()
 
   const [name, setName] = useState(initial.name)
@@ -81,7 +82,13 @@ export function ProfileClient({ initial }: { initial: Initial }) {
     const data = await res.json().catch(() => ({}))
     if (!res.ok) {
       const key = errorMessages[data.error]
-      setPwError(key ? t(key) : tUsers('errors.updateGeneric'))
+      setPwError(
+        key
+          ? t(key)
+          : data.error === 'TOO_MANY_REQUESTS'
+            ? tApi('TOO_MANY_REQUESTS')
+            : tUsers('errors.updateGeneric')
+      )
       setBusy(false)
       return
     }

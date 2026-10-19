@@ -27,7 +27,8 @@
     "password": "Passwort",
     "submit": "Anmelden",
     "loading": "Anmelden...",
-    "error": "Ungültige E-Mail oder Passwort"
+    "error": "Ungültige E-Mail oder Passwort",
+    "tooMany": "Zu viele Anmeldeversuche. Bitte in 15 Minuten erneut versuchen."
   },
 
   "sidebar": {

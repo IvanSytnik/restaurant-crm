@@ -4,6 +4,7 @@ import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
+import { rateLimit } from '@/lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,6 +27,15 @@ export async function POST(request: Request) {
   const parsed = schema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ error: 'VALIDATION_ERROR', details: parsed.error.flatten() }, { status: 400 })
+  }
+
+  // Limits guessing the current password with a stolen session.
+  const rl = rateLimit(`password-change:${session.user.id}`, 5, 15 * 60_000)
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: 'TOO_MANY_REQUESTS' },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfterSec) } }
+    )
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.user.id } })

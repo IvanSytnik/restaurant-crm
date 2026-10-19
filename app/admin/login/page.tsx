@@ -37,7 +37,7 @@ function LoginForm() {
     setLoading(false)
 
     if (result?.error) {
-      setError(t('error'))
+      setError(result.error === 'TOO_MANY_REQUESTS' ? t('tooMany') : t('error'))
       return
     }
 
