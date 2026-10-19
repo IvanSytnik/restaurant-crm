@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { z } from 'zod'
-import { authOptions } from '@/lib/auth'
+import { authOptions, forgetAccount } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { isLastActiveOwner } from '@/lib/users'
 
@@ -99,6 +99,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
       createdAt: true,
     },
   })
+  forgetAccount(id)
 
   return NextResponse.json(updated)
 }
