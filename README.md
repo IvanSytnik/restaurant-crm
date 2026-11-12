@@ -2,7 +2,12 @@
 
 Self-hosted reservations, a live floor plan, a trilingual menu and the public website for a single restaurant, in one Next.js app.
 
-[![CI](https://github.com/IvanSytnik/restaurant-crm/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/IvanSytnik/restaurant-crm/actions/workflows/ci.yml)
+> **License:** the code is published for review only, not for reuse. All rights reserved, see [LICENSE](LICENSE).
+
+**Contents:** [Why](#why) · [How booking works](#how-booking-works) · [Guarantees](#guarantees) · [Features](#features) · [Screenshots](#screenshots) · [Architecture](#architecture) · [Data model](#data-model) · [Tech stack](#tech-stack) · [Run locally](#run-locally) · [Tests and CI](#tests-and-ci) · [Deployment](#deployment) · [Security](#security) · [Limitations](#limitations) · [Roadmap and changes](#roadmap-and-changes) · [License and contact](#license-and-contact)
+
+[![CI](https://img.shields.io/github/actions/workflow/status/IvanSytnik/restaurant-crm/ci.yml?branch=main&label=CI)](https://github.com/IvanSytnik/restaurant-crm/actions/workflows/ci.yml)
+[![License: view-only](https://img.shields.io/badge/license-view--only-lightgrey)](LICENSE)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
 ![Next.js](https://img.shields.io/badge/Next.js-15-000000)
 ![Prisma](https://img.shields.io/badge/Prisma-5.22-2d3748)
@@ -67,13 +72,13 @@ Enforced in code and covered by tests (`npm test`):
 
 | Guarantee | Where | Tests |
 |---|---|---|
-| No two blocking reservations overlap on a table (buffer included; touching slots allowed) | `lib/booking/table-allocator.ts`, `lib/booking/lock.ts` | overlap and buffer edges, inactive tables, min capacity, long reservations; concurrency test against a real database (opt-in, see below) |
-| Smallest fitting table is chosen | `selectBestTable()` | best fit, tie by name, no table / all occupied |
-| Dates and times follow Europe/Vienna, also on DST days | `lib/public/vienna-time.ts` | run with the host zone set to New York; last Sundays of March and October |
-| Public bookings only inside opening hours, on the 15-min grid | `lib/booking/slots.ts` | open/last-booking bounds, off-grid, closed days, DST days |
-| Content falls back to German when a translation is missing | `lib/menu/i18n.ts` | names, descriptions, variants, titles |
-| A promotion is "live" only on its weekdays and hours (Vienna) | `lib/promotions.ts` | date bounds, weekday, time window, serialized dates |
-| The three message files have the same keys and placeholders | `scripts/check-i18n.ts` | runs in CI |
+| No two blocking reservations overlap on a table (buffer included; touching slots allowed) | `lib/booking/table-allocator.ts`, `lib/booking/lock.ts` | overlap and buffer edges, inactive tables, min capacity, long reservations: [`tests/booking/table-allocator.test.ts`](tests/booking/table-allocator.test.ts); advisory lock vs. concurrent double booking against a real database (opt-in, see below): [`tests/integration/double-booking.test.ts`](tests/integration/double-booking.test.ts) |
+| Smallest fitting table is chosen | `selectBestTable()` | best fit, tie by name, no table / all occupied: [`tests/booking/table-allocator.test.ts`](tests/booking/table-allocator.test.ts) |
+| Dates and times follow Europe/Vienna, also on DST days | `lib/public/vienna-time.ts` | run with the host zone set to New York; last Sundays of March and October: [`tests/vienna-time.test.ts`](tests/vienna-time.test.ts) |
+| Public bookings only inside opening hours, on the 15-min grid | `lib/booking/slots.ts` | open/last-booking bounds, off-grid, closed days, DST days: [`tests/vienna-time.test.ts`](tests/vienna-time.test.ts) (`checkPublicSlot()`) |
+| Content falls back to German when a translation is missing | `lib/menu/i18n.ts` | names, descriptions, variants, titles: [`tests/menu-i18n.test.ts`](tests/menu-i18n.test.ts) |
+| A promotion is "live" only on its weekdays and hours (Vienna) | `lib/promotions.ts` | date bounds, weekday, time window, serialized dates: [`tests/promotions.test.ts`](tests/promotions.test.ts) |
+| The three message files have the same keys and placeholders | `scripts/check-i18n.ts` | runs in CI: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (step "i18n parity") |
 
 Enforced in code, verified manually (no automated tests yet): role-based access on every API route, immediate loss of access for deactivated users, rate limits.
 
@@ -321,6 +326,8 @@ Vercel, from `main`:
 Screenshots and the GIF are regenerated with `scripts/screenshots.ts` against a seeded instance; `DEMO_CLOCK` (see the script header) pins the demo to an evening service at any real time of day.
 
 ## Security
+
+To report a vulnerability, see [SECURITY.md](SECURITY.md).
 
 - Every API route checks the session and role itself; middleware only redirects pages.
 - Role and active flag are re-read from the database on every session read (cached ≤ 60 s per instance): deactivating a user ends their access. Sessions last 12 hours.

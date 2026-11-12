@@ -64,7 +64,7 @@ no `dangerouslySetInnerHTML` anywhere; no `.DS_Store` is tracked.
 
 ### H3. Admin booking without email fails for any phone number containing spaces or parentheses
 - **Where:** `components/admin/NewReservationForm.tsx:71`, `app/api/reservations/route.ts:20`
-- **What:** the form sends `` `${form.guestPhone}@phone.local` `` as the email. `+43 664 1234567@phone.local`
+- **What:** the form sends `` `${form.guestPhone}@phone.local` `` as the email. `+43 316 000 000@phone.local`
   fails `z.string().email()` (verified), so the API returns 422 "Некорректные данные".
 - **Why:** phone bookings are the main admin flow, and Austrian numbers are normally typed with spaces.
 - **Fix:** strip non-digits/`+` when building the placeholder (or let the API accept an empty email and fill

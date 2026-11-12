@@ -507,7 +507,7 @@
       "impressumTitle": "Impressum — структуровані поля",
       "impressumHint": "Якщо заповнити ці поля, Impressum згенерується автоматично. Можна також вказати власний текст нижче.",
       "legalCompanyName": "Юридична назва",
-      "legalCompanyNameHint": "Напр. «Sytnik Gastro GmbH» або «Ivan Sytnik e.U.»",
+      "legalCompanyNameHint": "Напр. «Muster Gastro GmbH» або «Max Mustermann e.U.»",
       "legalOwner": "Власник / Geschäftsführer",
       "legalAddress": "Юридична адреса",
       "legalFirmenbuch": "Firmenbuchnummer",

@@ -78,15 +78,15 @@ export function LegalTab({ initial }: { initial: ContactsMap }) {
         </div>
 
         <Field label={t('legalCompanyName')} hint={t('legalCompanyNameHint')}>
-          <input className={inputClass} value={values.legal_company_name ?? ''} onChange={(e) => set('legal_company_name', e.target.value)} placeholder="Sytnik Gastro GmbH" />
+          <input className={inputClass} value={values.legal_company_name ?? ''} onChange={(e) => set('legal_company_name', e.target.value)} placeholder="Muster Gastro GmbH" />
         </Field>
 
         <Field label={t('legalOwner')}>
-          <input className={inputClass} value={values.legal_owner_name ?? ''} onChange={(e) => set('legal_owner_name', e.target.value)} placeholder="Ivan Sytnik" />
+          <input className={inputClass} value={values.legal_owner_name ?? ''} onChange={(e) => set('legal_owner_name', e.target.value)} placeholder="Max Mustermann" />
         </Field>
 
         <Field label={t('legalAddress')}>
-          <input className={inputClass} value={values.legal_address ?? ''} onChange={(e) => set('legal_address', e.target.value)} placeholder="Mariahilferstr. 100, 1070 Wien" />
+          <input className={inputClass} value={values.legal_address ?? ''} onChange={(e) => set('legal_address', e.target.value)} placeholder="Musterstraße 1, 1010 Wien" />
         </Field>
 
         <div className="grid gap-4 sm:grid-cols-2">
@@ -146,7 +146,7 @@ export function LegalTab({ initial }: { initial: ContactsMap }) {
             <input className={inputClass} value={values.dpo_name ?? ''} onChange={(e) => set('dpo_name', e.target.value)} />
           </Field>
           <Field label={t('dpoContact')} hint={t('dpoContactHint')}>
-            <input type="email" className={inputClass} value={values.dpo_contact ?? ''} onChange={(e) => set('dpo_contact', e.target.value)} placeholder="datenschutz@restaurant.at" />
+            <input type="email" className={inputClass} value={values.dpo_contact ?? ''} onChange={(e) => set('dpo_contact', e.target.value)} placeholder="datenschutz@example.com" />
           </Field>
         </div>
 

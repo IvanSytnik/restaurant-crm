@@ -507,7 +507,7 @@
       "impressumTitle": "Impressum — structured fields",
       "impressumHint": "If these fields are filled, the Impressum is auto-generated. You can also provide a custom text below.",
       "legalCompanyName": "Legal name",
-      "legalCompanyNameHint": "e.g. «Sytnik Gastro GmbH» or «Ivan Sytnik e.U.»",
+      "legalCompanyNameHint": "e.g. «Muster Gastro GmbH» or «Max Mustermann e.U.»",
       "legalOwner": "Owner / Managing director",
       "legalAddress": "Legal address",
       "legalFirmenbuch": "Firmenbuchnummer",

@@ -1,0 +1,76 @@
+name: Bug report
+description: Something in the code does not work as documented.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Security problems: please do **not** report them here, see [SECURITY.md](https://github.com/IvanSytnik/restaurant-crm/blob/main/SECURITY.md).
+        Do not paste real guest data (names, phone numbers, emails) into this issue.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Booking / availability / table allocation
+        - Floor plan
+        - Reservations list (admin)
+        - Menu, promotions or gallery
+        - Settings or users
+        - Emails
+        - Public website
+        - i18n (DE / EN / UK)
+        - Tooling, tests or CI
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected and what happened instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. npm run seed:demo
+        2. Sign in as STAFF
+        3. ...
+    validations:
+      required: true
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit
+      description: Output of `git rev-parse --short HEAD`.
+
+  - type: dropdown
+    id: role
+    attributes:
+      label: Signed in as
+      options:
+        - Not signed in (public site)
+        - STAFF
+        - MANAGER
+        - OWNER
+
+  - type: input
+    id: locale
+    attributes:
+      label: Language and time zone
+      description: Interface language (de / en / uk) and the time zone of your browser and server, if the bug involves dates or times.
+      placeholder: "en, browser Europe/Vienna, server UTC"
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs or error codes
+      description: Server log lines or the `error` code returned by the API. Remove secrets and personal data.
+      render: text

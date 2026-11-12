@@ -508,7 +508,7 @@
       "impressumTitle": "Impressum — strukturierte Felder",
       "impressumHint": "Wenn diese Felder ausgefüllt sind, wird das Impressum automatisch generiert. Sie können unten auch einen eigenen Text angeben.",
       "legalCompanyName": "Juristischer Name",
-      "legalCompanyNameHint": "z.B. «Sytnik Gastro GmbH» oder «Ivan Sytnik e.U.»",
+      "legalCompanyNameHint": "z.B. «Muster Gastro GmbH» oder «Max Mustermann e.U.»",
       "legalOwner": "Inhaber / Geschäftsführer",
       "legalAddress": "Juristische Adresse",
       "legalFirmenbuch": "Firmenbuchnummer",
