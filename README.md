@@ -6,7 +6,8 @@ Self-hosted reservations, a live floor plan, a trilingual menu and the public we
 
 **Contents:** [Why](#why) · [How booking works](#how-booking-works) · [Guarantees](#guarantees) · [Features](#features) · [Screenshots](#screenshots) · [Architecture](#architecture) · [Data model](#data-model) · [Tech stack](#tech-stack) · [Run locally](#run-locally) · [Tests and CI](#tests-and-ci) · [Deployment](#deployment) · [Security](#security) · [Limitations](#limitations) · [Roadmap and changes](#roadmap-and-changes) · [License and contact](#license-and-contact)
 
-[![CI](https://github.com/IvanSytnik/restaurant-crm/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/IvanSytnik/restaurant-crm/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/IvanSytnik/restaurant-crm/ci.yml?branch=main&label=CI)](https://github.com/IvanSytnik/restaurant-crm/actions/workflows/ci.yml)
+[![License: view-only](https://img.shields.io/badge/license-view--only-lightgrey)](LICENSE)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
 ![Next.js](https://img.shields.io/badge/Next.js-15-000000)
 ![Prisma](https://img.shields.io/badge/Prisma-5.22-2d3748)
