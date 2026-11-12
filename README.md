@@ -2,6 +2,10 @@
 
 Self-hosted reservations, a live floor plan, a trilingual menu and the public website for a single restaurant, in one Next.js app.
 
+> **License:** the code is published for review only, not for reuse. All rights reserved, see [LICENSE](LICENSE).
+
+**Contents:** [Why](#why) · [How booking works](#how-booking-works) · [Guarantees](#guarantees) · [Features](#features) · [Screenshots](#screenshots) · [Architecture](#architecture) · [Data model](#data-model) · [Tech stack](#tech-stack) · [Run locally](#run-locally) · [Tests and CI](#tests-and-ci) · [Deployment](#deployment) · [Security](#security) · [Limitations](#limitations) · [Roadmap and changes](#roadmap-and-changes) · [License and contact](#license-and-contact)
+
 [![CI](https://github.com/IvanSytnik/restaurant-crm/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/IvanSytnik/restaurant-crm/actions/workflows/ci.yml)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6)
 ![Next.js](https://img.shields.io/badge/Next.js-15-000000)
