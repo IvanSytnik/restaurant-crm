@@ -71,13 +71,13 @@ Enforced in code and covered by tests (`npm test`):
 
 | Guarantee | Where | Tests |
 |---|---|---|
-| No two blocking reservations overlap on a table (buffer included; touching slots allowed) | `lib/booking/table-allocator.ts`, `lib/booking/lock.ts` | overlap and buffer edges, inactive tables, min capacity, long reservations; concurrency test against a real database (opt-in, see below) |
-| Smallest fitting table is chosen | `selectBestTable()` | best fit, tie by name, no table / all occupied |
-| Dates and times follow Europe/Vienna, also on DST days | `lib/public/vienna-time.ts` | run with the host zone set to New York; last Sundays of March and October |
-| Public bookings only inside opening hours, on the 15-min grid | `lib/booking/slots.ts` | open/last-booking bounds, off-grid, closed days, DST days |
-| Content falls back to German when a translation is missing | `lib/menu/i18n.ts` | names, descriptions, variants, titles |
-| A promotion is "live" only on its weekdays and hours (Vienna) | `lib/promotions.ts` | date bounds, weekday, time window, serialized dates |
-| The three message files have the same keys and placeholders | `scripts/check-i18n.ts` | runs in CI |
+| No two blocking reservations overlap on a table (buffer included; touching slots allowed) | `lib/booking/table-allocator.ts`, `lib/booking/lock.ts` | overlap and buffer edges, inactive tables, min capacity, long reservations: [`tests/booking/table-allocator.test.ts`](tests/booking/table-allocator.test.ts); advisory lock vs. concurrent double booking against a real database (opt-in, see below): [`tests/integration/double-booking.test.ts`](tests/integration/double-booking.test.ts) |
+| Smallest fitting table is chosen | `selectBestTable()` | best fit, tie by name, no table / all occupied: [`tests/booking/table-allocator.test.ts`](tests/booking/table-allocator.test.ts) |
+| Dates and times follow Europe/Vienna, also on DST days | `lib/public/vienna-time.ts` | run with the host zone set to New York; last Sundays of March and October: [`tests/vienna-time.test.ts`](tests/vienna-time.test.ts) |
+| Public bookings only inside opening hours, on the 15-min grid | `lib/booking/slots.ts` | open/last-booking bounds, off-grid, closed days, DST days: [`tests/vienna-time.test.ts`](tests/vienna-time.test.ts) (`checkPublicSlot()`) |
+| Content falls back to German when a translation is missing | `lib/menu/i18n.ts` | names, descriptions, variants, titles: [`tests/menu-i18n.test.ts`](tests/menu-i18n.test.ts) |
+| A promotion is "live" only on its weekdays and hours (Vienna) | `lib/promotions.ts` | date bounds, weekday, time window, serialized dates: [`tests/promotions.test.ts`](tests/promotions.test.ts) |
+| The three message files have the same keys and placeholders | `scripts/check-i18n.ts` | runs in CI: [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (step "i18n parity") |
 
 Enforced in code, verified manually (no automated tests yet): role-based access on every API route, immediate loss of access for deactivated users, rate limits.
 
