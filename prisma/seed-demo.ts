@@ -311,7 +311,7 @@ function buildReservations(): ResSeed[] {
     { table: 'T9', guest: 'Ivan Petrenko', phone: '+43 699 000 0104', email: 'ivan.petrenko@example.com', guests: 2, start: plus(g, 15), minutes: 60, status: 'CONFIRMED', source: 'WEBSITE', locale: 'uk' },
     // Later today
     { table: 'T6', guest: 'Stammtisch Huber', phone: '+43 650 000 0105', guests: 6, start: plus(g, 90), minutes: 120, status: 'CONFIRMED', source: 'PHONE', note: 'Stammgäste, Bier vorab kühlen' },
-    { table: 'Stube', guest: 'Firma Alpenblick – Teamessen', phone: '+43 316 000 0106', email: 'office@alpenblick.example', guests: 9, start: plus(g, 120), minutes: 150, status: 'CONFIRMED', source: 'ADMIN', comment: '2 × vegetarisch' },
+    { table: 'Stube', guest: 'Firma Musterbau – Teamessen', phone: '+43 316 000 0106', email: 'office@musterbau.example', guests: 9, start: plus(g, 120), minutes: 150, status: 'CONFIRMED', source: 'ADMIN', comment: '2 × vegetarisch' },
     { table: 'T4', guest: 'Julia Steiner', phone: '+43 664 000 0107', email: 'julia.steiner@example.com', guests: 4, start: plus(g, 150), minutes: 90, status: 'CONFIRMED', source: 'WEBSITE' },
     { table: 'T7', guest: 'Thomas Gruber', phone: '+43 660 000 0108', guests: 2, start: plus(g, 180), minutes: 60, status: 'CONFIRMED', source: 'PHONE' },
     // Earlier today: finished or not shown
@@ -327,9 +327,9 @@ function buildReservations(): ResSeed[] {
     { table: 'T3', guest: 'Mykola Shevchuk', phone: '+43 660 000 0202', email: 'mykola.s@example.com', guests: 4, start: tm('12:30'), minutes: 90, status: 'CONFIRMED', source: 'WEBSITE', locale: 'uk' },
     { table: 'T7', guest: 'Laura Bauer', phone: '+43 676 000 0203', guests: 2, start: tm('13:00'), minutes: 60, status: 'CONFIRMED', source: 'PHONE' },
     { table: 'T6', guest: 'Familie Pichler', phone: '+43 699 000 0204', guests: 5, start: tm('18:00'), minutes: 120, status: 'CONFIRMED', source: 'PHONE', comment: 'Hund dabei' },
-    { table: 'T2', guest: 'James Miller', phone: '+44 7700 000205', email: 'james.miller@example.com', guests: 2, start: tm('18:30'), minutes: 60, status: 'CONFIRMED', source: 'WEBSITE', locale: 'en' },
+    { table: 'T2', guest: 'James Miller', phone: '+44 7700 900205', email: 'james.miller@example.com', guests: 2, start: tm('18:30'), minutes: 60, status: 'CONFIRMED', source: 'WEBSITE', locale: 'en' },
     { table: 'T5', guest: 'Sarah Koller', phone: '+43 650 000 0206', email: 'sarah.koller@example.com', guests: 3, start: tm('19:00'), minutes: 90, status: 'CONFIRMED', source: 'WEBSITE' },
-    { table: 'Stube', guest: 'Weinclub Graz', phone: '+43 316 000 0207', guests: 8, start: tm('19:00'), minutes: 150, status: 'CONFIRMED', source: 'ADMIN', note: 'Weinbegleitung vorbestellt' },
+    { table: 'Stube', guest: 'Weinrunde Lindenhof', phone: '+43 316 000 0207', guests: 8, start: tm('19:00'), minutes: 150, status: 'CONFIRMED', source: 'ADMIN', note: 'Weinbegleitung vorbestellt' },
     { table: 'T8', guest: 'Michael Haas', phone: '+43 664 000 0208', guests: 4, start: tm('19:30'), minutes: 90, status: 'CANCELLED', source: 'PHONE' },
   )
   return list

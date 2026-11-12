@@ -101,11 +101,11 @@ export function GeneralTab({ initial }: { initial: ContactsMap }) {
         <h2 className="text-base font-semibold text-gray-900">{t('address')}</h2>
 
         <Field label={t('addressLine')}>
-          <input className={inputClass} value={values.address ?? ''} onChange={(e) => set('address', e.target.value)} placeholder="Mariahilferstrasse 100" />
+          <input className={inputClass} value={values.address ?? ''} onChange={(e) => set('address', e.target.value)} placeholder="Musterstraße 1" />
         </Field>
         <div className="grid gap-4 sm:grid-cols-3">
           <Field label={t('postalCode')}>
-            <input className={inputClass} value={values.postal_code ?? ''} onChange={(e) => set('postal_code', e.target.value)} placeholder="1070" />
+            <input className={inputClass} value={values.postal_code ?? ''} onChange={(e) => set('postal_code', e.target.value)} placeholder="1010" />
           </Field>
           <Field label={t('city')}>
             <input className={inputClass} value={values.city ?? ''} onChange={(e) => set('city', e.target.value)} placeholder="Wien" />
@@ -122,10 +122,10 @@ export function GeneralTab({ initial }: { initial: ContactsMap }) {
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label={t('phone')}>
-            <input className={inputClass} value={values.phone ?? ''} onChange={(e) => set('phone', e.target.value)} placeholder="+43 1 234 5678" />
+            <input className={inputClass} value={values.phone ?? ''} onChange={(e) => set('phone', e.target.value)} placeholder="+43 316 000 000" />
           </Field>
           <Field label={t('email')}>
-            <input type="email" className={inputClass} value={values.email ?? ''} onChange={(e) => set('email', e.target.value)} placeholder="info@restaurant.at" />
+            <input type="email" className={inputClass} value={values.email ?? ''} onChange={(e) => set('email', e.target.value)} placeholder="info@example.com" />
           </Field>
         </div>
 

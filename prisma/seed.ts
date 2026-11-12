@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 
 async function main() {
   // ── Owner ─────────────────────────────────────
-  const ownerEmail = process.env.OWNER_EMAIL || 'owner@restaurant.at'
+  const ownerEmail = process.env.OWNER_EMAIL || 'owner@example.com'
   const ownerPassword = process.env.OWNER_PASSWORD
   if (!ownerPassword || ownerPassword.length < 12) {
     throw new Error('OWNER_PASSWORD env var is required (min 12 chars)')
