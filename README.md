@@ -327,6 +327,8 @@ Screenshots and the GIF are regenerated with `scripts/screenshots.ts` against a 
 
 ## Security
 
+To report a vulnerability, see [SECURITY.md](SECURITY.md).
+
 - Every API route checks the session and role itself; middleware only redirects pages.
 - Role and active flag are re-read from the database on every session read (cached ≤ 60 s per instance): deactivating a user ends their access. Sessions last 12 hours.
 - Passwords hashed with bcrypt; the seed refuses short passwords and never logs them.
